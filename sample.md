@@ -11,6 +11,8 @@ Body text is set in **Source Sans 3**, headings in *Source Serif 4* and code in 
 
 A paragraph directly below a second-level heading. Umlauts and special characters: äöü ÄÖÜ ß — „Anführungszeichen“ … € 1.234,56.
 
+Numbers in running text use old-style figures: 1984, 2026, 3 × 7 = 21. Greek: Τυπογραφία. Cyrillic: Типографика.
+
 ### Heading level 3
 
 Headings from level 4 onward use the body size and differ only in weight and style.
@@ -100,6 +102,15 @@ print(count_words(Path("sample.md")), 42, True)
 | Source Serif 4  | Headings | 200–900  |
 | Source Sans 3   | Body     | 200–900  |
 | Source Code Pro | Code     | 200–900  |
+
+## Diagram
+
+```mermaid
+flowchart LR
+    A[Markdown] --> B{Typora}
+    B --> C[Source]
+    B --> D[Source Dark]
+```
 
 ## Math
 

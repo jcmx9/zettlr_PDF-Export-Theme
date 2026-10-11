@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install lint tooling
+        run: npm ci
+
+      - name: Lint CSS (stylelint)
+        run: npm run lint:css
+
+      - name: Lint shell scripts (shellcheck)
+        run: shellcheck scripts/*.sh
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Lint Python scripts (ruff)
+        run: uvx ruff check scripts/
+
+      - name: Check color contrast (WCAG AA)
+        run: python3 scripts/check_contrast.py

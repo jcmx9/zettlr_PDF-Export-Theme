@@ -1,0 +1,16 @@
+/*
+ * Source Compact — smaller type and tighter margins for small screens.
+ */
+
+@import url("source.css");
+
+:root {
+    --base-size: 15px;
+    --content-width: 44em;
+}
+
+@media screen {
+    #write {
+        padding: 28px 28px 96px;
+    }
+}

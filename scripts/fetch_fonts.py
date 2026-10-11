@@ -1,78 +1,95 @@
 #!/usr/bin/env python3
-"""Download the Source font family from Google Fonts for offline use.
+"""Download the Source font family from Adobe's GitHub releases.
 
-Writes variable woff2 files (latin + latin-ext subsets) to source/fonts/,
-the matching @font-face rules to source/fonts.css and the OFL license texts
-next to the fonts.
+Uses the variable OTF (CFF2) builds as woff2. Unlike the Google Fonts builds
+they keep all OpenType features, e.g. old-style figures. Writes the fonts to
+source/fonts/, the matching @font-face rules to source/fonts.css and the OFL
+license texts next to the fonts.
 """
 
-import re
+import io
 import sys
 import urllib.request
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 FONT_DIR = ROOT / "source" / "fonts"
 FONT_CSS = ROOT / "source" / "fonts.css"
 
-CSS_URL = (
-    "https://fonts.googleapis.com/css2"
-    "?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900"
-    "&family=Source+Sans+3:ital,wght@0,200..900;1,200..900"
-    "&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900"
-    "&display=swap"
-)
-LICENSES = {
-    "OFL-SourceCodePro.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcecodepro/OFL.txt",
-    "OFL-SourceSans3.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcesans3/OFL.txt",
-    "OFL-SourceSerif4.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourceserif4/OFL.txt",
-}
-SUBSETS = ("latin", "latin-ext")
-# A modern user agent makes Google Fonts serve woff2 files
-USER_AGENT = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/130.0 Safari/537.36"
-)
+RELEASES = "https://github.com/adobe-fonts/{repo}/releases/download/{tag}/{asset}"
+LICENSE = "https://raw.githubusercontent.com/adobe-fonts/{repo}/release/LICENSE.md"
 
-BLOCK_RE = re.compile(r"/\*\s*([\w-]+)\s*\*/\s*(@font-face\s*\{.*?\})", re.S)
+# family, repo, release tag, release asset, {style: member path in the ZIP}
+FAMILIES = [
+    (
+        "Source Serif 4",
+        "source-serif",
+        "4.005R",
+        "source-serif-4.005_WOFF2.zip",
+        {
+            "normal": "source-serif-4.005_WOFF2/VAR/SourceSerif4Variable-Roman.otf.woff2",
+            "italic": "source-serif-4.005_WOFF2/VAR/SourceSerif4Variable-Italic.otf.woff2",
+        },
+    ),
+    (
+        "Source Sans 3",
+        "source-sans",
+        "3.052R",
+        "WOFF2-source-sans-3.052R.zip",
+        {
+            "normal": "WOFF2/VF/SourceSans3VF-Upright.otf.woff2",
+            "italic": "WOFF2/VF/SourceSans3VF-Italic.otf.woff2",
+        },
+    ),
+    (
+        "Source Code Pro",
+        "source-code-pro",
+        "2.042R-u%2F1.062R-i%2F1.026R-vf",
+        "WOFF2-source-code-pro-2.042R-u_1.062R-i_1.026Rvf.zip",
+        {
+            "normal": "WOFF2/VF/SourceCodeVF-Upright.otf.woff2",
+            "italic": "WOFF2/VF/SourceCodeVF-Italic.otf.woff2",
+        },
+    ),
+]
+
+FACE = """@font-face {{
+    font-family: "{family}";
+    font-style: {style};
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("fonts/{filename}") format("woff2");
+}}
+"""
 
 
 def fetch(url: str) -> bytes:
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(request, timeout=30) as response:
+    with urllib.request.urlopen(url, timeout=60) as response:
         return response.read()
-
-
-def prop(block: str, name: str) -> str:
-    match = re.search(rf"{name}:\s*([^;]+);", block)
-    if not match:
-        raise ValueError(f"missing {name} in @font-face block")
-    return match.group(1).strip()
 
 
 def main() -> int:
     FONT_DIR.mkdir(parents=True, exist_ok=True)
-    css = fetch(CSS_URL).decode()
+    for stale in FONT_DIR.glob("*.woff2"):
+        stale.unlink()
 
     rules = []
-    for subset, block in BLOCK_RE.findall(css):
-        if subset not in SUBSETS:
-            continue
-        family = prop(block, "font-family").strip("'\"")
-        style = prop(block, "font-style")
-        url = prop(block, "src").split(")")[0].removeprefix("url(")
-        filename = f"{family.replace(' ', '')}-{style}-{subset}.woff2"
-        (FONT_DIR / filename).write_bytes(fetch(url))
-        print(f"  {filename}")
-        rules.append(f"/* {subset} */\n" + block.replace(url, f"fonts/{filename}"))
+    for family, repo, tag, asset, members in FAMILIES:
+        url = RELEASES.format(repo=repo, tag=tag, asset=asset)
+        with zipfile.ZipFile(io.BytesIO(fetch(url))) as archive:
+            for style, member in members.items():
+                filename = f"{family.replace(' ', '')}-{style}.otf.woff2"
+                (FONT_DIR / filename).write_bytes(archive.read(member))
+                rules.append(FACE.format(family=family, style=style, filename=filename))
+                print(f"  {filename}")
+
+        license_name = f"OFL-{family.replace(' ', '')}.txt"
+        (FONT_DIR / license_name).write_bytes(fetch(LICENSE.format(repo=repo)))
+        print(f"  {license_name}")
 
     header = "/* Generated by scripts/fetch_fonts.py — do not edit by hand. */\n\n"
-    FONT_CSS.write_text(header + "\n\n".join(rules) + "\n")
-
-    for filename, url in LICENSES.items():
-        (FONT_DIR / filename).write_bytes(fetch(url))
-        print(f"  {filename}")
-
+    FONT_CSS.write_text(header + "\n".join(rules))
     print(f"{len(rules)} font files, CSS written to {FONT_CSS.relative_to(ROOT)}")
     return 0
 

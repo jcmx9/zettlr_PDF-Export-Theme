@@ -8,7 +8,7 @@
 :root {
     --text-color: #d9d5ce;
     --text-muted: #9a958c;
-    --text-faint: #5f5a53;
+    --text-faint: #7a746c;
     --heading-color: #f1ede6;
     --accent: #e0805f;
     --border: #3a3631;
@@ -29,7 +29,7 @@
     --syntax-type: #6cc4b8;
     --syntax-string: #a8c97a;
     --syntax-number: #e8976f;
-    --syntax-comment: #7d776e;
+    --syntax-comment: #9a9388;
     --syntax-meta: #d9b26a;
     --syntax-operator: #a39e95;
 
@@ -37,4 +37,5 @@
     --active-file-bg-color: #2c2a27;
     --item-hover-bg-color: #262421;
     --select-text-bg-color: #5a3426;
+    --mermaid-theme: night;
 }

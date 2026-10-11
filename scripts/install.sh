@@ -6,7 +6,7 @@ set -euo pipefail
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 readonly repo_dir
 readonly theme_dir="${TYPORA_THEME_DIR:-${HOME}/Library/Application Support/abnerworks.Typora/themes}"
-readonly items=(source.css source-dark.css source)
+readonly items=(source.css source-dark.css source-compact.css source-dark-compact.css source)
 
 link_item() {
     local name="$1"
