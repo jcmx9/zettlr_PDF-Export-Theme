@@ -3,7 +3,7 @@
 
 Reads the :root variables of source.css and source-dark.css (the dark theme
 inherits from the light one) and fails if a text/background pair is below the
-required ratio.
+required ratio. Also verifies that the Zettlr palette mirrors these colors.
 """
 
 import re
@@ -44,6 +44,14 @@ PAIRS = [
     ("--text-faint", "--code-bg", AA_LARGE),
 ]
 
+# Zettlr palette name (without --src-) -> Typora variable, if not --<same name>
+ZETTLR_NAMES = {
+    "text": "--text-color",
+    "heading": "--heading-color",
+    "bg": "--bg-color",
+    "selection": "--select-text-bg-color",
+}
+
 VAR_RE = re.compile(r"(--[\w-]+)\s*:\s*(#[0-9a-fA-F]{6})\s*;")
 
 
@@ -51,6 +59,27 @@ def root_vars(css: str) -> dict[str, str]:
     """Return hex color variables of the first top-level :root block."""
     block = re.search(r"^:root\s*\{(.*?)^\}", css, re.DOTALL | re.MULTILINE)
     return dict(VAR_RE.findall(block.group(1))) if block else {}
+
+
+def block_vars(css: str, selector: str) -> dict[str, str]:
+    """Return hex color variables of the block with the given selector."""
+    block = re.search(
+        rf"^{re.escape(selector)}\s*\{{(.*?)^\}}", css, re.DOTALL | re.MULTILINE
+    )
+    return dict(VAR_RE.findall(block.group(1))) if block else {}
+
+
+def check_zettlr(name: str, palette: dict[str, str], colors: dict[str, str]) -> int:
+    failures = 0
+    for var, value in palette.items():
+        short = var.removeprefix("--src-")
+        typora = ZETTLR_NAMES.get(short, f"--{short}")
+        if colors.get(typora, "").lower() != value.lower():
+            failures += 1
+            print(
+                f"  FAIL Zettlr {name}: {var} {value} != {typora} {colors.get(typora)}"
+            )
+    return failures
 
 
 def luminance(hex_color: str) -> float:
@@ -82,7 +111,12 @@ def main() -> int:
     light = root_vars((ROOT / "source.css").read_text())
     dark = light | root_vars((ROOT / "source-dark.css").read_text())
     failures = check("Source", light) + check("Source Dark", dark)
-    print(f"{failures} failing pair(s)")
+
+    zettlr = (ROOT / "zettlr" / "source-zettlr.css").read_text()
+    print("Zettlr palette")
+    failures += check_zettlr("light", block_vars(zettlr, "html:root"), light)
+    failures += check_zettlr("dark", block_vars(zettlr, "html body.dark"), dark)
+    print(f"{failures} failure(s)")
     return 1 if failures else 0
 
 

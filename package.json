@@ -4,7 +4,7 @@
     "description": "Lint tooling for the Source Typora theme",
     "license": "MIT",
     "scripts": {
-        "lint:css": "stylelint \"*.css\""
+        "lint:css": "stylelint \"*.css\" \"zettlr/*.css\""
     },
     "devDependencies": {
         "stylelint": "^16.0.0",

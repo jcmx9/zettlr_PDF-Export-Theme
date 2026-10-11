@@ -1,0 +1,195 @@
+/*
+ * Source — Zettlr theme · v26.10.0
+ * Headings: Source Serif 4 · Body: Source Sans 3 · Code: Source Code Pro
+ *
+ * Installed next to Zettlr's custom.css (see scripts/install-zettlr.sh), so
+ * the font import below resolves relative to Zettlr's data folder.
+ * Works with every built-in Zettlr theme; light/dark follows body.dark.
+ * Colors mirror source.css and source-dark.css.
+ */
+
+@import url("source/fonts-ttf.css");
+
+/* Palette */
+
+html:root {
+    --src-font-serif: "Source Serif 4", Georgia, serif;
+    --src-font-sans: "Source Sans 3", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --src-font-mono: "Source Code Pro", Menlo, Consolas, monospace;
+
+    --src-text: #2b2b2b;
+    --src-text-muted: #6b6b6b;
+    --src-text-faint: #8f897f;
+    --src-heading: #1a1a1a;
+    --src-accent: #b5452b;
+    --src-bg: #fdfcfa;
+    --src-code-bg: #f4f2ee;
+    --src-mark-bg: #fbeab0;
+    --src-selection: #f3d8cf;
+
+    --src-alert-note: #2f6aa8;
+    --src-alert-tip: #3b7d3a;
+    --src-alert-important: #7a4fb0;
+    --src-alert-warning: #8f5f00;
+    --src-alert-caution: #b5452b;
+
+    --src-syntax-keyword: #a3337a;
+    --src-syntax-def: #1f5f99;
+    --src-syntax-type: #1f6f6a;
+    --src-syntax-string: #4f7a28;
+    --src-syntax-number: #b5452b;
+    --src-syntax-comment: #736b60;
+    --src-syntax-meta: #8a5a00;
+}
+
+html body.dark {
+    --src-text: #d9d5ce;
+    --src-text-muted: #9a958c;
+    --src-text-faint: #7a746c;
+    --src-heading: #f1ede6;
+    --src-accent: #e0805f;
+    --src-bg: #1e1c1a;
+    --src-code-bg: #272522;
+    --src-mark-bg: #5c4a16;
+    --src-selection: #5a3426;
+
+    --src-alert-note: #6fa3dc;
+    --src-alert-tip: #79b46a;
+    --src-alert-important: #b08ce0;
+    --src-alert-warning: #d9a440;
+    --src-alert-caution: #e0805f;
+
+    --src-syntax-keyword: #e08cc0;
+    --src-syntax-def: #82b4e8;
+    --src-syntax-type: #6cc4b8;
+    --src-syntax-string: #a8c97a;
+    --src-syntax-number: #e8976f;
+    --src-syntax-comment: #9a9388;
+    --src-syntax-meta: #d9b26a;
+}
+
+/* Alerts (> [!NOTE] …) are styled through variables on :root / body.dark */
+
+html:root,
+html body.dark {
+    --zettlr-note-color: var(--src-alert-note);
+    --zettlr-tip-color: var(--src-alert-tip);
+    --zettlr-important-color: var(--src-alert-important);
+    --zettlr-warning-color: var(--src-alert-warning);
+    --zettlr-caution-color: var(--src-alert-caution);
+    --zettlr-note-bg: color-mix(in srgb, var(--src-alert-note) 8%, var(--src-bg));
+    --zettlr-tip-bg: color-mix(in srgb, var(--src-alert-tip) 8%, var(--src-bg));
+    --zettlr-important-bg: color-mix(in srgb, var(--src-alert-important) 8%, var(--src-bg));
+    --zettlr-warning-bg: color-mix(in srgb, var(--src-alert-warning) 8%, var(--src-bg));
+    --zettlr-caution-bg: color-mix(in srgb, var(--src-alert-caution) 8%, var(--src-bg));
+}
+
+/*
+ * Editor variables. Zettlr sets its theme on .cm-editor with a single class,
+ * so "body .cm-editor" wins without !important.
+ */
+
+body .cm-editor {
+    --zettlr-editor-font: var(--src-font-sans);
+    --zettlr-editor-code-font: var(--src-font-mono);
+    --zettlr-editor-line-height: 1.65;
+
+    --zettlr-editor-header-style: 600;
+    --zettlr-editor-strong-style: 700;
+    --zettlr-editor-emphasis-style: italic;
+    --zettlr-editor-code-style: normal;
+
+    /* Scale 1.25 for h1–h3, body size from h4 on (same as the Typora theme) */
+    --zettlr-editor-header-1-size: 1.95em;
+    --zettlr-editor-header-2-size: 1.56em;
+    --zettlr-editor-header-3-size: 1.25em;
+    --zettlr-editor-header-4-size: 1em;
+    --zettlr-editor-header-5-size: 1em;
+    --zettlr-editor-header-6-size: 1em;
+
+    --zettlr-editor-primary-color: var(--src-accent);
+    --zettlr-editor-secondary-color: var(--src-accent);
+    --zettlr-editor-scroller-color: var(--src-text);
+    --zettlr-editor-scroller-bg: var(--src-bg);
+    --zettlr-editor-selection-color: var(--src-selection);
+    --zettlr-editor-highlight-color: var(--src-mark-bg);
+    --zettlr-editor-citation-color: var(--src-text-muted);
+    --zettlr-editor-citation-bg: var(--src-code-bg);
+    --zettlr-editor-code-color: var(--src-text);
+    --zettlr-editor-code-bg: var(--src-code-bg);
+    --zettlr-editor-escape-color: var(--src-text-faint);
+    --zettlr-editor-accent-color: var(--src-bg);
+    --zettlr-editor-accent-bg: var(--src-text-muted);
+    --zettlr-editor-error-color: var(--src-alert-caution);
+
+    /* Code syntax (Zettlr groups tokens by Solarized color names) */
+    --zettlr-editor-code-base-00: var(--src-syntax-comment);
+    --zettlr-editor-code-green: var(--src-syntax-string);
+    --zettlr-editor-code-magenta: var(--src-syntax-keyword);
+    --zettlr-editor-code-blue: var(--src-syntax-def);
+    --zettlr-editor-code-cyan: var(--src-syntax-type);
+    --zettlr-editor-code-violet: var(--src-syntax-number);
+    --zettlr-editor-code-orange: var(--src-syntax-number);
+    --zettlr-editor-code-yellow: var(--src-syntax-meta);
+    --zettlr-editor-code-red: var(--src-alert-caution);
+
+    font-variant-numeric: oldstyle-nums proportional-nums;
+}
+
+/* Headings: serif font, more space above than below */
+
+body .cm-editor .cm-line:has(.cm-header-1),
+body .cm-editor .cm-line:has(.cm-header-2),
+body .cm-editor .cm-line:has(.cm-header-3),
+body .cm-editor .cm-line:has(.cm-header-4),
+body .cm-editor .cm-line:has(.cm-header-5),
+body .cm-editor .cm-line:has(.cm-header-6) {
+    --zettlr-editor-font: var(--src-font-serif);
+    color: var(--src-heading);
+}
+
+body .cm-editor .cm-line:has(.cm-header-1) {
+    --zettlr-editor-header-style: 700;
+    padding-top: 0.8em;
+    padding-bottom: 0.2em;
+}
+
+body .cm-editor .cm-line:has(.cm-header-2) {
+    padding-top: 0.9em;
+    padding-bottom: 0.15em;
+}
+
+body .cm-editor .cm-line:has(.cm-header-3) {
+    padding-top: 0.8em;
+    padding-bottom: 0.1em;
+}
+
+body .cm-editor .cm-line:has(.cm-header-4) {
+    --zettlr-editor-header-style: 700;
+    padding-top: 0.6em;
+}
+
+body .cm-editor .cm-line:has(.cm-header-5) {
+    --zettlr-editor-header-style: italic 600;
+    padding-top: 0.6em;
+}
+
+body .cm-editor .cm-line:has(.cm-header-6) {
+    --zettlr-editor-header-style: italic 400;
+    padding-top: 0.6em;
+    color: var(--src-text-muted);
+}
+
+/* Markdown syntax characters (#, *, `, …) recede */
+
+body .cm-editor .cm-code-mark {
+    color: var(--src-text-faint);
+}
+
+/* Code: no old-style figures in monospace */
+
+body .cm-editor .code-block-line-background,
+body .cm-editor .cm-monospace,
+body .cm-editor .cm-gutters {
+    font-variant-numeric: normal;
+}

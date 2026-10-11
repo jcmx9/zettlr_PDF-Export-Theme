@@ -1,6 +1,6 @@
 # Source — Typora Theme
 
-> A calm, typographic Typora theme built on Adobe's Source superfamily.
+> A calm, typographic theme for Typora and Zettlr built on Adobe's Source superfamily.
 
 [![CI](https://github.com/jcmx9/Typora_Theme-Source/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/Typora_Theme-Source/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -40,7 +40,7 @@ All fonts are bundled as variable OTF (CFF2) fonts in `woff2` format, taken from
 
 ### Release ZIP
 
-Download the ZIP from the [latest release](https://github.com/jcmx9/Typora_Theme-Source/releases/latest), open Typora's theme folder (*Preferences → Appearance → Open Theme Folder*) and copy all `.css` files and the `source/` folder into it.
+Download the Typora ZIP from the [latest release](https://github.com/jcmx9/Typora_Theme-Source/releases/latest), open Typora's theme folder (*Preferences → Appearance → Open Theme Folder*) and copy all `.css` files and the `source/` folder into it.
 
 ### With symlinks (macOS)
 
@@ -53,6 +53,23 @@ cd Typora_Theme-Source
 The script links all theme files and the `source/` folder into Typora's theme folder. Changes in the repository take effect after reloading Typora. Existing files with the same name are moved to `*.bak`.
 
 Then restart Typora and choose a theme from the **Themes** menu. To switch automatically with the system appearance, enable *Preferences → Appearance → Use separate theme in dark mode* and select **Source Dark**.
+
+## Zettlr
+
+The same typography and colors are available for [Zettlr](https://www.zettlr.com) (tested against 4.8). Zettlr has no theme menu for custom themes; instead its `custom.css` imports `source-zettlr.css`. Light and dark follow Zettlr's dark mode, and the theme works with every built-in Zettlr theme.
+
+```bash
+./scripts/install-zettlr.sh              # link theme and fonts, add the import to custom.css
+./scripts/install-zettlr.sh --uninstall  # remove import and links again
+```
+
+Existing rules in `custom.css` are kept, and a timestamped backup is written before every change. Without the script, unpack the Zettlr ZIP from the release into Zettlr's data folder (macOS: `~/Library/Application Support/zettlr`) and add `@import url("source-zettlr.css");` as the first line of `custom.css`.
+
+Differences to Typora:
+
+- Zettlr is an editor with visible Markdown syntax, so the theme sets fonts, sizes, spacing and colors, not the layout of tables or code blocks.
+- Zettlr runs on Chromium, so it uses the TTF fonts, which are embedded in `source/fonts-ttf.css`; Zettlr's file protocol cannot serve font files across origins.
+- Exports run through Pandoc and are not affected by the theme.
 
 ## PDF export
 
@@ -88,7 +105,7 @@ python3 scripts/check_contrast.py
 # Re-download fonts from Adobe's releases and regenerate source/fonts.css
 python3 scripts/fetch_fonts.py
 
-# Build the release ZIP in dist/
+# Build the release ZIPs (Typora, Zettlr) in dist/
 ./scripts/package.sh
 
 # Preview every element
@@ -104,16 +121,18 @@ source.css                – Light theme (layout, typography, colors)
 source-dark.css           – Dark theme (color overrides only)
 source-compact.css        – Compact light variant
 source-dark-compact.css   – Compact dark variant
-source/fonts.css          – Generated @font-face rules
+zettlr/source-zettlr.css  – Zettlr theme (light and dark)
+source/fonts.css          – Generated @font-face rules (OTF files, Typora)
+source/fonts-ttf.css      – Generated @font-face rules (embedded TTF, Zettlr)
 source/fonts/             – Variable OTF fonts (woff2) and OFL licenses
 sample.md                 – Sample document with all elements
-scripts/                  – Install, package, font download and contrast check
+scripts/                  – Install (Typora, Zettlr), package, font download, contrast check
 .github/workflows/        – CI (lint, contrast) and release (ZIP on tag)
 ```
 
 ## Versioning
 
-This project uses [CalVer](https://calver.org/) in the format `YY.M.MICRO`. The version lives in the header comment of `source.css`. Pushing a tag `v<version>` builds the ZIP and creates a GitHub release.
+This project uses [CalVer](https://calver.org/) in the format `YY.M.MICRO`. The version lives in the header comment of `source.css`. Pushing a tag `v<version>` builds one ZIP for Typora and one for Zettlr and creates a GitHub release.
 
 ## License
 
