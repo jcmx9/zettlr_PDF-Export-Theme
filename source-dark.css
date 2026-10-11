@@ -1,0 +1,40 @@
+/*
+ * Source Dark — dark variant of the Source Typora theme.
+ * Layout and typography come from source.css; only colors are overridden here.
+ */
+
+@import url("source.css");
+
+:root {
+    --text-color: #d9d5ce;
+    --text-muted: #9a958c;
+    --text-faint: #5f5a53;
+    --heading-color: #f1ede6;
+    --accent: #e0805f;
+    --border: #3a3631;
+    --bg-color: #1e1c1a;
+    --code-bg: #272522;
+    --table-stripe: #232120;
+    --mark-bg: #5c4a16;
+    --kbd-bg: #2c2a27;
+
+    --alert-note: #6fa3dc;
+    --alert-tip: #79b46a;
+    --alert-important: #b08ce0;
+    --alert-warning: #d9a440;
+    --alert-caution: #e0805f;
+
+    --syntax-keyword: #e08cc0;
+    --syntax-def: #82b4e8;
+    --syntax-type: #6cc4b8;
+    --syntax-string: #a8c97a;
+    --syntax-number: #e8976f;
+    --syntax-comment: #7d776e;
+    --syntax-meta: #d9b26a;
+    --syntax-operator: #a39e95;
+
+    --side-bar-bg-color: #191816;
+    --active-file-bg-color: #2c2a27;
+    --item-hover-bg-color: #262421;
+    --select-text-bg-color: #5a3426;
+}
