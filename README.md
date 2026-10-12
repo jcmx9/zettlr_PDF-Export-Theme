@@ -81,7 +81,7 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 
 The editor theme works with every built-in Zettlr theme; Zettlr's *Appearance → Editor theme* setting no longer matters. Light and dark follow Zettlr's dark mode. It sets fonts, heading sizes (scale 1.25 for levels 1–3, body size from level 4), spacing and colors. To try Zettlr without it, comment out the first line of `custom.css` in Zettlr's *Assets Manager*.
 
-Tags are shown in the accent color including their `#`. Zettlr itself does not support `/` in tags: `#project/client` is read as the tag `#project` followed by plain text. Use `-` or `_` for hierarchies, e.g. `#project-client`.
+Tags are shown in the accent color including their `#`. Zettlr does not support tag hierarchies: in Obsidian-style tags such as `#project/client` only `#project` is recognized and colored; the note itself stays unchanged.
 
 ## Typora
 
