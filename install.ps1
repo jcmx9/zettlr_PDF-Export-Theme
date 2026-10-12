@@ -7,8 +7,8 @@ Install or update (run the same line again to update):
 Uninstall:
   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
 
-Sets up Zettlr: editor theme, PDF export profile "Source PDF" and snippet
-"protokoll". Typst is downloaded into the installer's own folder. Typora
+Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
+snippets protokoll, jourfixe, workshop and entscheidung. Typst is downloaded into the installer's own folder. Typora
 themes installed by earlier versions are removed.
 #>
 param(
@@ -27,7 +27,6 @@ $TypstVersion = "0.15.0"
 $ImportLine = '@import url("source-zettlr.css");'
 $ProfileName = "Source PDF.yaml"
 $ProfileMarker = "zettlr_PDF-Export-Theme installer"
-$SnippetName = "protokoll.tpl.md"
 # Installed into Typora by versions up to 26.10.4
 $LegacyTyporaThemes = @("source.css", "source-dark.css", "source-compact.css", "source-dark-compact.css")
 
@@ -92,7 +91,10 @@ function Install-Bundle([string]$Temp) {
         $old = (Get-Content -LiteralPath (Join-Path $Current "VERSION") -Raw).Trim()
     }
     New-Item -ItemType Directory -Force -Path $AppDir | Out-Null
-    if (Test-Path -LiteralPath $Current) { Remove-Item -LiteralPath $Current -Recurse -Force }
+    # The previous version stays in current.old until setup is done, so files
+    # it installed can be told apart from the user's own
+    if (Test-Path -LiteralPath "$Current.old") { Remove-Item -LiteralPath "$Current.old" -Recurse -Force }
+    if (Test-Path -LiteralPath $Current) { Move-Item -LiteralPath $Current -Destination "$Current.old" }
     Move-Item -LiteralPath $extracted -Destination $Current
     if ($old -eq $new) { Write-Host "Version $new (reinstalled)" } else { Write-Host "Version $old -> $new" }
 }
@@ -162,14 +164,28 @@ function Install-Zettlr {
 
     $template = Read-Text ([IO.Path]::Combine($Current, "zettlr", "Source PDF.yaml.in"))
     $content = $template.Replace("@TYPST@", (Convert-YamlPath $TypstExe)).Replace("@DIR@", (Convert-YamlPath $Current))
+    # No fixed root on Windows (notes may live on any drive): Typst uses the note's folder
+    $content = $content -replace "(?m)^.*@ROOT@.*\r?\n", ""
     $defaults = Join-Path $ZettlrDir "defaults"
     New-Item -ItemType Directory -Force -Path $defaults | Out-Null
     Write-Text (Join-Path $defaults $ProfileName) $content
 
     $snippets = Join-Path $ZettlrDir "snippets"
     New-Item -ItemType Directory -Force -Path $snippets | Out-Null
-    Copy-Item -LiteralPath ([IO.Path]::Combine($Current, "zettlr", "snippets", $SnippetName)) -Destination (Join-Path $snippets $SnippetName) -Force
-    Write-Host '  theme, export profile "Source PDF" and snippet "protokoll" installed'
+    # Every snippet the bundle ships, so installer and bundle never disagree
+    foreach ($file in Get-ChildItem -LiteralPath ([IO.Path]::Combine($Current, "zettlr", "snippets")) -Filter "*.tpl.md") {
+        $name = $file.Name.Substring(0, $file.Name.Length - ".tpl.md".Length)
+        $source = $file.FullName
+        $target = Join-Path $snippets $file.Name
+        # Keep a copy of a snippet with this name that is not one of ours
+        $previous = ([IO.Path]::Combine("$Current.old", "zettlr", "snippets", "$name.tpl.md"))
+        if ((Test-Path -LiteralPath $target) -and ((Read-Text $target) -ne (Read-Text $source)) -and
+            -not ((Test-Path -LiteralPath $previous) -and ((Read-Text $target) -eq (Read-Text $previous)))) {
+            Backup-File $target
+        }
+        Copy-Item -LiteralPath $source -Destination $target -Force
+    }
+    Write-Host '  theme, export profile "Source PDF" and snippets installed'
 }
 
 function Uninstall-Zettlr {
@@ -182,13 +198,17 @@ function Uninstall-Zettlr {
     if ((Test-Path -LiteralPath $profilePath) -and (Read-Text $profilePath).Contains($ProfileMarker)) {
         Remove-Item -LiteralPath $profilePath -Force
     }
-    $snippet = ([IO.Path]::Combine($ZettlrDir, "snippets", $SnippetName))
-    $ours = ([IO.Path]::Combine($Current, "zettlr", "snippets", $SnippetName))
-    if ((Test-Path -LiteralPath $snippet) -and (Test-Path -LiteralPath $ours) -and ((Read-Text $snippet) -eq (Read-Text $ours))) {
-        Remove-Item -LiteralPath $snippet -Force
-    }
-    elseif (Test-Path -LiteralPath $snippet) {
-        Write-Warning "kept $snippet (changed or unknown)"
+    $bundled = ([IO.Path]::Combine($Current, "zettlr", "snippets"))
+    $ourSnippets = if (Test-Path -LiteralPath $bundled) { Get-ChildItem -LiteralPath $bundled -Filter "*.tpl.md" } else { @() }
+    foreach ($file in $ourSnippets) {
+        $snippet = ([IO.Path]::Combine($ZettlrDir, "snippets", $file.Name))
+        $ours = $file.FullName
+        if ((Test-Path -LiteralPath $snippet) -and ((Read-Text $snippet) -eq (Read-Text $ours))) {
+            Remove-Item -LiteralPath $snippet -Force
+        }
+        elseif (Test-Path -LiteralPath $snippet) {
+            Write-Warning "kept $snippet (changed or unknown)"
+        }
     }
     Write-Host "  removed"
 }
@@ -237,4 +257,5 @@ try {
 }
 finally {
     Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath "$Current.old" -Recurse -Force -ErrorAction SilentlyContinue
 }

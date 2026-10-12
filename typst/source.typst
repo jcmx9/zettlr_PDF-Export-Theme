@@ -4,8 +4,10 @@
 // Noto Emoji (monochrome) is the fallback for emoji and symbols, so they take
 // the text color and weight.
 //
-// Metadata (all optional): title, subtitle, client, date, author, lang.
-// Without a date, the export date is used.
+// Metadata (all optional): title, subtitle, client, date, author, lang,
+// logo (image path, shown next to the title), next (next meeting).
+// Without a date, the export date is used. Mermaid code blocks are drawn
+// with the bundled mmdr package (--package-cache-path typst/packages).
 
 #let text-color = rgb("#2b2b2b")
 #let muted = rgb("#6b6b6b")
@@ -18,6 +20,16 @@
 #let font-serif = ("Source Serif 4", font-emoji)
 #let font-sans = ("SourceSans3VF", font-emoji)
 #let font-mono = ("SourceCodeVF", font-emoji)
+
+#import "@preview/mmdr:0.2.2": mermaid-svg
+
+// Labels in the document language (de, otherwise en)
+#let doc-lang = "$if(lang)$$lang$$else$de$endif$".slice(0, 2)
+#let labels = (
+  de: (page: "Seite", next: "Nächster Termin", diagram: "Diagramm"),
+  en: (page: "Page", next: "Next meeting", diagram: "Diagram"),
+)
+#let label-text(key) = labels.at(doc-lang, default: labels.en).at(key)
 
 // Helpers referenced by Pandoc's Typst writer
 // (newer Pandoc versions call divider(), older ones use horizontalrule)
@@ -34,10 +46,13 @@ $endif$
 #let doc-title = $if(title)$[$title$]$else$none$endif$
 #let doc-client = $if(client)$[$client$]$else$none$endif$
 #let doc-date = $if(date)$[$date$]$else$datetime.today().display("[day].[month].[year]")$endif$
+#let doc-logo = $if(logo-typst)$[$logo-typst$]$else$none$endif$
 
 #set document(
 $if(title)$
   title: [$title$],
+$elseif(pdf-title)$
+  title: [$pdf-title$],
 $endif$
 $if(author)$
   author: ($for(author)$"$author$"$sep$, $endfor$),
@@ -58,7 +73,7 @@ $endif$
         if doc-client != none and doc-title != none [ · ]
         if doc-title != none [#doc-title]
       },
-      [Seite #counter(page).display() / #counter(page).final().first()],
+      [#label-text("page") #counter(page).display() / #counter(page).final().first()],
     )
   },
 )
@@ -133,15 +148,20 @@ $endif$
   }
   none
 }
+// It stays a real list, so the PDF keeps its list structure (PDF/UA).
 #show list: it => {
   let tasks = it.children.map(item => task-parts(item.body))
   if tasks.len() == 0 or tasks.contains(none) { return it }
-  block(above: 0.9em, below: 0.9em, for task in tasks {
-    block(above: 0.5em, below: 0.5em, grid(
+  list(
+    marker: [],
+    indent: 0pt,
+    body-indent: 0pt,
+    spacing: 0.5em,
+    ..tasks.map(task => list.item(grid(
       columns: (1.4em, 1fr),
       task-box(task.done), task.body.join(),
-    ))
-  })
+    ))),
+  )
 }
 
 // Alerts (> [!NOTE] …), emitted by source.lua
@@ -217,6 +237,46 @@ $endif$
   it
 }
 #show table: set text(number-type: "lining", number-width: "tabular")
+// Long tables continue on the next page, with their header repeated
+#show figure.where(kind: table): set block(breakable: true)
+
+// Images
+
+#show figure.where(kind: image): set block(above: 1.4em, below: 1.4em)
+#show figure.caption: set text(size: 0.9em, fill: muted)
+
+// Mermaid diagrams (```mermaid code blocks)
+
+#let mermaid-theme = (
+  // Static Regular: SVG text cannot use the variable font's weights
+  font_family: "Source Sans 3",
+  primary_color: "#f4f2ee",
+  primary_text_color: "#2b2b2b",
+  primary_border_color: "#b9b2a6",
+  secondary_color: "#fbeab0",
+  tertiary_color: "#fdfcfa",
+  line_color: "#6b6b6b",
+  text_color: "#2b2b2b",
+  edge_label_background: "#ffffff",
+  cluster_background: "#fdfcfa",
+  cluster_border: "#e4e1dc",
+  background: "#ffffff",
+  sequence_actor_fill: "#f4f2ee",
+  sequence_actor_border: "#b9b2a6",
+  sequence_actor_line: "#b9b2a6",
+  sequence_note_fill: "#fbeab0",
+  sequence_note_border: "#e0c66a",
+)
+#show raw.where(lang: "mermaid", block: true): it => block(
+  width: 100%,
+  above: 1.4em,
+  below: 1.4em,
+  {
+    set text(font: font-sans, number-type: auto, number-width: auto)
+    let svg = mermaid-svg(it.text, base-theme: "modern", theme: mermaid-theme)
+    align(center, image(bytes(svg), format: "svg", alt: label-text("diagram")))
+  },
+)
 
 $for(header-includes)$
 $header-includes$
@@ -224,17 +284,28 @@ $header-includes$
 $endfor$
 // Title block
 
-#if doc-client != none {
-  text(size: 9pt, fill: muted, tracking: 0.08em, upper(doc-client))
-  v(0.2em)
-}
-#if doc-title != none {
-  block(below: 1em, par(leading: 0.4em, text(font: font-serif, size: 2.1em, weight: 700, fill: heading-color, doc-title)))
-}
+#let title-block = {
+  if doc-client != none {
+    text(size: 9pt, fill: muted, tracking: 0.08em, upper(doc-client))
+    v(0.2em)
+  }
+  if doc-title != none {
+    block(below: 1em, par(leading: 0.4em, text(font: font-serif, size: 2.1em, weight: 700, fill: heading-color, doc-title)))
+  }
 $if(subtitle)$
-#block(below: 0.4em, text(font: font-serif, size: 1.25em, fill: muted)[$subtitle$])
+  block(below: 0.4em, text(font: font-serif, size: 1.25em, fill: muted)[$subtitle$])
 $endif$
-#text(size: 9.5pt, fill: muted)[#doc-date$if(author)$ · $for(author)$$author$$sep$, $endfor$$endif$]
+  text(size: 9.5pt, fill: muted)[#doc-date$if(author)$ · $for(author)$$author$$sep$, $endfor$$endif$]
+}
+#if doc-logo == none {
+  title-block
+} else {
+  grid(
+    columns: (1fr, auto),
+    column-gutter: 16pt,
+    title-block, box(height: 14mm, doc-logo),
+  )
+}
 #v(0.3em)
 #line(length: 100%, stroke: 0.8pt + border)
 
@@ -247,6 +318,15 @@ $if(toc)$
 
 $endif$
 $body$
+$if(next)$
+
+#block(above: 2em, sticky: false, {
+  line(length: 100%, stroke: 0.5pt + border)
+  v(0.2em)
+  text(weight: 600, fill: heading-color)[#label-text("next"):]
+  [ $next$]
+})
+$endif$
 
 $for(include-after)$
 $include-after$

@@ -6,8 +6,10 @@
 #
 # - "# Title" becomes the document title, "## Section" the first level
 # - Every line break in the note is kept (hard_line_breaks)
-# - ==highlight==, > [!NOTE] alerts and typographic quotes are supported
-# - Front matter (optional): client, date, subtitle, author
+# - ==highlight==, > [!NOTE] alerts, typographic quotes, images, Mermaid
+#   diagrams, task tables and page breaks (\newpage) are supported
+# - Front matter (optional): client, date, subtitle, author, logo, next, lang
+# - The PDF conforms to PDF/A-2u for archiving
 reader: markdown+hard_line_breaks+mark+alerts-smart
 writer: pdf
 standalone: true
@@ -15,6 +17,9 @@ pdf-engine: '@TYPST@'
 pdf-engine-opts:
   - --ignore-system-fonts
   - '--font-path=@DIR@/typst/fonts'
+  - '--package-cache-path=@DIR@/typst/packages'
+  - --pdf-standard=a-2u
+  - '--root=@ROOT@'
 template: '@DIR@/typst/source.typst'
 filters:
   - type: lua
@@ -22,7 +27,6 @@ filters:
 shift-heading-level-by: -1
 variables:
   papersize: a4
-  lang: de
 metadata-files: []
 include-before-body: []
 include-after-body: []

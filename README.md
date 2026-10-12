@@ -16,7 +16,7 @@ Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks
 | Code        | Source Code Pro |
 | Emoji       | Noto Emoji      |
 
-The Source fonts are Adobe's variable OTF builds. Emoji use the monochrome Noto Emoji, so they follow the text color and weight in the PDF and in Zettlr. All fonts are bundled with the theme; nothing is loaded from the internet at runtime.
+The Source fonts are Adobe's variable OTF builds; only Mermaid diagrams use the static Source Sans 3 Regular, because Typst draws SVG text without variable weights. Emoji use the monochrome Noto Emoji, so they follow the text color and weight in the PDF and in Zettlr. All fonts are bundled with the theme; nothing is loaded from the internet at runtime.
 
 ## Install and update
 
@@ -38,7 +38,7 @@ The installer
 
 1. downloads the latest release and verifies its SHA-256 checksum,
 2. downloads Typst into its own folder if needed (no system changes),
-3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippet **protokoll**.
+3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippets **protokoll**, **jourfixe**, **workshop** and **entscheidung**.
 
 Versions up to 26.10.4 also installed Typora themes; the installer removes them (only its own files).
 
@@ -62,7 +62,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
 ## Usage in Zettlr
 
 1. Restart Zettlr after installing.
-2. New note: type `:protokoll` and press Enter. Tab jumps through client, topic, agenda, participants, notes and tasks; the date is filled in automatically.
+2. New note: type `:protokoll` and press Enter. Tab jumps through client, topic, agenda, participants, notes and tasks; the date is filled in automatically. Further snippets: `:jourfixe`, `:workshop` and `:entscheidung` (decision paper).
 3. Export: **File → Export…** (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>E</kbd>), profile **Source PDF**.
 
 Where the PDF is saved is set under *Preferences → Import and Export*.
@@ -70,12 +70,26 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 ### What the PDF supports
 
 - **Title:** `# Topic` becomes the document title, `## Section` the section headings
-- **Front matter (optional):** `client`, `date` (defaults to the export date), `subtitle`, `author`
+- **Front matter (optional):**
+  - `client`, `subtitle`, `author`
+  - `date` – defaults to the export date
+  - `logo` – image next to the title, path relative to the note (or absolute on macOS/Linux)
+  - `next` – next meeting, printed at the end
+  - `lang: en` – English labels (Page, Next meeting, alert and table titles); German is the default
 - **Line breaks:** every line break in the note is kept
-- **Tasks:** `- [ ]` / `- [x]` render as check boxes
+- **Tasks:** `- [ ]` / `- [x]` render as check boxes. A task list with owners becomes a table *Aufgabe · Wer · Bis · Status*:
+  ```markdown
+  - [ ] Draft the sitemap – jcmx9, bis 17.10.
+  - [x] Book the review – Anna Beispiel
+  ```
 - **Alerts:** `> [!NOTE]` (Info), `[!TIP]` (Tipp), `[!IMPORTANT]` (Wichtig), `[!WARNING]` (Hinweis, calm orange), `[!CAUTION]` (Achtung); German keywords such as `> [!HINWEIS]` work as well
-- **Text:** `==highlight==`, footnotes, tables, code with syntax colors, math, typographic quotes, German hyphenation, emoji (monochrome, in text color)
+- **Images:** `![Caption](bilder/screen.png){width=50%}` with caption below; paths relative to the note. On Windows images must be in the note's folder or below it
+- **Diagrams:** ` ```mermaid ` code blocks are drawn in the theme's colors (flowcharts, sequence diagrams, …), offline
+- **Page breaks:** `\newpage` or `<!-- pagebreak -->` on a line of its own
+- **Long tables** continue on the next page with their header repeated
+- **Text:** `==highlight==`, footnotes, code with syntax colors, math, typographic quotes, German hyphenation, emoji (monochrome, in text color)
 - **Footer:** client, title and page numbers
+- **PDF/A-2u:** the PDF meets the archiving standard. Images and diagrams carry alt texts; full PDF/UA accessibility is not enforced, because it would make exports fail on everyday notes (e.g. a note starting with `###`)
 
 ### Editor theme
 
@@ -104,6 +118,13 @@ python3 scripts/check_contrast.py
 # Re-download fonts (Adobe releases, Noto Emoji from google/fonts)
 uv run scripts/fetch_fonts.py
 
+# Re-download the bundled Typst packages (Mermaid renderer)
+python3 scripts/fetch_packages.py
+
+# End-to-end test: export tests/fixtures/*.md and all snippets like Zettlr
+# does (needs pandoc, typst and pdftotext or mutool)
+./scripts/test_pdf.sh
+
 # Build the release bundle and install it locally
 ./scripts/package.sh
 ./install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
@@ -115,7 +136,7 @@ pandoc note.md -f markdown+hard_line_breaks+mark+alerts-smart -t pdf --pdf-engin
   --shift-heading-level-by=-1 -o note.pdf
 ```
 
-CI lints everything and runs the installer on Ubuntu, macOS and Windows (PowerShell 5.1).
+CI lints everything, runs the installer on Ubuntu, macOS and Windows (PowerShell 5.1) and exports the test notes with Zettlr's Pandoc version through the installed profile.
 
 ## Project Structure
 
@@ -123,11 +144,13 @@ CI lints everything and runs the installer on Ubuntu, macOS and Windows (PowerSh
 install.sh, install.ps1   – Installers (macOS/Linux, Windows)
 VERSION                   – Release version (CalVer)
 typst/source.typst        – Pandoc template for the PDF
-typst/source.lua          – Pandoc filter (alerts, typographic quotes)
-typst/fonts/              – Variable OTF fonts for Typst
+typst/source.lua          – Pandoc filter (alerts, quotes, images, logo, task tables, page breaks)
+typst/fonts/              – Fonts for Typst (variable OTF, Noto Emoji, static Regular for diagrams)
+typst/packages/           – Bundled Typst packages (mmdr for Mermaid)
 typst/example-meeting.md  – Example meeting note
 zettlr/                   – Zettlr editor theme, embedded fonts, export profile template, snippet
-scripts/                  – Font download, contrast check, bundle build
+scripts/                  – Font and package download, contrast check, bundle build, PDF test
+tests/fixtures/           – Test notes for the end-to-end PDF test
 docs/                     – README images
 ```
 
@@ -139,3 +162,4 @@ docs/                     – README images
 
 Code and theme: MIT – see [LICENSE](LICENSE).
 Fonts: SIL Open Font License 1.1 – see `typst/fonts/OFL-*.txt`. Source is a trademark of Adobe; Noto is a trademark of Google.
+mmdr (Mermaid renderer): MIT – see `typst/packages/preview/mmdr/0.2.2/LICENSE`.
