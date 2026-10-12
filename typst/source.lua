@@ -5,14 +5,33 @@
 --    "alerts" extension) and German keywords (> [!HINWEIS] …).
 -- 2. Typographic quotes are passed to Typst verbatim. Pandoc would turn
 --    “ ” into a plain " and Typst would then guess the wrong German quote.
+-- 3. Local images are handed to Typst by their path relative to the note.
+--    Pandoc would copy them into a temporary folder outside Typst's root.
+-- 4. Front matter "logo" becomes the logo next to the title.
+-- 5. Task lists with owners ("- [ ] Task – Name, bis 17.10.") become a
+--    table with the columns task, owner, due date and status.
+-- 6. \newpage, \pagebreak and <!-- pagebreak --> start a new page.
 
-local ALERT_TITLES = {
+local TEXT = {
   de = {
-    note = "Info",
-    tip = "Tipp",
-    important = "Wichtig",
-    warning = "Hinweis",
-    caution = "Achtung",
+    alerts = {
+      note = "Info",
+      tip = "Tipp",
+      important = "Wichtig",
+      warning = "Hinweis",
+      caution = "Achtung",
+    },
+    tasks = { "Aufgabe", "Wer", "Bis", "Status" },
+  },
+  en = {
+    alerts = {
+      note = "Note",
+      tip = "Tip",
+      important = "Important",
+      warning = "Warning",
+      caution = "Caution",
+    },
+    tasks = { "Task", "Owner", "Due", "Status" },
   },
 }
 
@@ -25,27 +44,110 @@ local GERMAN_KEYWORDS = {
   ACHTUNG = "caution",
 }
 
+-- Words that introduce the due date after the owner
+local DUE_WORDS = { "bis", "due", "by" }
+
 local lang = "de"
 
+local function text()
+  return TEXT[lang] or TEXT.en
+end
+
+-- A Typst string literal
+local function typst_string(s)
+  return '"' .. s:gsub("\\", "\\\\"):gsub('"', '\\"') .. '"'
+end
+
+-- --- Images ------------------------------------------------------------------
+
+-- Path of a local image as Typst should see it, or nil for remote images
+local function local_path(src)
+  if src:match("^%a[%w+.-]*://") or src:match("^data:") then
+    return nil
+  end
+  local path = src:gsub("%%(%x%x)", function(hex)
+    return string.char(tonumber(hex, 16))
+  end)
+  if path:sub(1, 2) == "~/" then
+    path = (os.getenv("HOME") or os.getenv("USERPROFILE") or "~") .. path:sub(2)
+  end
+  return (path:gsub("\\", "/"))
+end
+
+-- Typst length from an image attribute such as 50%, 8cm or 300px
+local function typst_length(value)
+  if not value then
+    return nil
+  end
+  local number, unit = value:match("^%s*([%d.]+)%s*(%a*%%?)%s*$")
+  if not number then
+    return nil
+  end
+  if unit == "" or unit == "px" then
+    return string.format("%gpt", tonumber(number) * 0.75)
+  end
+  if unit == "%" or unit == "cm" or unit == "mm" or unit == "in" or unit == "pt" or unit == "em" then
+    return number .. unit
+  end
+  return nil
+end
+
+local function image(img)
+  local path = local_path(img.src)
+  if not path then
+    return nil
+  end
+  local args = { typst_string(path) }
+  local width = typst_length(img.attributes.width)
+  local height = typst_length(img.attributes.height)
+  if width then
+    table.insert(args, "width: " .. width)
+  end
+  if height then
+    table.insert(args, "height: " .. height)
+  end
+  -- Alt text is required for accessible PDFs: caption, else the file name
+  local alt = pandoc.utils.stringify(img.caption)
+  if alt == "" then
+    alt = path:match("([^/]+)$"):gsub("%.%w+$", "")
+  end
+  table.insert(args, "alt: " .. typst_string(alt))
+  return pandoc.RawInline("typst", "#box(image(" .. table.concat(args, ", ") .. "))")
+end
+
+-- --- Metadata ----------------------------------------------------------------
+
 function Meta(meta)
+  -- Accessible PDFs need a title; without "# Title" use the file name
+  if not meta.title and PANDOC_STATE.input_files[1] then
+    local name = PANDOC_STATE.input_files[1]:match("([^/\\]+)$")
+    meta["pdf-title"] = (name:gsub("%.%w+$", ""))
+  end
   if meta.lang then
     lang = pandoc.utils.stringify(meta.lang):sub(1, 2)
   end
+  if meta.logo then
+    local path = local_path(pandoc.utils.stringify(meta.logo))
+    if path then
+      meta["logo-typst"] = pandoc.RawInline("typst", "#image(" .. typst_string(path) .. ', height: 100%, alt: "Logo")')
+    end
+  end
+  return meta
 end
+
+-- --- Alerts ------------------------------------------------------------------
 
 local function alert_kind(div)
   for _, class in ipairs(div.classes) do
-    if ALERT_TITLES.de[class] then
+    if TEXT.de.alerts[class] then
       return class
     end
   end
 end
 
-local function alert_blocks(kind, title, body)
-  if ALERT_TITLES[lang] then
-    title = ALERT_TITLES[lang][kind]
-  end
-  local blocks = { pandoc.RawBlock("typst", string.format('#alert("%s", "%s")[', kind, title)) }
+local function alert_blocks(kind, body)
+  local title = text().alerts[kind]
+  local blocks = { pandoc.RawBlock("typst", string.format("#alert(%s, %s)[", typst_string(kind), typst_string(title))) }
   for _, block in ipairs(body) do
     table.insert(blocks, block)
   end
@@ -59,13 +161,11 @@ local function alert(div)
     return nil
   end
   local body = div.content
-  local title = kind:sub(1, 1):upper() .. kind:sub(2)
   local first = body[1]
   if first and first.t == "Div" and first.classes:includes("title") then
-    title = pandoc.utils.stringify(first)
     body = { table.unpack(body, 2) }
   end
-  return alert_blocks(kind, title, body)
+  return alert_blocks(kind, body)
 end
 
 -- > [!HINWEIS] … arrives as a plain block quote starting with "[!HINWEIS]"
@@ -93,9 +193,99 @@ local function german_alert(quote)
   if #inlines > 0 then
     table.insert(body, 1, pandoc.Para(inlines))
   end
-  local title = keyword:sub(1, 1) .. keyword:sub(2):lower()
-  return alert_blocks(kind, title, body)
+  return alert_blocks(kind, body)
 end
+
+-- --- Tasks -------------------------------------------------------------------
+
+local DASHES = { ["–"] = true, ["—"] = true, ["-"] = true }
+
+-- Split "☐ Task – Name, bis 17.10." into its parts, or nil if it is no task
+local function task_parts(item)
+  if #item ~= 1 or (item[1].t ~= "Plain" and item[1].t ~= "Para") then
+    return nil
+  end
+  local inlines = item[1].content
+  local box = inlines[1]
+  if not box or box.t ~= "Str" or (box.text ~= "☐" and box.text ~= "☒") then
+    return nil
+  end
+
+  local dash
+  for i = #inlines - 1, 3, -1 do
+    local el = inlines[i]
+    if el.t == "Str" and DASHES[el.text] and inlines[i - 1].t == "Space" and inlines[i + 1].t == "Space" then
+      dash = i
+      break
+    end
+  end
+
+  local task = pandoc.List({ table.unpack(inlines, 3, (dash or #inlines + 2) - 2) })
+  local owner, due = "", ""
+  if dash then
+    owner = pandoc.utils.stringify(pandoc.Inlines({ table.unpack(inlines, dash + 2) }))
+    for _, word in ipairs(DUE_WORDS) do
+      local before, after = owner:match("^(.-),?%s+" .. word .. "%s*(.-)%s*$")
+      if before then
+        owner, due = before, after
+        break
+      end
+    end
+  end
+  return { box = box.text, task = task, owner = owner, due = due, has_owner = dash ~= nil }
+end
+
+local function plain(s)
+  return { pandoc.Plain(pandoc.Inlines(s)) }
+end
+
+local function task_table(list)
+  local rows, any_owner = {}, false
+  for _, item in ipairs(list.content) do
+    local parts = task_parts(item)
+    if not parts then
+      return nil
+    end
+    any_owner = any_owner or parts.has_owner
+    table.insert(rows, {
+      { pandoc.Plain(parts.task) },
+      plain(parts.owner),
+      plain(parts.due),
+      plain(parts.box),
+    })
+  end
+  if not any_owner then
+    return nil
+  end
+  local header = {}
+  for _, title in ipairs(text().tasks) do
+    table.insert(header, plain(title))
+  end
+  local simple = pandoc.SimpleTable(
+    {},
+    { pandoc.AlignDefault, pandoc.AlignDefault, pandoc.AlignDefault, pandoc.AlignCenter },
+    { 0.56, 0.2, 0.14, 0.1 },
+    header,
+    rows
+  )
+  return pandoc.utils.from_simple_table(simple)
+end
+
+-- --- Page breaks -------------------------------------------------------------
+
+local PAGEBREAK = pandoc.RawBlock("typst", "#pagebreak(weak: true)")
+
+local function raw_block(raw)
+  local text = raw.text:match("^%s*(.-)%s*$")
+  if raw.format == "tex" and (text == "\\newpage" or text == "\\pagebreak" or text == "\\clearpage") then
+    return PAGEBREAK
+  end
+  if raw.format == "html" and text:match("^<!%-%-%s*pagebreak%s*%-%->$") then
+    return PAGEBREAK
+  end
+end
+
+-- --- Quotes ------------------------------------------------------------------
 
 local QUOTES = { "„", "“", "”", "‚", "‘", "’", "»", "«", "›", "‹" }
 
@@ -143,5 +333,6 @@ end
 
 return {
   { Meta = Meta },
+  { BulletList = task_table, RawBlock = raw_block, Image = image },
   { Div = alert, BlockQuote = german_alert, Str = quotes },
 }

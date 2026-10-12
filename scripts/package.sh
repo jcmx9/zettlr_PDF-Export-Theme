@@ -13,7 +13,7 @@ readonly files=(
     VERSION LICENSE README.md
     zettlr/source-zettlr.css zettlr/source-zettlr-fonts.css
     "zettlr/Source PDF.yaml.in" zettlr/snippets
-    typst/source.typst typst/source.lua typst/fonts
+    typst/source.typst typst/source.lua typst/fonts typst/packages
 )
 
 checksum() {

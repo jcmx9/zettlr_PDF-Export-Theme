@@ -9,8 +9,8 @@
 #   --bundle <file>    install from a local bundle (scripts/package.sh) instead
 #                      of the latest GitHub release
 #
-# Sets up Zettlr: editor theme, PDF export profile "Source PDF" and snippet
-# "protokoll". Typst is downloaded into the installer's own folder; no admin
+# Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
+# snippets protokoll, jourfixe, workshop and entscheidung. Typst is downloaded into the installer's own folder; no admin
 # rights needed. Typora themes installed by earlier versions are removed.
 set -euo pipefail
 
@@ -20,7 +20,6 @@ readonly TYPST_VERSION="0.15.0"
 readonly IMPORT_LINE='@import url("source-zettlr.css");'
 readonly PROFILE_NAME="Source PDF.yaml"
 readonly PROFILE_MARKER="zettlr_PDF-Export-Theme installer"
-readonly SNIPPET_NAME="protokoll.tpl.md"
 # Installed into Typora by versions up to 26.10.4
 readonly LEGACY_TYPORA_THEMES="source.css source-dark.css source-compact.css source-dark-compact.css"
 
@@ -151,7 +150,8 @@ fetch_bundle() {
         mv "${CURRENT}" "${CURRENT}.old"
     fi
     mv "${TMP_DIR}/bundle" "${CURRENT}"
-    rm -rf "${CURRENT}.old"
+    # The previous version stays in current.old until setup is done, so files
+    # it installed can be told apart from the user's own
     if [[ "${old}" == "${new}" ]]; then
         info "Version ${new} (reinstalled)"
     else
@@ -216,6 +216,8 @@ write_profile() {
     dir_path="${CURRENT//${q}/${q}${q}}"
     content="${template//@TYPST@/${typst_path}}"
     content="${content//@DIR@/${dir_path}}"
+    # Root "/" lets Typst read images outside the note's folder
+    content="${content//@ROOT@//}"
     mkdir -p "${dir}/defaults"
     printf '%s\n' "${content}" > "${dir}/defaults/${PROFILE_NAME}"
 }
@@ -242,9 +244,20 @@ setup_zettlr() {
     add_import "${dir}/custom.css"
     write_profile "${dir}"
     mkdir -p "${dir}/snippets"
-    rm -f "${dir}/snippets/${SNIPPET_NAME}"
-    cp "${CURRENT}/zettlr/snippets/${SNIPPET_NAME}" "${dir}/snippets/${SNIPPET_NAME}"
-    info "  theme, export profile \"Source PDF\" and snippet \"protokoll\" installed"
+    local name target source
+    # Every snippet the bundle ships, so installer and bundle never disagree
+    for source in "${CURRENT}"/zettlr/snippets/*.tpl.md; do
+        name="$(basename "${source}" .tpl.md)"
+        target="${dir}/snippets/${name}.tpl.md"
+        # Keep a copy of a snippet with this name that is not one of ours
+        if [[ -f "${target}" ]] && ! cmp -s "${target}" "${source}" &&
+            ! cmp -s "${target}" "${CURRENT}.old/zettlr/snippets/${name}.tpl.md"; then
+            backup "${target}"
+        fi
+        rm -f "${target}"
+        cp "${source}" "${target}"
+    done
+    info "  theme, export profile \"Source PDF\" and snippets installed"
 }
 
 remove_zettlr() {
@@ -256,13 +269,16 @@ remove_zettlr() {
     if [[ -f "${profile}" ]] && grep -q "${PROFILE_MARKER}" "${profile}"; then
         rm "${profile}"
     fi
-    local snippet="${dir}/snippets/${SNIPPET_NAME}"
-    if [[ -f "${snippet}" && -f "${CURRENT}/zettlr/snippets/${SNIPPET_NAME}" ]] &&
-        cmp -s "${snippet}" "${CURRENT}/zettlr/snippets/${SNIPPET_NAME}"; then
-        rm "${snippet}"
-    elif [[ -e "${snippet}" ]]; then
-        warn "kept ${snippet} (changed or unknown)"
-    fi
+    local ours snippet
+    for ours in "${CURRENT}"/zettlr/snippets/*.tpl.md; do
+        [[ -f "${ours}" ]] || continue
+        snippet="${dir}/snippets/$(basename "${ours}")"
+        if [[ -f "${snippet}" ]] && cmp -s "${snippet}" "${ours}"; then
+            rm "${snippet}"
+        elif [[ -e "${snippet}" ]]; then
+            warn "kept ${snippet} (changed or unknown)"
+        fi
+    done
     info "  removed"
 }
 
@@ -306,6 +322,7 @@ EOF
     if [[ "${found}" -eq 0 ]]; then
         warn "Zettlr not found; start Zettlr once, then run this again"
     fi
+    rm -rf "${CURRENT}.old"
 
     info ""
     info "Done. Restart Zettlr, then:"

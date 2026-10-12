@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main, dev]
 
+env:
+  # The Pandoc version Zettlr ships with
+  PANDOC_VERSION: "3.10.1"
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -101,6 +105,20 @@ jobs:
           test -s t.pdf
           "$app/bin/typst" fonts --ignore-system-fonts --font-path "$app/current/typst/fonts" | grep -qx 'Noto Emoji'
 
+          # End to end: export the test notes with the installed profile
+          if [ "$(uname -s)" = Darwin ]; then
+            curl -fsSL -o pandoc.zip "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-arm64-macOS.zip"
+            unzip -q pandoc.zip
+            export PATH="$PWD/pandoc-$PANDOC_VERSION-arm64/bin:$PATH"
+            brew install --quiet poppler
+          else
+            curl -fsSL "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-linux-amd64.tar.gz" | tar -xz
+            export PATH="$PWD/pandoc-$PANDOC_VERSION/bin:$PATH"
+            sudo apt-get install -y -qq poppler-utils >/dev/null
+          fi
+          pandoc --version | head -n 1
+          ./scripts/test_pdf.sh "$zettlr/defaults/Source PDF.yaml"
+
           bash install.sh --uninstall
           cmp "$zettlr/custom.css" original.css
           test ! -e "$app"
@@ -145,6 +163,17 @@ jobs:
           if ($LASTEXITCODE -ne 0 -or -not (Test-Path t.pdf)) { throw "typst failed" }
           $families = & "$app\bin\typst.exe" fonts --ignore-system-fonts --font-path "$app\current\typst\fonts"
           if ($families -notcontains "Noto Emoji") { throw "Noto Emoji missing" }
+
+          # End to end: export the test notes with the installed profile
+          Invoke-WebRequest -UseBasicParsing -OutFile pandoc.zip "https://github.com/jgm/pandoc/releases/download/$env:PANDOC_VERSION/pandoc-$env:PANDOC_VERSION-windows-x86_64.zip"
+          Expand-Archive pandoc.zip -DestinationPath .
+          $pandoc = Join-Path $PWD "pandoc-$env:PANDOC_VERSION\pandoc.exe"
+          Push-Location tests\fixtures
+          foreach ($note in @("all-elements.md", "english.md", "edge-cases.md")) {
+            & $pandoc -d "$zettlr\defaults\Source PDF.yaml" $note -o "$env:RUNNER_TEMP\$note.pdf"
+            if ($LASTEXITCODE -ne 0 -or (Get-Item "$env:RUNNER_TEMP\$note.pdf").Length -eq 0) { throw "export of $note failed" }
+          }
+          Pop-Location
 
           & ([scriptblock]::Create($code)) -Uninstall
           if ((Get-FileHash "$zettlr\custom.css").Hash -ne (Get-FileHash original.css).Hash) { throw "custom.css not restored" }
