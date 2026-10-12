@@ -8,6 +8,6 @@
     },
     "devDependencies": {
         "stylelint": "^16.0.0",
-        "stylelint-config-recommended": "^14.0.0"
+        "stylelint-config-recommended": "^18.0.0"
     }
 }
