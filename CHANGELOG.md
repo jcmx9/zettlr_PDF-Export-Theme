@@ -1,0 +1,70 @@
+# Changelog
+
+All notable changes to this project are documented in this file.
+Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [CalVer](https://calver.org/) `YY.M.MICRO`.
+
+## [Unreleased]
+
+## [26.10.6] - 2026-10-12
+
+### Added
+- Front matter `logo` (image next to the title), `next` (next meeting at the end) and `lang: en` (English labels)
+- Task lists with owners (`- [ ] Task – Name, bis 17.10.`) become a table *Aufgabe · Wer · Bis · Status*
+- Mermaid diagrams in the PDF, drawn offline in the theme's colors with the bundled mmdr package
+- Page breaks with `\newpage` or `<!-- pagebreak -->`; long tables continue on the next page with their header
+- PDFs conform to PDF/A-2u; images and diagrams carry alt texts
+- Snippets `jourfixe`, `workshop` and `entscheidung`; `protokoll` gained owner, due date and next meeting
+- End-to-end PDF test (`scripts/test_pdf.sh`), run in CI on Linux, macOS and Windows with Zettlr's Pandoc 3.10.1
+- CHANGELOG, CONTRIBUTING, SECURITY and CODEOWNERS; monthly check for new Typst releases
+
+### Fixed
+- Notes with images could not be exported: Pandoc's temporary image copies were outside Typst's root
+- Updating no longer backs up the installer's own previous snippets, only snippets the user changed
+- The installer takes the snippet list from the bundle, so it cannot fail while a release is being built
+
+### Changed
+- GitHub Actions and stylelint updated to their current major versions
+
+## [26.10.5] - 2026-10-12
+
+### Removed
+- Typora themes; the project covers Zettlr, Pandoc, Lua, Typst and the PDF only. The installer removes Typora themes installed by earlier versions (only its own files)
+
+## [26.10.4] - 2026-10-12
+
+### Fixed
+- The `#` of a tag keeps the tag color in Zettlr
+
+## [26.10.3] - 2026-10-12
+
+### Changed
+- Larger paragraph spacing in the PDF (1.4em), so blank-line paragraphs stand out from line breaks
+
+## [26.10.2] - 2026-10-12
+
+### Added
+- Monochrome Noto Emoji in the Zettlr editor theme
+
+### Fixed
+- Documentation: Typst does apply old-style figures for Source Sans
+
+## [26.10.1] - 2026-10-12
+
+### Added
+- Monochrome Noto Emoji as emoji fallback in the PDF
+
+## [26.10.0] - 2026-10-12
+
+### Added
+- Zettlr export profile "Source PDF" (Pandoc, Lua filter, Typst) with alerts, task boxes, typographic quotes and old-style figures
+- Zettlr editor theme with Adobe's variable Source fonts
+- One-line installers for macOS, Linux and Windows
+
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.6...HEAD
+[26.10.6]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.5...v26.10.6
+[26.10.5]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.4...v26.10.5
+[26.10.4]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.3...v26.10.4
+[26.10.3]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.2...v26.10.3
+[26.10.2]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.1...v26.10.2
+[26.10.1]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.0...v26.10.1
+[26.10.0]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/releases/tag/v26.10.0
