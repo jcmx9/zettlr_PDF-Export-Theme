@@ -9,6 +9,8 @@ outputs are generated:
 - the same woff2 files embedded as data URIs in source/fonts-embedded.css
   for Zettlr, whose file protocol cannot serve fonts across origins
 - desktop OTF files in typst/fonts/ for the Pandoc/Typst PDF export
+- Noto Emoji (monochrome, variable) in typst/fonts/ as the emoji fallback
+  for the PDF; it only exists as TTF. The editors use the system emoji font.
 
 The OFL license texts are stored next to the font files.
 """
@@ -88,6 +90,14 @@ DESKTOP_FONTS = [
     ),
 ]
 
+# Monochrome Noto Emoji from google/fonts, pinned to a commit
+NOTO_EMOJI = "https://raw.githubusercontent.com/google/fonts/{rev}/ofl/notoemoji/{name}"
+NOTO_EMOJI_REV = "8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5"
+NOTO_EMOJI_FILES = {
+    "NotoEmoji%5Bwght%5D.ttf": "NotoEmoji-Variable.ttf",
+    "OFL.txt": "OFL-NotoEmoji.txt",
+}
+
 FACE = """@font-face {{
     font-family: "{family}";
     font-style: {style};
@@ -144,6 +154,10 @@ def fetch_desktop_fonts() -> None:
                 print(f"  typst/fonts/{filename}")
     for license_file in FONT_DIR.glob("OFL-*.txt"):
         (TYPST_FONT_DIR / license_file.name).write_bytes(license_file.read_bytes())
+    for name, filename in NOTO_EMOJI_FILES.items():
+        url = NOTO_EMOJI.format(rev=NOTO_EMOJI_REV, name=name)
+        (TYPST_FONT_DIR / filename).write_bytes(fetch(url))
+        print(f"  typst/fonts/{filename}")
 
 
 def main() -> int:

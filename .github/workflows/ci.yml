@@ -94,6 +94,7 @@ jobs:
           printf '#set text(font: "SourceSans3VF")\nHallo\n' > t.typ
           "$app/bin/typst" compile --ignore-system-fonts --font-path "$app/current/typst/fonts" t.typ t.pdf
           test -s t.pdf
+          "$app/bin/typst" fonts --ignore-system-fonts --font-path "$app/current/typst/fonts" | grep -qx 'Noto Emoji'
 
           bash install.sh --uninstall
           cmp "$zettlr/custom.css" original.css
@@ -131,6 +132,8 @@ jobs:
           [IO.File]::WriteAllText("$PWD\t.typ", "#set text(font: `"SourceSans3VF`")`nHallo`n")
           & "$app\bin\typst.exe" compile --ignore-system-fonts --font-path "$app\current\typst\fonts" t.typ t.pdf
           if ($LASTEXITCODE -ne 0 -or -not (Test-Path t.pdf)) { throw "typst failed" }
+          $families = & "$app\bin\typst.exe" fonts --ignore-system-fonts --font-path "$app\current\typst\fonts"
+          if ($families -notcontains "Noto Emoji") { throw "Noto Emoji missing" }
 
           & ([scriptblock]::Create($code)) -Uninstall
           if ((Get-FileHash "$zettlr\custom.css").Hash -ne (Get-FileHash original.css).Hash) { throw "custom.css not restored" }
