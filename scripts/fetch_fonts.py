@@ -89,6 +89,14 @@ DESKTOP_FONTS = [
         "VF-source-sans-3.052R.zip",
         ["VF/SourceSans3VF-Upright.otf", "VF/SourceSans3VF-Italic.otf"],
     ),
+    # Static Regular for Mermaid diagrams: Typst draws SVG text with a variable
+    # font's default instance, which is ExtraLight for Source Sans 3
+    (
+        "source-sans",
+        "3.052R",
+        "OTF-source-sans-3.052R.zip",
+        ["OTF/SourceSans3-Regular.otf"],
+    ),
     (
         "source-code-pro",
         "2.042R-u%2F1.062R-i%2F1.026R-vf",
