@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install lint tooling
+        run: npm ci
+
+      - name: Lint CSS (stylelint)
+        run: npm run lint:css
+
+      - name: Lint shell scripts (shellcheck)
+        run: shellcheck install.sh scripts/*.sh
+
+      - name: Parse PowerShell installer
+        shell: pwsh
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile("$PWD/install.ps1", [ref]$null, [ref]$errors) | Out-Null
+          if ($errors) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+
+      - name: Lint Python scripts (ruff)
+        run: uvx ruff check scripts/
+
+      - name: Check color contrast (WCAG AA)
+        run: python3 scripts/check_contrast.py
+
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build bundle
+        run: ./scripts/package.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle
+          path: dist/
+
+  bootstrap-unix:
+    needs: bundle
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle
+          path: dist/
+
+      - name: Install, update and uninstall
+        run: |
+          set -euo pipefail
+          if [ "$(uname -s)" = Darwin ]; then
+            zettlr="$HOME/Library/Application Support/zettlr"
+            typora="$HOME/Library/Application Support/abnerworks.Typora/themes"
+          else
+            zettlr="$HOME/.config/zettlr"
+            typora="$HOME/.config/Typora/themes"
+          fi
+          mkdir -p "$zettlr" "$typora"
+          printf '/* own rule */\n' > "$zettlr/custom.css"
+          cp "$zettlr/custom.css" original.css
+
+          bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
+          bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
+          test -f "$zettlr/defaults/Source PDF.yaml"
+          test -f "$zettlr/snippets/protokoll.tpl.md"
+          test -f "$typora/source.css"
+          head -n 1 "$zettlr/custom.css" | grep -qF 'source-zettlr.css'
+
+          app="$HOME/.local/share/zettlr-pdf-export-theme"
+          printf '#set text(font: "SourceSans3VF")\nHallo\n' > t.typ
+          "$app/bin/typst" compile --ignore-system-fonts --font-path "$app/current/typst/fonts" t.typ t.pdf
+          test -s t.pdf
+
+          bash install.sh --uninstall
+          cmp "$zettlr/custom.css" original.css
+          test ! -e "$app"
+
+  bootstrap-windows:
+    needs: bundle
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle
+          path: dist/
+
+      - name: Install, update and uninstall (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+          $zettlr = Join-Path $env:APPDATA "zettlr"
+          $typora = Join-Path $env:APPDATA "Typora\themes"
+          New-Item -ItemType Directory -Force -Path $zettlr, $typora | Out-Null
+          [IO.File]::WriteAllText("$zettlr\custom.css", "/* own rule */`r`n")
+          Copy-Item "$zettlr\custom.css" original.css
+
+          $code = Get-Content -Raw install.ps1
+          & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
+          & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
+          foreach ($f in @("$zettlr\defaults\Source PDF.yaml", "$zettlr\snippets\protokoll.tpl.md", "$typora\source.css")) {
+            if (-not (Test-Path -LiteralPath $f)) { throw "missing $f" }
+          }
+
+          $app = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
+          [IO.File]::WriteAllText("$PWD\t.typ", "#set text(font: `"SourceSans3VF`")`nHallo`n")
+          & "$app\bin\typst.exe" compile --ignore-system-fonts --font-path "$app\current\typst\fonts" t.typ t.pdf
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path t.pdf)) { throw "typst failed" }
+
+          & ([scriptblock]::Create($code)) -Uninstall
+          if ((Get-FileHash "$zettlr\custom.css").Hash -ne (Get-FileHash original.css).Hash) { throw "custom.css not restored" }
+          if (Test-Path -LiteralPath $app) { throw "app folder left behind" }

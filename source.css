@@ -1,7 +1,7 @@
 /*
  * Source — Typora theme
  * Headings: Source Serif 4 · Body: Source Sans 3 · Code: Source Code Pro
- * Fonts are bundled in source/fonts/ (SIL Open Font License), no network needed.
+ * Fonts: variable OTF from Adobe, bundled in source/fonts/ (SIL OFL), no network needed.
  * Colors live in :root variables; source-dark.css only overrides those.
  */
 
@@ -11,10 +11,12 @@
     --font-serif: "Source Serif 4", "Source Serif Pro", Georgia, serif;
     --font-sans: "Source Sans 3", "Source Sans Pro", -apple-system, "Helvetica Neue", Arial, sans-serif;
     --font-mono: "Source Code Pro", Menlo, Consolas, monospace;
+    --base-size: 17px;
+    --content-width: 46em;
 
     --text-color: #2b2b2b;
     --text-muted: #6b6b6b;
-    --text-faint: #b4afa7;
+    --text-faint: #8f897f;
     --heading-color: #1a1a1a;
     --accent: #b5452b;
     --border: #e4e1dc;
@@ -27,7 +29,7 @@
     --alert-note: #2f6aa8;
     --alert-tip: #3b7d3a;
     --alert-important: #7a4fb0;
-    --alert-warning: #a86b00;
+    --alert-warning: #b05a1a;
     --alert-caution: #b5452b;
 
     --syntax-keyword: #a3337a;
@@ -35,7 +37,7 @@
     --syntax-type: #1f6f6a;
     --syntax-string: #4f7a28;
     --syntax-number: #b5452b;
-    --syntax-comment: #948d82;
+    --syntax-comment: #736b60;
     --syntax-meta: #8a5a00;
     --syntax-operator: #6b6b6b;
 
@@ -54,10 +56,13 @@
     --meta-content-color: var(--accent);
     --primary-color: var(--accent);
     --window-border: 1px solid var(--border);
+    --blur-text-color: var(--text-faint);
+    --mermaid-theme: neutral;
+    --mermaid-font-family: var(--font-sans);
 }
 
 html {
-    font-size: 17px;
+    font-size: var(--base-size);
     -webkit-font-smoothing: antialiased;
 }
 
@@ -69,15 +74,16 @@ body {
 }
 
 #write {
-    max-width: 46em;
+    max-width: var(--content-width);
     margin: 0 auto;
     padding: 40px 48px 120px;
     font-feature-settings: "kern", "liga";
+    font-variant-numeric: oldstyle-nums proportional-nums;
 }
 
 @media only screen and (min-width: 1400px) {
     #write {
-        max-width: 50em;
+        max-width: calc(var(--content-width) + 4em);
     }
 }
 
@@ -93,7 +99,6 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     color: var(--heading-color);
     font-weight: 600;
-    font-variant-numeric: oldstyle-nums;
 }
 
 h1 {
@@ -140,18 +145,18 @@ h6 {
 }
 
 /* Stacked headings and the document start need less space above */
-#write > h1:first-child,
-#write > h2:first-child,
-#write > h3:first-child {
-    margin-top: 0.4em;
-}
-
 h1 + h2,
 h2 + h3,
 h3 + h4,
 h4 + h5,
 h5 + h6 {
     margin-top: 0.6em;
+}
+
+#write > h1:first-child,
+#write > h2:first-child,
+#write > h3:first-child {
+    margin-top: 0.4em;
 }
 
 /* Text */
@@ -246,6 +251,18 @@ blockquote.md-alert .md-alert-text {
     text-transform: uppercase;
 }
 
+/* Typora renders the alert title via ::after with its own capitalize rule */
+blockquote.md-alert .md-alert-text-container::after {
+    text-transform: uppercase;
+}
+
+/* German alert titles: NOTE is "Info", WARNING is the softer "Hinweis" */
+blockquote.md-alert-note .md-alert-text-container::after { content: "Info"; }
+blockquote.md-alert-tip .md-alert-text-container::after { content: "Tipp"; }
+blockquote.md-alert-important .md-alert-text-container::after { content: "Wichtig"; }
+blockquote.md-alert-warning .md-alert-text-container::after { content: "Hinweis"; }
+blockquote.md-alert-caution .md-alert-text-container::after { content: "Achtung"; }
+
 blockquote.md-alert > p:first-child {
     margin-top: 0.2em;
 }
@@ -254,6 +271,7 @@ blockquote.md-alert > p:first-child {
 
 code, tt, pre, .md-fences, .CodeMirror, kbd {
     font-family: var(--font-mono);
+    font-variant-numeric: normal;
 }
 
 code {
@@ -328,7 +346,7 @@ kbd {
 table {
     border-collapse: collapse;
     margin: 1.2em 0;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: lining-nums tabular-nums;
 }
 
 table th {
@@ -402,11 +420,10 @@ sup.md-footnote {
     background-color: var(--select-text-bg-color);
 }
 
-/* Focus mode: fade everything except the block being edited */
+/* Focus mode: Typora fades inactive blocks with --blur-text-color */
 
-.on-focus-mode .md-end-block:not(.md-focus):not(.md-focus-container),
-.on-focus-mode .md-end-block:not(.md-focus):not(.md-focus-container) * {
-    color: var(--text-faint) !important; /* overrides Typora's built-in focus color */
+.on-focus-mode .md-alert:not(.md-focus-container) {
+    background-color: transparent;
 }
 
 .on-focus-mode .md-end-block:not(.md-focus):not(.md-focus-container) code {
@@ -415,6 +432,12 @@ sup.md-footnote {
 
 .on-focus-mode blockquote {
     border-left-color: var(--border);
+}
+
+/* Diagrams (Mermaid theme and font are set via --mermaid-* in :root) */
+
+.md-diagram-panel {
+    font-family: var(--font-sans);
 }
 
 /* Typora UI */
