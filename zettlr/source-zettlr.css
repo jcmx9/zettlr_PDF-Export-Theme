@@ -13,9 +13,9 @@
 /* Palette */
 
 html:root {
-    --src-font-serif: "Source Serif 4", Georgia, serif;
-    --src-font-sans: "Source Sans 3", -apple-system, "Helvetica Neue", Arial, sans-serif;
-    --src-font-mono: "Source Code Pro", Menlo, Consolas, monospace;
+    --src-font-serif: "Source Serif 4", "Noto Emoji", Georgia, serif;
+    --src-font-sans: "Source Sans 3", "Noto Emoji", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --src-font-mono: "Source Code Pro", "Noto Emoji", Menlo, Consolas, monospace;
 
     --src-text: #2b2b2b;
     --src-text-muted: #6b6b6b;

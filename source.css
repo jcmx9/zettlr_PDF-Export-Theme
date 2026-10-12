@@ -8,9 +8,9 @@
 @import url("source/fonts.css");
 
 :root {
-    --font-serif: "Source Serif 4", "Source Serif Pro", Georgia, serif;
-    --font-sans: "Source Sans 3", "Source Sans Pro", -apple-system, "Helvetica Neue", Arial, sans-serif;
-    --font-mono: "Source Code Pro", Menlo, Consolas, monospace;
+    --font-serif: "Source Serif 4", "Source Serif Pro", "Noto Emoji", Georgia, serif;
+    --font-sans: "Source Sans 3", "Source Sans Pro", "Noto Emoji", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "Source Code Pro", "Noto Emoji", Menlo, Consolas, monospace;
     --base-size: 17px;
     --content-width: 46em;
 
