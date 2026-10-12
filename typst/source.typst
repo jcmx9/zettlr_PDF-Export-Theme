@@ -5,7 +5,8 @@
 // the text color and weight.
 //
 // Metadata (all optional): title, subtitle, client, date, author, lang,
-// logo (image path, shown next to the title), next (next meeting).
+// logo (image path, shown next to the title), logo-height (maximum height,
+// default 30mm), next (next meeting).
 // Without a date, the export date is used. Mermaid code blocks are drawn
 // with the bundled mmdr package (--package-cache-path typst/packages).
 
@@ -46,7 +47,17 @@ $endif$
 #let doc-title = $if(title)$[$title$]$else$none$endif$
 #let doc-client = $if(client)$[$client$]$else$none$endif$
 #let doc-date = $if(date)$[$date$]$else$datetime.today().display("[day].[month].[year]")$endif$
-#let doc-logo = $if(logo-typst)$[$logo-typst$]$else$none$endif$
+#let doc-logo-path = $if(logo-path)$$logo-path$$else$none$endif$
+// The logo keeps its proportions and fits into 30mm height and 60mm width
+#let logo-max-height = $if(logo-height)$$logo-height$$else$30mm$endif$
+#let logo-max-width = 60mm
+#let doc-logo = if doc-logo-path != none {
+  context {
+    let natural = measure(image(doc-logo-path))
+    let scale = calc.min(logo-max-width / natural.width, logo-max-height / natural.height)
+    image(doc-logo-path, width: natural.width * scale, alt: "Logo")
+  }
+}
 
 #set document(
 $if(title)$
@@ -303,7 +314,8 @@ $endif$
   grid(
     columns: (1fr, auto),
     column-gutter: 16pt,
-    title-block, box(height: 14mm, doc-logo),
+    align: (left + top, right + top),
+    title-block, doc-logo,
   )
 }
 #v(0.3em)

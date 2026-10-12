@@ -46,6 +46,13 @@ jobs:
       - name: Check color contrast (WCAG AA)
         run: python3 scripts/check_contrast.py
 
+      - name: Check version in both READMEs
+        run: |
+          version="$(cat VERSION)"
+          for readme in README.md README.en.md; do
+            grep -qF "**Version ${version}**" "$readme" || { echo "$readme does not show version ${version}"; exit 1; }
+          done
+
   bundle:
     runs-on: ubuntu-latest
     steps:

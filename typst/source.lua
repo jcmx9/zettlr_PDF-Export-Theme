@@ -7,7 +7,8 @@
 --    “ ” into a plain " and Typst would then guess the wrong German quote.
 -- 3. Local images are handed to Typst by their path relative to the note.
 --    Pandoc would copy them into a temporary folder outside Typst's root.
--- 4. Front matter "logo" becomes the logo next to the title.
+-- 4. Front matter "logo" becomes the logo next to the title; "logo-height"
+--    sets its maximum height (default 30mm, see the template).
 -- 5. Task lists with owners ("- [ ] Task – Name, bis 17.10.") become a
 --    table with the columns task, owner, due date and status.
 -- 6. \newpage, \pagebreak and <!-- pagebreak --> start a new page.
@@ -129,8 +130,16 @@ function Meta(meta)
   if meta.logo then
     local path = local_path(pandoc.utils.stringify(meta.logo))
     if path then
-      meta["logo-typst"] = pandoc.RawInline("typst", "#image(" .. typst_string(path) .. ', height: 100%, alt: "Logo")')
+      meta["logo-path"] = pandoc.RawInline("typst", typst_string(path))
     end
+  end
+  if meta["logo-height"] then
+    -- Absolute lengths only; a percentage has no meaning for the logo
+    local height = typst_length(pandoc.utils.stringify(meta["logo-height"]))
+    if height and height:sub(-1) == "%" then
+      height = nil
+    end
+    meta["logo-height"] = height and pandoc.RawInline("typst", height) or nil
   end
   return meta
 end
