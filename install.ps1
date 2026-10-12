@@ -8,7 +8,7 @@ Uninstall:
   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
 
 Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
-snippets protokoll, jourfixe, workshop, entscheidung and kopfdaten. Typst is downloaded into the installer's own folder. Typora
+snippets meeting, telefonnotiz and header. Typst is downloaded into the installer's own folder. Typora
 themes installed by earlier versions are removed.
 #>
 param(
@@ -185,6 +185,23 @@ function Install-Zettlr {
         }
         Copy-Item -LiteralPath $source -Destination $target -Force
     }
+    # Snippets an earlier version installed but this one no longer ships:
+    # remove them unless the user changed them
+    $oldSnippets = ([IO.Path]::Combine("$Current.old", "zettlr", "snippets"))
+    if (Test-Path -LiteralPath $oldSnippets) {
+        foreach ($old in Get-ChildItem -LiteralPath $oldSnippets -Filter "*.tpl.md") {
+            $target = Join-Path $snippets $old.Name
+            $stillShipped = Test-Path -LiteralPath ([IO.Path]::Combine($Current, "zettlr", "snippets", $old.Name))
+            if (-not $stillShipped -and (Test-Path -LiteralPath $target)) {
+                if ((Read-Text $target) -eq (Read-Text $old.FullName)) {
+                    Remove-Item -LiteralPath $target -Force
+                }
+                else {
+                    Write-Warning "kept $target (changed; no longer part of the theme)"
+                }
+            }
+        }
+    }
     Write-Host '  theme, export profile "Source PDF" and snippets installed'
 }
 
@@ -252,7 +269,7 @@ try {
     }
     Write-Host ""
     Write-Host "Done. Restart Zettlr, then:"
-    Write-Host "  - new meeting note: type :protokoll"
+    Write-Host "  - new meeting note: type :meeting"
     Write-Host '  - PDF: File > Export, profile "Source PDF"'
 }
 finally {

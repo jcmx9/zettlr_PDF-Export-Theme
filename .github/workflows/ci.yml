@@ -101,7 +101,7 @@ jobs:
           bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
           bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
           test -f "$zettlr/defaults/Source PDF.yaml"
-          test -f "$zettlr/snippets/protokoll.tpl.md"
+          test -f "$zettlr/snippets/meeting.tpl.md"
           test -f "$zettlr/source-zettlr-fonts.css"
           test ! -e "$typora/source.css" && test ! -e "$typora/source-dark.css" && test ! -e "$typora/source"
           test -f "$typora/other.css"
@@ -159,7 +159,7 @@ jobs:
           $code = Get-Content -Raw install.ps1
           & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
           & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
-          foreach ($f in @("$zettlr\defaults\Source PDF.yaml", "$zettlr\snippets\protokoll.tpl.md", "$zettlr\source-zettlr-fonts.css", "$typora\other.css")) {
+          foreach ($f in @("$zettlr\defaults\Source PDF.yaml", "$zettlr\snippets\meeting.tpl.md", "$zettlr\source-zettlr-fonts.css", "$typora\other.css")) {
             if (-not (Test-Path -LiteralPath $f)) { throw "missing $f" }
           }
           foreach ($f in @("$typora\source.css", "$typora\source-dark.css", "$typora\source")) {
