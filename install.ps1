@@ -23,7 +23,7 @@ $ProgressPreference = "SilentlyContinue"
 
 $Repo = "jcmx9/zettlr_PDF-Export-Theme"
 $BundleName = "zettlr-pdf-export-theme"
-$TypstVersion = "0.15.0"
+$TypstVersion = "0.15.1"
 $ImportLine = '@import url("source-zettlr.css");'
 $ProfileName = "Source PDF.yaml"
 $ProfileMarker = "zettlr_PDF-Export-Theme installer"

@@ -1,6 +1,8 @@
 ---
 client: Example Ltd
 lang: en
+logo: logo.png
+logo-height: 15mm
 next: 24 October 2026, 10:00
 ---
 
