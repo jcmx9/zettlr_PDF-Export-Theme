@@ -62,6 +62,7 @@ jobs:
   bootstrap-unix:
     needs: bundle
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -114,6 +115,7 @@ jobs:
           else
             curl -fsSL "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-linux-amd64.tar.gz" | tar -xz
             export PATH="$PWD/pandoc-$PANDOC_VERSION/bin:$PATH"
+            sudo apt-get update -qq
             sudo apt-get install -y -qq poppler-utils >/dev/null
           fi
           pandoc --version | head -n 1
