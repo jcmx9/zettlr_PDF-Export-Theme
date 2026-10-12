@@ -10,7 +10,7 @@
 #                      of the latest GitHub release
 #
 # Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
-# snippets protokoll, jourfixe, workshop and entscheidung. Typst is downloaded into the installer's own folder; no admin
+# snippets protokoll, jourfixe, workshop, entscheidung and kopfdaten. Typst is downloaded into the installer's own folder; no admin
 # rights needed. Typora themes installed by earlier versions are removed.
 set -euo pipefail
 

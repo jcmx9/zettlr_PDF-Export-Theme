@@ -114,6 +114,12 @@ main() {
     expect edge-cases.md "${text}" "Notiz ohne Titel" "leer links" "Aufgabe ohne alles"
     echo "ok   edge-cases.md"
 
+    # Empty front matter fields (e.g. from the kopfdaten snippet) are ignored
+    text="$(render empty-fields.md "${profile}")"
+    expect empty-fields.md "${text}" "Leere Kopfdaten" "Alle optionalen Felder sind leer."
+    reject empty-fields.md "${text}" "Nächster Termin"
+    echo "ok   empty-fields.md"
+
     # Snippets with their placeholders filled in must export as well
     local snippet name
     # shellcheck disable=SC2016 # literal $ placeholders

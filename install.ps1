@@ -8,7 +8,7 @@ Uninstall:
   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
 
 Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
-snippets protokoll, jourfixe, workshop and entscheidung. Typst is downloaded into the installer's own folder. Typora
+snippets protokoll, jourfixe, workshop, entscheidung and kopfdaten. Typst is downloaded into the installer's own folder. Typora
 themes installed by earlier versions are removed.
 #>
 param(

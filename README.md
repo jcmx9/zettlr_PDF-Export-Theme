@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.7** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.8** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben – Thema, Agenda, Teilnehmer, Mitschrift, Aufgaben – und mit einem Klick als ruhiges, typografisches A4-PDF exportieren. Alle Bausteine sind frei und quelloffen: Zettlr, Pandoc (in Zettlr enthalten) und [Typst](https://typst.app).
 
@@ -40,7 +40,7 @@ Der Installer
 
 1. lädt das neueste Release und prüft dessen SHA-256-Prüfsumme,
 2. lädt bei Bedarf Typst in seinen eigenen Ordner (keine Systemänderungen),
-3. richtet **Zettlr** ein: Editor-Theme, Exportprofil **Source PDF**, Snippets **protokoll**, **jourfixe**, **workshop** und **entscheidung**.
+3. richtet **Zettlr** ein: Editor-Theme, Exportprofil **Source PDF**, Snippets **protokoll**, **jourfixe**, **workshop**, **entscheidung** und **kopfdaten**.
 
 Versionen bis 26.10.4 haben auch Typora-Themes installiert; der Installer entfernt sie (nur seine eigenen Dateien).
 
@@ -64,7 +64,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
 ## Verwendung in Zettlr
 
 1. Zettlr nach der Installation neu starten.
-2. Neue Notiz: `:protokoll` tippen und Enter drücken. Tab springt durch Kunde, Thema, Agenda, Teilnehmer, Mitschrift und Aufgaben; das Datum wird automatisch eingesetzt. Weitere Snippets: `:jourfixe`, `:workshop` und `:entscheidung` (Entscheidungsvorlage).
+2. Neue Notiz: `:protokoll` tippen und Enter drücken. Tab springt durch Kunde, Thema, Agenda, Teilnehmer, Mitschrift und Aufgaben; das Datum wird automatisch eingesetzt. Weitere Snippets: `:jourfixe`, `:workshop` und `:entscheidung` (Entscheidungsvorlage). `:kopfdaten` setzt alle Felder des Front Matters mit Standardwert und Kommentar ein; leere Felder werden beim Export ignoriert.
 3. Export: **Datei → Exportieren…** (<kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>E</kbd>), Profil **Source PDF**.
 
 Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export* fest.
