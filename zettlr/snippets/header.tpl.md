@@ -1,5 +1,5 @@
 ---
-# Kopfdaten für den PDF-Export "Source PDF". Leere Felder werden ignoriert.
+# Alle Felder für den PDF-Export "Source PDF". Leere Felder werden ignoriert.
 client: "${1:Kunde}"  # Kunde oder Firma: über dem Titel und in der Fußzeile
 title: "${2:Titel}"  # Titel des Dokuments; "#" im Text sind Abschnitte
 subtitle: "$3"  # Untertitel unter dem Titel

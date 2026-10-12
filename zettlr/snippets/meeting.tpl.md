@@ -2,16 +2,16 @@
 client: "${1:Kunde}"
 title: "${2:Thema}"
 date: $CURRENT_DATE.$CURRENT_MONTH.$CURRENT_YEAR
-next: ${9:offen}
+next: $9
 ---
-
-# Agenda
-
-1. ${3:Punkt}
 
 # Teilnehmer
 
-- ${4:Name}
+- ${3:Name}
+
+# Agenda
+
+1. ${4:Punkt}
 
 # Mitschrift
 
