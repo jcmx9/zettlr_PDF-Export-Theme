@@ -9,10 +9,9 @@
 #   --bundle <file>    install from a local bundle (scripts/package.sh) instead
 #                      of the latest GitHub release
 #
-# Sets up, for every app that is installed:
-#   Zettlr  – editor theme, PDF export profile "Source PDF", snippet "protokoll"
-#   Typora  – themes Source, Source Dark, Source Compact, Source Dark Compact
-# Typst is downloaded into the installer's own folder; no admin rights needed.
+# Sets up Zettlr: editor theme, PDF export profile "Source PDF" and snippet
+# "protokoll". Typst is downloaded into the installer's own folder; no admin
+# rights needed. Typora themes installed by earlier versions are removed.
 set -euo pipefail
 
 readonly REPO="jcmx9/zettlr_PDF-Export-Theme"
@@ -22,7 +21,8 @@ readonly IMPORT_LINE='@import url("source-zettlr.css");'
 readonly PROFILE_NAME="Source PDF.yaml"
 readonly PROFILE_MARKER="zettlr_PDF-Export-Theme installer"
 readonly SNIPPET_NAME="protokoll.tpl.md"
-readonly TYPORA_THEMES="source.css source-dark.css source-compact.css source-dark-compact.css"
+# Installed into Typora by versions up to 26.10.4
+readonly LEGACY_TYPORA_THEMES="source.css source-dark.css source-compact.css source-dark-compact.css"
 
 readonly APP_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/zettlr-pdf-export-theme"
 readonly CURRENT="${APP_DIR}/current"
@@ -238,7 +238,7 @@ setup_zettlr() {
     remove_legacy "${dir}"
     rm -f "${dir}/source-zettlr.css" "${dir}/source-zettlr-fonts.css"
     cp "${CURRENT}/zettlr/source-zettlr.css" "${dir}/source-zettlr.css"
-    cp "${CURRENT}/source/fonts-embedded.css" "${dir}/source-zettlr-fonts.css"
+    cp "${CURRENT}/zettlr/source-zettlr-fonts.css" "${dir}/source-zettlr-fonts.css"
     add_import "${dir}/custom.css"
     write_profile "${dir}"
     mkdir -p "${dir}/snippets"
@@ -266,37 +266,20 @@ remove_zettlr() {
     info "  removed"
 }
 
-# --- Typora -------------------------------------------------------------------
+# --- Typora (legacy) ----------------------------------------------------------
 
-setup_typora() {
+# Earlier versions also installed Typora themes. They are removed only when
+# the font folder carries this installer's marker, so other themes stay.
+remove_legacy_typora() {
     local dir="$1" theme
-    info "Typora: ${dir}"
-    for theme in ${TYPORA_THEMES}; do
-        rm -f "${dir}/${theme}"
-        cp "${CURRENT}/${theme}" "${dir}/${theme}"
-    done
-    if [[ -L "${dir}/source" ]]; then
-        rm "${dir}/source"
+    if [[ ! -f "${dir}/source/fonts.css" ]] || ! grep -q "scripts/fetch_fonts.py" "${dir}/source/fonts.css"; then
+        return 0
     fi
-    rm -rf "${dir}/source/fonts"
-    mkdir -p "${dir}/source"
-    cp "${CURRENT}/source/fonts.css" "${dir}/source/fonts.css"
-    cp -R "${CURRENT}/source/fonts" "${dir}/source/fonts"
-    info "  themes Source, Source Dark, Source Compact, Source Dark Compact installed"
-}
-
-remove_typora() {
-    local dir="$1" theme
-    info "Typora: ${dir}"
-    for theme in ${TYPORA_THEMES}; do
+    info "Typora: removing themes of earlier versions from ${dir}"
+    for theme in ${LEGACY_TYPORA_THEMES}; do
         rm -f "${dir}/${theme}"
     done
-    if [[ -L "${dir}/source" ]]; then
-        rm "${dir}/source"
-    elif [[ -f "${dir}/source/fonts.css" ]] && grep -q "scripts/fetch_fonts.py" "${dir}/source/fonts.css"; then
-        rm -rf "${dir}/source"
-    fi
-    info "  removed"
+    rm -rf "${dir}/source"
 }
 
 # --- Main ---------------------------------------------------------------------
@@ -318,11 +301,10 @@ $(zettlr_dirs)
 EOF
     dir="$(typora_dir)"
     if [[ -n "${dir}" ]]; then
-        setup_typora "${dir}"
-        found=1
+        remove_legacy_typora "${dir}"
     fi
     if [[ "${found}" -eq 0 ]]; then
-        warn "neither Zettlr nor Typora found; start Zettlr once, then run this again"
+        warn "Zettlr not found; start Zettlr once, then run this again"
     fi
 
     info ""
@@ -341,7 +323,7 @@ $(zettlr_dirs)
 EOF
     dir="$(typora_dir)"
     if [[ -n "${dir}" ]]; then
-        remove_typora "${dir}"
+        remove_legacy_typora "${dir}"
     fi
     rm -rf "${APP_DIR}"
     info "Uninstalled."
@@ -358,7 +340,7 @@ main() {
                 shift
                 ;;
             -h | --help)
-                sed -n '2,17p' "$0" 2>/dev/null || true
+                sed -n '2,15p' "$0" 2>/dev/null || true
                 exit 0
                 ;;
             *) die "unknown option: $1" ;;

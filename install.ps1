@@ -7,10 +7,9 @@ Install or update (run the same line again to update):
 Uninstall:
   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
 
-Sets up, for every app that is installed:
-  Zettlr  - editor theme, PDF export profile "Source PDF", snippet "protokoll"
-  Typora  - themes Source, Source Dark, Source Compact, Source Dark Compact
-Typst is downloaded into the installer's own folder.
+Sets up Zettlr: editor theme, PDF export profile "Source PDF" and snippet
+"protokoll". Typst is downloaded into the installer's own folder. Typora
+themes installed by earlier versions are removed.
 #>
 param(
     [switch]$Uninstall,
@@ -29,7 +28,8 @@ $ImportLine = '@import url("source-zettlr.css");'
 $ProfileName = "Source PDF.yaml"
 $ProfileMarker = "zettlr_PDF-Export-Theme installer"
 $SnippetName = "protokoll.tpl.md"
-$TyporaThemes = @("source.css", "source-dark.css", "source-compact.css", "source-dark-compact.css")
+# Installed into Typora by versions up to 26.10.4
+$LegacyTyporaThemes = @("source.css", "source-dark.css", "source-compact.css", "source-dark-compact.css")
 
 $AppDir = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
 $Current = Join-Path $AppDir "current"
@@ -157,7 +157,7 @@ function Convert-YamlPath([string]$Path) {
 function Install-Zettlr {
     Write-Host "Zettlr: $ZettlrDir"
     Copy-Item -LiteralPath ([IO.Path]::Combine($Current, "zettlr", "source-zettlr.css")) -Destination (Join-Path $ZettlrDir "source-zettlr.css") -Force
-    Copy-Item -LiteralPath ([IO.Path]::Combine($Current, "source", "fonts-embedded.css")) -Destination (Join-Path $ZettlrDir "source-zettlr-fonts.css") -Force
+    Copy-Item -LiteralPath ([IO.Path]::Combine($Current, "zettlr", "source-zettlr-fonts.css")) -Destination (Join-Path $ZettlrDir "source-zettlr-fonts.css") -Force
     Add-Import (Join-Path $ZettlrDir "custom.css")
 
     $template = Read-Text ([IO.Path]::Combine($Current, "zettlr", "Source PDF.yaml.in"))
@@ -193,40 +193,27 @@ function Uninstall-Zettlr {
     Write-Host "  removed"
 }
 
-# --- Typora -------------------------------------------------------------------
+# --- Typora (legacy) ----------------------------------------------------------
 
-function Install-Typora {
-    Write-Host "Typora: $TyporaDir"
-    foreach ($theme in $TyporaThemes) {
-        Copy-Item -LiteralPath (Join-Path $Current $theme) -Destination (Join-Path $TyporaDir $theme) -Force
+# Earlier versions also installed Typora themes. They are removed only when
+# the font folder carries this installer's marker, so other themes stay.
+function Remove-LegacyTypora {
+    $fontsCss = ([IO.Path]::Combine($TyporaDir, "source", "fonts.css"))
+    if (-not ((Test-Path -LiteralPath $fontsCss) -and (Read-Text $fontsCss).Contains("scripts/fetch_fonts.py"))) {
+        return
     }
-    $target = Join-Path $TyporaDir "source"
-    if (Test-Path -LiteralPath (Join-Path $target "fonts")) {
-        Remove-Item -LiteralPath (Join-Path $target "fonts") -Recurse -Force
-    }
-    New-Item -ItemType Directory -Force -Path $target | Out-Null
-    Copy-Item -LiteralPath ([IO.Path]::Combine($Current, "source", "fonts.css")) -Destination (Join-Path $target "fonts.css") -Force
-    Copy-Item -LiteralPath ([IO.Path]::Combine($Current, "source", "fonts")) -Destination (Join-Path $target "fonts") -Recurse -Force
-    Write-Host "  themes Source, Source Dark, Source Compact, Source Dark Compact installed"
-}
-
-function Uninstall-Typora {
-    Write-Host "Typora: $TyporaDir"
-    foreach ($theme in $TyporaThemes) {
+    Write-Host "Typora: removing themes of earlier versions from $TyporaDir"
+    foreach ($theme in $LegacyTyporaThemes) {
         Remove-Item -LiteralPath (Join-Path $TyporaDir $theme) -Force -ErrorAction SilentlyContinue
     }
-    $fontsCss = ([IO.Path]::Combine($TyporaDir, "source", "fonts.css"))
-    if ((Test-Path -LiteralPath $fontsCss) -and (Read-Text $fontsCss).Contains("scripts/fetch_fonts.py")) {
-        Remove-Item -LiteralPath (Join-Path $TyporaDir "source") -Recurse -Force
-    }
-    Write-Host "  removed"
+    Remove-Item -LiteralPath (Join-Path $TyporaDir "source") -Recurse -Force
 }
 
 # --- Main ---------------------------------------------------------------------
 
 if ($Uninstall) {
     if (Test-Path -LiteralPath $ZettlrDir) { Uninstall-Zettlr }
-    if (Test-Path -LiteralPath $TyporaDir) { Uninstall-Typora }
+    if (Test-Path -LiteralPath $TyporaDir) { Remove-LegacyTypora }
     if (Test-Path -LiteralPath $AppDir) { Remove-Item -LiteralPath $AppDir -Recurse -Force }
     Write-Host "Uninstalled."
     return
@@ -239,9 +226,9 @@ try {
     Install-Typst $temp
     $found = $false
     if (Test-Path -LiteralPath $ZettlrDir) { Install-Zettlr; $found = $true }
-    if (Test-Path -LiteralPath $TyporaDir) { Install-Typora; $found = $true }
+    if (Test-Path -LiteralPath $TyporaDir) { Remove-LegacyTypora }
     if (-not $found) {
-        Write-Warning "neither Zettlr nor Typora found; start Zettlr once, then run this again"
+        Write-Warning "Zettlr not found; start Zettlr once, then run this again"
     }
     Write-Host ""
     Write-Host "Done. Restart Zettlr, then:"

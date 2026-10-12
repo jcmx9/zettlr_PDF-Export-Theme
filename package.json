@@ -4,7 +4,7 @@
     "description": "Lint tooling for zettlr_PDF-Export-Theme",
     "license": "MIT",
     "scripts": {
-        "lint:css": "stylelint \"*.css\" \"zettlr/*.css\""
+        "lint:css": "stylelint \"zettlr/*.css\""
     },
     "devDependencies": {
         "stylelint": "^16.0.0",
