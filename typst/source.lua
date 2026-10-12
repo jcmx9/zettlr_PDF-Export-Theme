@@ -129,7 +129,7 @@ function Meta(meta)
   end
   if meta.logo then
     local path = local_path(pandoc.utils.stringify(meta.logo))
-    if path then
+    if path and path ~= "" then
       meta["logo-path"] = pandoc.RawInline("typst", typst_string(path))
     end
   end
