@@ -225,6 +225,12 @@ body .cm-editor .cm-code-mark {
     color: var(--src-text-faint);
 }
 
+/* …except the # of a tag, which keeps the tag color */
+
+body .cm-editor .cm-zkn-tag-mark {
+    color: var(--zettlr-editor-primary-color);
+}
+
 /* Code: no old-style figures in monospace */
 
 body .cm-editor .code-block-line-background,
