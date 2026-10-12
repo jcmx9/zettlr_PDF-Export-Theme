@@ -1,14 +1,14 @@
 /*
- * Source — Zettlr theme · v26.10.0
+ * Source — Zettlr theme
  * Headings: Source Serif 4 · Body: Source Sans 3 · Code: Source Code Pro
  *
- * Installed next to Zettlr's custom.css (see scripts/install-zettlr.sh), so
- * the font import below resolves relative to Zettlr's data folder.
+ * Installed next to Zettlr's custom.css by install.sh / install.ps1, which
+ * also copies the embedded variable OTF fonts as source-zettlr-fonts.css.
  * Works with every built-in Zettlr theme; light/dark follows body.dark.
  * Colors mirror source.css and source-dark.css.
  */
 
-@import url("source/fonts-ttf.css");
+@import url("source-zettlr-fonts.css");
 
 /* Palette */
 
@@ -30,7 +30,7 @@ html:root {
     --src-alert-note: #2f6aa8;
     --src-alert-tip: #3b7d3a;
     --src-alert-important: #7a4fb0;
-    --src-alert-warning: #8f5f00;
+    --src-alert-warning: #b05a1a;
     --src-alert-caution: #b5452b;
 
     --src-syntax-keyword: #a3337a;
@@ -56,7 +56,7 @@ html body.dark {
     --src-alert-note: #6fa3dc;
     --src-alert-tip: #79b46a;
     --src-alert-important: #b08ce0;
-    --src-alert-warning: #d9a440;
+    --src-alert-warning: #e09a52;
     --src-alert-caution: #e0805f;
 
     --src-syntax-keyword: #e08cc0;

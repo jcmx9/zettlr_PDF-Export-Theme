@@ -66,6 +66,11 @@ $endif$
   fill: text-color,
   lang: "$if(lang)$$lang$$else$de$endif$",
   hyphenate: true,
+  // Old-style figures in running text; tables and code switch to lining.
+  // Note: Typst 0.15 ignores the figure features of Source Sans (Source
+  // Serif works), so body text keeps lining figures until that is fixed.
+  number-type: "old-style",
+  number-width: "proportional",
 )
 #set par(leading: 0.7em, spacing: 1.1em)
 
@@ -143,7 +148,7 @@ $endif$
   note: rgb("#2f6aa8"),
   tip: rgb("#3b7d3a"),
   important: rgb("#7a4fb0"),
-  warning: rgb("#8f5f00"),
+  warning: rgb("#b05a1a"),
   caution: rgb("#b5452b"),
 )
 #let alert(kind, title, body) = {
@@ -174,7 +179,7 @@ $endif$
 
 // Code
 
-#show raw: set text(font: font-mono, size: 0.88em)
+#show raw: set text(font: font-mono, size: 0.88em, number-type: auto, number-width: auto)
 // Syntax colors from the palette as an embedded TextMate theme
 // (Typst cannot read files outside the temporary document's folder)
 #set raw(theme: bytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>name</key><string>Source</string>\n  <key>settings</key>\n  <array>\n    <dict><key>settings</key><dict>\n      <key>foreground</key><string>#2b2b2b</string>\n      <key>background</key><string>#f4f2ee</string>\n    </dict></dict>\n    <dict><key>scope</key><string>comment, punctuation.definition.comment</string>\n      <key>settings</key><dict><key>foreground</key><string>#736b60</string><key>fontStyle</key><string>italic</string></dict></dict>\n    <dict><key>scope</key><string>string, punctuation.definition.string</string>\n      <key>settings</key><dict><key>foreground</key><string>#4f7a28</string></dict></dict>\n    <dict><key>scope</key><string>constant.numeric, constant.language, constant.character</string>\n      <key>settings</key><dict><key>foreground</key><string>#b5452b</string></dict></dict>\n    <dict><key>scope</key><string>keyword, storage, keyword.control.import</string>\n      <key>settings</key><dict><key>foreground</key><string>#a3337a</string></dict></dict>\n    <dict><key>scope</key><string>keyword.operator</string>\n      <key>settings</key><dict><key>foreground</key><string>#6b6b6b</string></dict></dict>\n    <dict><key>scope</key><string>entity.name.function, support.function, meta.function-call</string>\n      <key>settings</key><dict><key>foreground</key><string>#1f5f99</string></dict></dict>\n    <dict><key>scope</key><string>entity.name.type, entity.name.class, support.type, support.class, storage.type</string>\n      <key>settings</key><dict><key>foreground</key><string>#1f6f6a</string></dict></dict>\n    <dict><key>scope</key><string>entity.name.tag, entity.other.attribute-name, meta.preprocessor, variable.parameter</string>\n      <key>settings</key><dict><key>foreground</key><string>#8a5a00</string></dict></dict>\n  </array>\n</dict>\n</plist>\n"))

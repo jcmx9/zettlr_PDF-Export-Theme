@@ -1,5 +1,5 @@
 /*
- * Source — Typora theme · v26.10.0
+ * Source — Typora theme
  * Headings: Source Serif 4 · Body: Source Sans 3 · Code: Source Code Pro
  * Fonts: variable OTF from Adobe, bundled in source/fonts/ (SIL OFL), no network needed.
  * Colors live in :root variables; source-dark.css only overrides those.
@@ -29,7 +29,7 @@
     --alert-note: #2f6aa8;
     --alert-tip: #3b7d3a;
     --alert-important: #7a4fb0;
-    --alert-warning: #8f5f00;
+    --alert-warning: #b05a1a;
     --alert-caution: #b5452b;
 
     --syntax-keyword: #a3337a;
@@ -255,6 +255,13 @@ blockquote.md-alert .md-alert-text {
 blockquote.md-alert .md-alert-text-container::after {
     text-transform: uppercase;
 }
+
+/* German alert titles: NOTE is "Info", WARNING is the softer "Hinweis" */
+blockquote.md-alert-note .md-alert-text-container::after { content: "Info"; }
+blockquote.md-alert-tip .md-alert-text-container::after { content: "Tipp"; }
+blockquote.md-alert-important .md-alert-text-container::after { content: "Wichtig"; }
+blockquote.md-alert-warning .md-alert-text-container::after { content: "Hinweis"; }
+blockquote.md-alert-caution .md-alert-text-container::after { content: "Achtung"; }
 
 blockquote.md-alert > p:first-child {
     margin-top: 0.2em;

@@ -2,6 +2,6 @@
     "extends": "stylelint-config-recommended",
     "ignoreFiles": [
         "source/fonts.css",
-        "source/fonts-ttf.css"
+        "source/fonts-embedded.css"
     ]
 }
