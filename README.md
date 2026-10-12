@@ -82,6 +82,7 @@ For client-ready PDFs (e.g. meeting notes written live during a call), Zettlr ex
 - **Title:** `# Topic` becomes the document title, `## Agenda`, `## Teilnehmer` … become the sections
 - **Front matter (optional):** `client`, `date` (defaults to the export date), `subtitle`, `author`
 - **Tasks:** `- [ ]` / `- [x]` lists render as check boxes
+- **Alerts and highlights:** `> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]` become colored boxes, `==text==` is highlighted; code uses the theme's syntax colors
 
 `./scripts/install-zettlr.sh` writes the export profile **Source PDF (Typst)** with the absolute paths of this repository and of `typst` (from `PATH`, `~/.local/bin`, `~/.cargo/bin` or Homebrew). It also links the snippet `protokoll`: type `:protokoll` in a new note to get the structure with client, date, topic, agenda, participants, notes and tasks.
 
@@ -90,9 +91,10 @@ Without the script (e.g. on another machine), copy `zettlr/Source PDF (Typst).ya
 Export from the command line:
 
 ```bash
-pandoc note.md -f markdown+hard_line_breaks -t pdf --pdf-engine=typst \
+pandoc note.md -f markdown+hard_line_breaks+mark+alerts-smart -t pdf --pdf-engine=typst \
   --pdf-engine-opt=--ignore-system-fonts --pdf-engine-opt=--font-path=typst/fonts \
-  --template=typst/source.typst --shift-heading-level-by=-1 -o note.pdf
+  --template=typst/source.typst --lua-filter=typst/source.lua \
+  --shift-heading-level-by=-1 -o note.pdf
 ```
 
 ## PDF export from Typora
@@ -149,6 +151,7 @@ zettlr/source-zettlr.css  – Zettlr theme (light and dark)
 source/fonts.css          – Generated @font-face rules (OTF files, Typora)
 source/fonts-ttf.css      – Generated @font-face rules (embedded TTF, Zettlr)
 typst/source.typst        – Pandoc template for the Typst PDF export
+typst/source.lua          – Pandoc filter (alerts, typographic quotes)
 typst/fonts/              – Variable TTF fonts for Typst
 typst/example-meeting.md  – Example meeting note
 zettlr/                   – Zettlr export profile template and snippet

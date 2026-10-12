@@ -17,8 +17,9 @@
 #let font-mono = ("SourceCodeVF",)
 
 // Helpers referenced by Pandoc's Typst writer
-#let horizontalrule = block(above: 1.6em, below: 1.6em, line(length: 100%, stroke: 0.6pt + border))
-#let divider = horizontalrule
+// (newer Pandoc versions call divider(), older ones use horizontalrule)
+#let divider() = block(above: 1.6em, below: 1.6em, line(length: 100%, stroke: 0.6pt + border))
+#let horizontalrule = divider()
 
 #show figure.where(kind: table): set figure.caption(position: $if(table-caption-position)$$table-caption-position$$else$top$endif$)
 #show figure.where(kind: image): set figure.caption(position: $if(figure-caption-position)$$figure-caption-position$$else$bottom$endif$)
@@ -137,6 +138,32 @@ $endif$
   })
 }
 
+// Alerts (> [!NOTE] …), emitted by source.lua
+#let alert-colors = (
+  note: rgb("#2f6aa8"),
+  tip: rgb("#3b7d3a"),
+  important: rgb("#7a4fb0"),
+  warning: rgb("#8f5f00"),
+  caution: rgb("#b5452b"),
+)
+#let alert(kind, title, body) = {
+  let color = alert-colors.at(kind, default: accent)
+  block(
+    width: 100%,
+    fill: color.lighten(93%),
+    stroke: (left: 2.5pt + color),
+    radius: (right: 3pt),
+    inset: (left: 12pt, right: 10pt, y: 8pt),
+    above: 1.2em,
+    below: 1.2em,
+    {
+      text(size: 0.8em, weight: 700, tracking: 0.06em, fill: color, upper(title))
+      v(0.1em)
+      body
+    },
+  )
+}
+
 #show quote.where(block: true): it => block(
   stroke: (left: 2pt + accent),
   inset: (left: 12pt, y: 3pt),
@@ -148,6 +175,9 @@ $endif$
 // Code
 
 #show raw: set text(font: font-mono, size: 0.88em)
+// Syntax colors from the palette as an embedded TextMate theme
+// (Typst cannot read files outside the temporary document's folder)
+#set raw(theme: bytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>name</key><string>Source</string>\n  <key>settings</key>\n  <array>\n    <dict><key>settings</key><dict>\n      <key>foreground</key><string>#2b2b2b</string>\n      <key>background</key><string>#f4f2ee</string>\n    </dict></dict>\n    <dict><key>scope</key><string>comment, punctuation.definition.comment</string>\n      <key>settings</key><dict><key>foreground</key><string>#736b60</string><key>fontStyle</key><string>italic</string></dict></dict>\n    <dict><key>scope</key><string>string, punctuation.definition.string</string>\n      <key>settings</key><dict><key>foreground</key><string>#4f7a28</string></dict></dict>\n    <dict><key>scope</key><string>constant.numeric, constant.language, constant.character</string>\n      <key>settings</key><dict><key>foreground</key><string>#b5452b</string></dict></dict>\n    <dict><key>scope</key><string>keyword, storage, keyword.control.import</string>\n      <key>settings</key><dict><key>foreground</key><string>#a3337a</string></dict></dict>\n    <dict><key>scope</key><string>keyword.operator</string>\n      <key>settings</key><dict><key>foreground</key><string>#6b6b6b</string></dict></dict>\n    <dict><key>scope</key><string>entity.name.function, support.function, meta.function-call</string>\n      <key>settings</key><dict><key>foreground</key><string>#1f5f99</string></dict></dict>\n    <dict><key>scope</key><string>entity.name.type, entity.name.class, support.type, support.class, storage.type</string>\n      <key>settings</key><dict><key>foreground</key><string>#1f6f6a</string></dict></dict>\n    <dict><key>scope</key><string>entity.name.tag, entity.other.attribute-name, meta.preprocessor, variable.parameter</string>\n      <key>settings</key><dict><key>foreground</key><string>#8a5a00</string></dict></dict>\n  </array>\n</dict>\n</plist>\n"))
 #show raw.where(block: false): it => box(
   fill: code-bg,
   inset: (x: 3pt),

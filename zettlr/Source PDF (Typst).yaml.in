@@ -6,8 +6,9 @@
 #
 # - "# Title" becomes the document title, "## Section" the first level
 # - Every line break in the note is kept (hard_line_breaks)
+# - ==highlight==, > [!NOTE] alerts and typographic quotes are supported
 # - Front matter (optional): client, date, subtitle, author
-reader: markdown+hard_line_breaks
+reader: markdown+hard_line_breaks+mark+alerts-smart
 writer: pdf
 standalone: true
 pdf-engine: "@TYPST@"
@@ -15,6 +16,9 @@ pdf-engine-opts:
   - --ignore-system-fonts
   - "--font-path=@REPO@/typst/fonts"
 template: "@REPO@/typst/source.typst"
+filters:
+  - type: lua
+    path: "@REPO@/typst/source.lua"
 shift-heading-level-by: -1
 variables:
   papersize: a4
