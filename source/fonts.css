@@ -47,3 +47,11 @@
     font-display: swap;
     src: url("fonts/SourceCodePro-italic.otf.woff2") format("woff2");
 }
+
+@font-face {
+    font-family: "Noto Emoji";
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url("fonts/NotoEmoji-normal.woff2") format("woff2");
+}

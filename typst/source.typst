@@ -70,8 +70,6 @@ $endif$
   lang: "$if(lang)$$lang$$else$de$endif$",
   hyphenate: true,
   // Old-style figures in running text; tables and code switch to lining.
-  // Note: Typst 0.15 ignores the figure features of Source Sans (Source
-  // Serif works), so body text keeps lining figures until that is fixed.
   number-type: "old-style",
   number-width: "proportional",
 )

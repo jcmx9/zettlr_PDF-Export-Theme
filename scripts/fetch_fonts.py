@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["fonttools>=4.50", "brotli>=1.1"]
+# ///
 """Download the Source font family from Adobe's GitHub releases.
 
 All fonts are Adobe's variable OTF (CFF2) builds. Unlike the Google Fonts
@@ -9,8 +13,11 @@ outputs are generated:
 - the same woff2 files embedded as data URIs in source/fonts-embedded.css
   for Zettlr, whose file protocol cannot serve fonts across origins
 - desktop OTF files in typst/fonts/ for the Pandoc/Typst PDF export
-- Noto Emoji (monochrome, variable) in typst/fonts/ as the emoji fallback
-  for the PDF; it only exists as TTF. The editors use the system emoji font.
+- Noto Emoji (monochrome, variable) as the emoji fallback everywhere, so
+  emoji follow the text color and weight; it only exists as TTF and is
+  converted to woff2 for the editors.
+
+Run with `uv run scripts/fetch_fonts.py` (needs fontTools for woff2).
 
 The OFL license texts are stored next to the font files.
 """
@@ -21,6 +28,8 @@ import sys
 import urllib.request
 import zipfile
 from pathlib import Path
+
+from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parent.parent
 FONT_DIR = ROOT / "source" / "fonts"
@@ -101,7 +110,7 @@ NOTO_EMOJI_FILES = {
 FACE = """@font-face {{
     font-family: "{family}";
     font-style: {style};
-    font-weight: 200 900;
+    font-weight: {weight};
     font-display: swap;
     src: url("{src}") format("woff2");
 }}
@@ -114,34 +123,80 @@ def fetch(url: str) -> bytes:
         return response.read()
 
 
-def fetch_web_fonts() -> None:
+def fetch_noto_emoji() -> dict[str, bytes]:
+    return {
+        filename: fetch(NOTO_EMOJI.format(rev=NOTO_EMOJI_REV, name=name))
+        for name, filename in NOTO_EMOJI_FILES.items()
+    }
+
+
+def to_woff2(data: bytes) -> bytes:
+    font = TTFont(io.BytesIO(data))
+    font.flavor = "woff2"
+    out = io.BytesIO()
+    font.save(out)
+    return out.getvalue()
+
+
+def add_face(
+    linked: list[str],
+    embedded: list[str],
+    family: str,
+    style: str,
+    weight: str,
+    filename: str,
+    data: bytes,
+) -> None:
+    (FONT_DIR / filename).write_bytes(data)
+    linked.append(
+        FACE.format(family=family, style=style, weight=weight, src=f"fonts/{filename}")
+    )
+    uri = "data:font/woff2;base64," + base64.b64encode(data).decode()
+    embedded.append(FACE.format(family=family, style=style, weight=weight, src=uri))
+    print(f"  source/fonts/{filename}")
+
+
+def fetch_web_fonts(emoji: dict[str, bytes]) -> None:
     FONT_DIR.mkdir(parents=True, exist_ok=True)
     for stale in FONT_DIR.glob("*.woff2"):
         stale.unlink()
 
-    linked, embedded = [], []
+    linked: list[str] = []
+    embedded: list[str] = []
     for family, repo, tag, asset, members in WEB_FONTS:
         url = RELEASES.format(repo=repo, tag=tag, asset=asset)
         with zipfile.ZipFile(io.BytesIO(fetch(url))) as archive:
             for style, member in members.items():
-                data = archive.read(member)
                 filename = f"{family.replace(' ', '')}-{style}.otf.woff2"
-                (FONT_DIR / filename).write_bytes(data)
-                linked.append(
-                    FACE.format(family=family, style=style, src=f"fonts/{filename}")
+                add_face(
+                    linked,
+                    embedded,
+                    family,
+                    style,
+                    "200 900",
+                    filename,
+                    archive.read(member),
                 )
-                uri = "data:font/woff2;base64," + base64.b64encode(data).decode()
-                embedded.append(FACE.format(family=family, style=style, src=uri))
-                print(f"  source/fonts/{filename}")
 
         license_name = f"OFL-{family.replace(' ', '')}.txt"
         (FONT_DIR / license_name).write_bytes(fetch(LICENSE.format(repo=repo)))
+
+    add_face(
+        linked,
+        embedded,
+        "Noto Emoji",
+        "normal",
+        "300 700",
+        "NotoEmoji-normal.woff2",
+        to_woff2(emoji["NotoEmoji-Variable.ttf"]),
+    )
+    (FONT_DIR / "OFL-NotoEmoji.txt").write_bytes(emoji["OFL-NotoEmoji.txt"])
 
     FONT_CSS.write_text(HEADER + "\n".join(linked))
     EMBEDDED_CSS.write_text(HEADER + "\n".join(embedded))
 
 
-def fetch_desktop_fonts() -> None:
+def fetch_desktop_fonts(emoji: dict[str, bytes]) -> None:
     TYPST_FONT_DIR.mkdir(parents=True, exist_ok=True)
     for stale in [*TYPST_FONT_DIR.glob("*.ttf"), *TYPST_FONT_DIR.glob("*.otf")]:
         stale.unlink()
@@ -154,15 +209,16 @@ def fetch_desktop_fonts() -> None:
                 print(f"  typst/fonts/{filename}")
     for license_file in FONT_DIR.glob("OFL-*.txt"):
         (TYPST_FONT_DIR / license_file.name).write_bytes(license_file.read_bytes())
-    for name, filename in NOTO_EMOJI_FILES.items():
-        url = NOTO_EMOJI.format(rev=NOTO_EMOJI_REV, name=name)
-        (TYPST_FONT_DIR / filename).write_bytes(fetch(url))
-        print(f"  typst/fonts/{filename}")
+    (TYPST_FONT_DIR / "NotoEmoji-Variable.ttf").write_bytes(
+        emoji["NotoEmoji-Variable.ttf"]
+    )
+    print("  typst/fonts/NotoEmoji-Variable.ttf")
 
 
 def main() -> int:
-    fetch_web_fonts()
-    fetch_desktop_fonts()
+    emoji = fetch_noto_emoji()
+    fetch_web_fonts(emoji)
+    fetch_desktop_fonts(emoji)
     return 0
 
 
