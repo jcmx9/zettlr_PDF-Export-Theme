@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Check WCAG contrast ratios of the theme's color variables.
+"""Check WCAG contrast ratios of the Zettlr theme's color palette.
 
-Reads the :root variables of source.css and source-dark.css (the dark theme
-inherits from the light one) and fails if a text/background pair is below the
-required ratio. Also verifies that the Zettlr palette mirrors these colors.
+Reads the --src-* variables of zettlr/source-zettlr.css (light: html:root,
+dark: html body.dark) and fails if a text/background pair is below the
+required ratio.
 """
 
 import re
@@ -15,71 +15,42 @@ ROOT = Path(__file__).resolve().parent.parent
 AA_TEXT = 4.5
 AA_LARGE = 3.0
 
-# (foreground, background, minimum ratio)
+# (foreground, background, minimum ratio), names without the --src- prefix
 PAIRS = [
-    ("--text-color", "--bg-color", AA_TEXT),
-    ("--heading-color", "--bg-color", AA_TEXT),
-    ("--text-muted", "--bg-color", AA_TEXT),
-    ("--accent", "--bg-color", AA_TEXT),
-    ("--text-color", "--code-bg", AA_TEXT),
-    ("--text-color", "--table-stripe", AA_TEXT),
-    ("--text-color", "--mark-bg", AA_TEXT),
-    ("--text-color", "--select-text-bg-color", AA_TEXT),
-    ("--alert-note", "--bg-color", AA_TEXT),
-    ("--alert-tip", "--bg-color", AA_TEXT),
-    ("--alert-important", "--bg-color", AA_TEXT),
-    ("--alert-warning", "--bg-color", AA_TEXT),
-    ("--alert-caution", "--bg-color", AA_TEXT),
-    ("--syntax-keyword", "--code-bg", AA_TEXT),
-    ("--syntax-def", "--code-bg", AA_TEXT),
-    ("--syntax-type", "--code-bg", AA_TEXT),
-    ("--syntax-string", "--code-bg", AA_TEXT),
-    ("--syntax-number", "--code-bg", AA_TEXT),
-    ("--syntax-comment", "--code-bg", AA_TEXT),
-    ("--syntax-meta", "--code-bg", AA_TEXT),
-    ("--syntax-operator", "--code-bg", AA_TEXT),
-    # Markdown syntax chars, line numbers and focus-mode fading are meant to
-    # recede, but must stay readable as large/non-text elements.
-    ("--text-faint", "--bg-color", AA_LARGE),
-    ("--text-faint", "--code-bg", AA_LARGE),
+    ("text", "bg", AA_TEXT),
+    ("heading", "bg", AA_TEXT),
+    ("text-muted", "bg", AA_TEXT),
+    ("accent", "bg", AA_TEXT),
+    ("text", "code-bg", AA_TEXT),
+    ("text", "mark-bg", AA_TEXT),
+    ("text", "selection", AA_TEXT),
+    ("alert-note", "bg", AA_TEXT),
+    ("alert-tip", "bg", AA_TEXT),
+    ("alert-important", "bg", AA_TEXT),
+    ("alert-warning", "bg", AA_TEXT),
+    ("alert-caution", "bg", AA_TEXT),
+    ("syntax-keyword", "code-bg", AA_TEXT),
+    ("syntax-def", "code-bg", AA_TEXT),
+    ("syntax-type", "code-bg", AA_TEXT),
+    ("syntax-string", "code-bg", AA_TEXT),
+    ("syntax-number", "code-bg", AA_TEXT),
+    ("syntax-comment", "code-bg", AA_TEXT),
+    ("syntax-meta", "code-bg", AA_TEXT),
+    # Markdown syntax chars are meant to recede, but must stay readable as
+    # large/non-text elements.
+    ("text-faint", "bg", AA_LARGE),
+    ("text-faint", "code-bg", AA_LARGE),
 ]
 
-# Zettlr palette name (without --src-) -> Typora variable, if not --<same name>
-ZETTLR_NAMES = {
-    "text": "--text-color",
-    "heading": "--heading-color",
-    "bg": "--bg-color",
-    "selection": "--select-text-bg-color",
-}
-
-VAR_RE = re.compile(r"(--[\w-]+)\s*:\s*(#[0-9a-fA-F]{6})\s*;")
-
-
-def root_vars(css: str) -> dict[str, str]:
-    """Return hex color variables of the first top-level :root block."""
-    block = re.search(r"^:root\s*\{(.*?)^\}", css, re.DOTALL | re.MULTILINE)
-    return dict(VAR_RE.findall(block.group(1))) if block else {}
+VAR_RE = re.compile(r"--src-([\w-]+)\s*:\s*(#[0-9a-fA-F]{6})\s*;")
 
 
 def block_vars(css: str, selector: str) -> dict[str, str]:
-    """Return hex color variables of the block with the given selector."""
+    """Return the hex --src-* variables of the block with the given selector."""
     block = re.search(
         rf"^{re.escape(selector)}\s*\{{(.*?)^\}}", css, re.DOTALL | re.MULTILINE
     )
     return dict(VAR_RE.findall(block.group(1))) if block else {}
-
-
-def check_zettlr(name: str, palette: dict[str, str], colors: dict[str, str]) -> int:
-    failures = 0
-    for var, value in palette.items():
-        short = var.removeprefix("--src-")
-        typora = ZETTLR_NAMES.get(short, f"--{short}")
-        if colors.get(typora, "").lower() != value.lower():
-            failures += 1
-            print(
-                f"  FAIL Zettlr {name}: {var} {value} != {typora} {colors.get(typora)}"
-            )
-    return failures
 
 
 def luminance(hex_color: str) -> float:
@@ -99,6 +70,10 @@ def check(name: str, colors: dict[str, str]) -> int:
     failures = 0
     print(f"{name}")
     for fg, bg, minimum in PAIRS:
+        if fg not in colors or bg not in colors:
+            failures += 1
+            print(f"  FAIL missing --src-{fg} or --src-{bg}")
+            continue
         value = ratio(colors[fg], colors[bg])
         ok = value >= minimum
         failures += not ok
@@ -108,14 +83,10 @@ def check(name: str, colors: dict[str, str]) -> int:
 
 
 def main() -> int:
-    light = root_vars((ROOT / "source.css").read_text())
-    dark = light | root_vars((ROOT / "source-dark.css").read_text())
-    failures = check("Source", light) + check("Source Dark", dark)
-
-    zettlr = (ROOT / "zettlr" / "source-zettlr.css").read_text()
-    print("Zettlr palette")
-    failures += check_zettlr("light", block_vars(zettlr, "html:root"), light)
-    failures += check_zettlr("dark", block_vars(zettlr, "html body.dark"), dark)
+    css = (ROOT / "zettlr" / "source-zettlr.css").read_text()
+    light = block_vars(css, "html:root")
+    dark = light | block_vars(css, "html body.dark")
+    failures = check("Light", light) + check("Dark", dark)
     print(f"{failures} failure(s)")
     return 1 if failures else 0
 
