@@ -8,7 +8,7 @@
 -- 3. Local images are handed to Typst by their path relative to the note.
 --    Pandoc would copy them into a temporary folder outside Typst's root.
 -- 4. Front matter "logo" becomes the logo next to the title; "logo-height"
---    sets its maximum height (default 30mm, see the template).
+--    sets its maximum height (default 20mm, see the template).
 -- 5. Task lists with owners ("- [ ] Task – Name, bis 17.10.") become a
 --    table with the columns task, owner, due date and status.
 -- 6. \newpage, \pagebreak and <!-- pagebreak --> start a new page.

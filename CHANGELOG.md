@@ -12,7 +12,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Front matter `logo-height` sets the maximum logo height
 
 ### Changed
-- The logo keeps its proportions and fits into 30 mm height and 60 mm width (was a fixed 14 mm height)
+- The logo keeps its proportions and fits into 20 mm height and 60 mm width (was a fixed 14 mm height)
+- Typst 0.15.1 (was 0.15.0); the installer updates it automatically
 
 ## [26.10.6] - 2026-10-12
 

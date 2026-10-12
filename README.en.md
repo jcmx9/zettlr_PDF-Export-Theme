@@ -75,8 +75,8 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 - **Front matter (optional):**
   - `client`, `subtitle`, `author`
   - `date` – defaults to the export date
-  - `logo` – image next to the title, path relative to the note (or absolute on macOS/Linux). It keeps its proportions and fits into 30 mm height and 60 mm width
-  - `logo-height` – maximum logo height instead of 30 mm, e.g. `logo-height: 20mm`
+  - `logo` – image next to the title, path relative to the note (or absolute on macOS/Linux). It keeps its proportions and fits into 20 mm height and 60 mm width
+  - `logo-height` – maximum logo height instead of 20 mm, e.g. `logo-height: 15mm`
   - `next` – next meeting, printed at the end
   - `lang: en` – English labels (Page, Next meeting, alert and table titles); German is the default
 - **Line breaks:** every line break in the note is kept
