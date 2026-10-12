@@ -10,7 +10,7 @@
 #                      of the latest GitHub release
 #
 # Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
-# snippets protokoll, jourfixe, workshop, entscheidung and kopfdaten. Typst is downloaded into the installer's own folder; no admin
+# snippets meeting, telefonnotiz and header. Typst is downloaded into the installer's own folder; no admin
 # rights needed. Typora themes installed by earlier versions are removed.
 set -euo pipefail
 
@@ -257,6 +257,21 @@ setup_zettlr() {
         rm -f "${target}"
         cp "${source}" "${target}"
     done
+    # Snippets an earlier version installed but this one no longer ships:
+    # remove them unless the user changed them
+    local old
+    for old in "${CURRENT}.old"/zettlr/snippets/*.tpl.md; do
+        [[ -f "${old}" ]] || continue
+        name="$(basename "${old}")"
+        target="${dir}/snippets/${name}"
+        if [[ ! -f "${CURRENT}/zettlr/snippets/${name}" && -f "${target}" ]]; then
+            if cmp -s "${target}" "${old}"; then
+                rm "${target}"
+            else
+                warn "kept ${target} (changed; no longer part of the theme)"
+            fi
+        fi
+    done
     info "  theme, export profile \"Source PDF\" and snippets installed"
 }
 
@@ -326,7 +341,7 @@ EOF
 
     info ""
     info "Done. Restart Zettlr, then:"
-    info "  - new meeting note: type :protokoll"
+    info "  - new meeting note: type :meeting"
     info "  - PDF: File > Export, profile \"Source PDF\""
 }
 

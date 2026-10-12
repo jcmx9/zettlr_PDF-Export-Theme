@@ -114,7 +114,7 @@ main() {
     expect edge-cases.md "${text}" "Notiz ohne Titel" "leer links" "Aufgabe ohne alles"
     echo "ok   edge-cases.md"
 
-    # Empty front matter fields (e.g. from the kopfdaten snippet) are ignored
+    # Empty front matter fields (e.g. from the header snippet) are ignored
     text="$(render empty-fields.md "${profile}")"
     expect empty-fields.md "${text}" "Leere Kopfdaten" "Alle optionalen Felder sind leer."
     reject empty-fields.md "${text}" "Nächster Termin"
@@ -133,6 +133,7 @@ main() {
         name="snippet-$(basename "${snippet}" .tpl.md).md"
         sed -E -e 's/\$\{[0-9]+:([^}]*)\}/\1/g' -e 's/\$[0-9]+//g' \
             -e 's/\$CURRENT_DATE/12/; s/\$CURRENT_MONTH/10/; s/\$CURRENT_YEAR/2026/' \
+            -e 's/\$CURRENT_HOUR/14/; s/\$CURRENT_MINUTE/05/' \
             "${snippet}" > "${fixtures}/${name}"
         text="$(render "${name}" "${profile}")" || { rm -f "${fixtures}/${name}"; exit 1; }
         rm -f "${fixtures}/${name}"

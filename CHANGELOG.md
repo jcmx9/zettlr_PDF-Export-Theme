@@ -5,6 +5,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.10] - 2026-10-12
+
+### Changed
+- Snippets reorganized: `meeting` (topic as title, participants, agenda, notes, tasks), `telefonnotiz` (phone call with time) and `header` (every front matter field, formerly `kopfdaten`). `protokoll`, `jourfixe`, `workshop` and `entscheidung` are gone
+- Updating removes snippets of earlier versions unless the user changed them
+
 ## [26.10.9] - 2026-10-12
 
 ### Changed
@@ -88,7 +94,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.9...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.10...HEAD
+[26.10.10]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.9...v26.10.10
 [26.10.9]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.8...v26.10.9
 [26.10.8]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.7...v26.10.8
 [26.10.7]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.6...v26.10.7
