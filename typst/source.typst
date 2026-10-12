@@ -1,6 +1,8 @@
 // Source — Pandoc template for Typst (A4 PDF, e.g. meeting notes for clients)
 // Headings: Source Serif 4 · Body: Source Sans 3 · Code: Source Code Pro
 // Colors mirror source.css. Fonts are expected via --font-path typst/fonts.
+// Noto Emoji (monochrome) is the fallback for emoji and symbols, so they take
+// the text color and weight.
 //
 // Metadata (all optional): title, subtitle, client, date, author, lang.
 // Without a date, the export date is used.
@@ -12,9 +14,10 @@
 #let border = rgb("#e4e1dc")
 #let code-bg = rgb("#f4f2ee")
 
-#let font-serif = ("Source Serif 4",)
-#let font-sans = ("SourceSans3VF",)
-#let font-mono = ("SourceCodeVF",)
+#let font-emoji = "Noto Emoji"
+#let font-serif = ("Source Serif 4", font-emoji)
+#let font-sans = ("SourceSans3VF", font-emoji)
+#let font-mono = ("SourceCodeVF", font-emoji)
 
 // Helpers referenced by Pandoc's Typst writer
 // (newer Pandoc versions call divider(), older ones use horizontalrule)
