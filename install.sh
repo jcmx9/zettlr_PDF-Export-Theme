@@ -16,7 +16,7 @@ set -euo pipefail
 
 readonly REPO="jcmx9/zettlr_PDF-Export-Theme"
 readonly BUNDLE="zettlr-pdf-export-theme"
-readonly TYPST_VERSION="0.15.0"
+readonly TYPST_VERSION="0.15.1"
 readonly IMPORT_LINE='@import url("source-zettlr.css");'
 readonly PROFILE_NAME="Source PDF.yaml"
 readonly PROFILE_MARKER="zettlr_PDF-Export-Theme installer"

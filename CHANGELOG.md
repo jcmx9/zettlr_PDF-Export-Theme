@@ -5,6 +5,16 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.7] - 2026-10-12
+
+### Added
+- German README (`README.md`) next to the English one (`README.en.md`), both with version line and language link; CI checks the version
+- Front matter `logo-height` sets the maximum logo height
+
+### Changed
+- The logo keeps its proportions and fits into 20 mm height and 60 mm width (was a fixed 14 mm height)
+- Typst 0.15.1 (was 0.15.0); the installer updates it automatically
+
 ## [26.10.6] - 2026-10-12
 
 ### Added
@@ -60,7 +70,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.6...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.7...HEAD
+[26.10.7]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.6...v26.10.7
 [26.10.6]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.5...v26.10.6
 [26.10.5]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.4...v26.10.5
 [26.10.4]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.3...v26.10.4

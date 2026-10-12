@@ -1,26 +1,28 @@
 # Zettlr PDF Export Theme
 
-> Clean, client-ready PDFs from Zettlr notes – plus a matching Zettlr editor theme, built on Adobe's Source type family.
+> Saubere, kundentaugliche PDFs aus Zettlr-Notizen – dazu ein passendes Zettlr-Editor-Theme, gesetzt in Adobes Schriftfamilie Source.
 
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks – and export them with one click as a calm, typographic A4 PDF. Everything involved is free and open source: Zettlr, Pandoc (ships with Zettlr) and [Typst](https://typst.app).
+**Version 26.10.7** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
-![Example meeting note as PDF](docs/example-meeting.png)
+Besprechungsnotizen live in Zettlr schreiben – Thema, Agenda, Teilnehmer, Mitschrift, Aufgaben – und mit einem Klick als ruhiges, typografisches A4-PDF exportieren. Alle Bausteine sind frei und quelloffen: Zettlr, Pandoc (in Zettlr enthalten) und [Typst](https://typst.app).
 
-| Element     | Font            |
-| ----------- | --------------- |
-| Headings    | Source Serif 4  |
-| Body        | Source Sans 3   |
-| Code        | Source Code Pro |
-| Emoji       | Noto Emoji      |
+![Beispiel einer Besprechungsnotiz als PDF](docs/example-meeting.png)
 
-The Source fonts are Adobe's variable OTF builds; only Mermaid diagrams use the static Source Sans 3 Regular, because Typst draws SVG text without variable weights. Emoji use the monochrome Noto Emoji, so they follow the text color and weight in the PDF and in Zettlr. All fonts are bundled with the theme; nothing is loaded from the internet at runtime.
+| Element       | Schrift         |
+| ------------- | --------------- |
+| Überschriften | Source Serif 4  |
+| Fließtext     | Source Sans 3   |
+| Code          | Source Code Pro |
+| Emoji         | Noto Emoji      |
 
-## Install and update
+Die Source-Schriften sind Adobes variable OTF-Fassungen; nur Mermaid-Diagramme nutzen die statische Source Sans 3 Regular, weil Typst SVG-Text ohne variable Strichstärken zeichnet. Emojis kommen aus der einfarbigen Noto Emoji und folgen deshalb im PDF und in Zettlr Textfarbe und Strichstärke. Alle Schriften liegen dem Theme bei; zur Laufzeit wird nichts aus dem Internet geladen.
 
-One line per system. Run the same line again to update.
+## Installieren und aktualisieren
+
+Eine Zeile pro System. Dieselbe Zeile aktualisiert auch.
 
 **macOS / Linux**
 
@@ -28,28 +30,28 @@ One line per system. Run the same line again to update.
 curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.sh | bash
 ```
 
-**Windows** (PowerShell, no admin rights needed)
+**Windows** (PowerShell, ohne Administratorrechte)
 
 ```powershell
 irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1 | iex
 ```
 
-The installer
+Der Installer
 
-1. downloads the latest release and verifies its SHA-256 checksum,
-2. downloads Typst into its own folder if needed (no system changes),
-3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippets **protokoll**, **jourfixe**, **workshop** and **entscheidung**.
+1. lädt das neueste Release und prüft dessen SHA-256-Prüfsumme,
+2. lädt bei Bedarf Typst in seinen eigenen Ordner (keine Systemänderungen),
+3. richtet **Zettlr** ein: Editor-Theme, Exportprofil **Source PDF**, Snippets **protokoll**, **jourfixe**, **workshop** und **entscheidung**.
 
-Versions up to 26.10.4 also installed Typora themes; the installer removes them (only its own files).
+Versionen bis 26.10.4 haben auch Typora-Themes installiert; der Installer entfernt sie (nur seine eigenen Dateien).
 
-Existing rules in Zettlr's `custom.css` are kept; a timestamped backup is written before every change.
+Eigene Regeln in Zettlrs `custom.css` bleiben erhalten; vor jeder Änderung wird eine Sicherung mit Zeitstempel angelegt.
 
 | | macOS | Linux | Windows |
 | --- | --- | --- | --- |
-| Installer files | `~/.local/share/zettlr-pdf-export-theme` | `~/.local/share/zettlr-pdf-export-theme` | `%LOCALAPPDATA%\zettlr-pdf-export-theme` |
+| Installer-Dateien | `~/.local/share/zettlr-pdf-export-theme` | `~/.local/share/zettlr-pdf-export-theme` | `%LOCALAPPDATA%\zettlr-pdf-export-theme` |
 | Zettlr | `~/Library/Application Support/zettlr` | `~/.config/zettlr` | `%APPDATA%\zettlr` |
 
-### Uninstall
+### Deinstallieren
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.sh | bash -s -- --uninstall
@@ -59,107 +61,115 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
 ```
 
-## Usage in Zettlr
+## Verwendung in Zettlr
 
-1. Restart Zettlr after installing.
-2. New note: type `:protokoll` and press Enter. Tab jumps through client, topic, agenda, participants, notes and tasks; the date is filled in automatically. Further snippets: `:jourfixe`, `:workshop` and `:entscheidung` (decision paper).
-3. Export: **File → Export…** (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>E</kbd>), profile **Source PDF**.
+1. Zettlr nach der Installation neu starten.
+2. Neue Notiz: `:protokoll` tippen und Enter drücken. Tab springt durch Kunde, Thema, Agenda, Teilnehmer, Mitschrift und Aufgaben; das Datum wird automatisch eingesetzt. Weitere Snippets: `:jourfixe`, `:workshop` und `:entscheidung` (Entscheidungsvorlage).
+3. Export: **Datei → Exportieren…** (<kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>E</kbd>), Profil **Source PDF**.
 
-Where the PDF is saved is set under *Preferences → Import and Export*.
+Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export* fest.
 
-### What the PDF supports
+### Was das PDF kann
 
-- **Title:** `# Topic` becomes the document title, `## Section` the section headings
-- **Front matter (optional):**
+- **Titel:** `# Thema` wird zum Dokumenttitel, `## Abschnitt` zu den Abschnittsüberschriften
+- **Front Matter (optional):**
   - `client`, `subtitle`, `author`
-  - `date` – defaults to the export date
-  - `logo` – image next to the title, path relative to the note (or absolute on macOS/Linux)
-  - `next` – next meeting, printed at the end
-  - `lang: en` – English labels (Page, Next meeting, alert and table titles); German is the default
-- **Line breaks:** every line break in the note is kept
-- **Tasks:** `- [ ]` / `- [x]` render as check boxes. A task list with owners becomes a table *Aufgabe · Wer · Bis · Status*:
+  - `date` – ohne Angabe das Exportdatum
+  - `logo` – Bild neben dem Titel, Pfad relativ zur Notiz (unter macOS/Linux auch absolut). Es behält seine Proportionen und passt in 20 mm Höhe und 60 mm Breite
+  - `logo-height` – maximale Logohöhe statt 20 mm, z. B. `logo-height: 15mm`
+  - `next` – nächster Termin, steht am Ende
+  - `lang: en` – englische Beschriftungen (Seite, nächster Termin, Box- und Tabellentitel); Standard ist Deutsch
+- **Zeilenumbrüche:** jeder Zeilenumbruch der Notiz bleibt erhalten
+- **Aufgaben:** `- [ ]` / `- [x]` werden zu Kästchen. Eine Aufgabenliste mit Zuständigkeiten wird zur Tabelle *Aufgabe · Wer · Bis · Status*:
   ```markdown
-  - [ ] Draft the sitemap – jcmx9, bis 17.10.
-  - [x] Book the review – Anna Beispiel
+  - [ ] Sitemap-Entwurf erstellen – jcmx9, bis 17.10.
+  - [x] Review-Termin festlegen – Anna Beispiel
   ```
-- **Alerts:** `> [!NOTE]` (Info), `[!TIP]` (Tipp), `[!IMPORTANT]` (Wichtig), `[!WARNING]` (Hinweis, calm orange), `[!CAUTION]` (Achtung); German keywords such as `> [!HINWEIS]` work as well
-- **Images:** `![Caption](bilder/screen.png){width=50%}` with caption below; paths relative to the note. On Windows images must be in the note's folder or below it
-- **Diagrams:** ` ```mermaid ` code blocks are drawn in the theme's colors (flowcharts, sequence diagrams, …), offline
-- **Page breaks:** `\newpage` or `<!-- pagebreak -->` on a line of its own
-- **Long tables** continue on the next page with their header repeated
-- **Text:** `==highlight==`, footnotes, code with syntax colors, math, typographic quotes, German hyphenation, emoji (monochrome, in text color)
-- **Footer:** client, title and page numbers
-- **PDF/A-2u:** the PDF meets the archiving standard. Images and diagrams carry alt texts; full PDF/UA accessibility is not enforced, because it would make exports fail on everyday notes (e.g. a note starting with `###`)
+- **Hinweisboxen:** `> [!NOTE]` (Info), `[!TIP]` (Tipp), `[!IMPORTANT]` (Wichtig), `[!WARNING]` (Hinweis, ruhiges Orange), `[!CAUTION]` (Achtung); deutsche Schlüsselwörter wie `> [!HINWEIS]` funktionieren ebenso
+- **Bilder:** `![Bildunterschrift](bilder/screen.png){width=50%}` mit Unterschrift darunter; Pfade relativ zur Notiz. Unter Windows müssen Bilder im Ordner der Notiz oder darunter liegen
+- **Diagramme:** ` ```mermaid `-Codeblöcke werden in den Farben des Themes gezeichnet (Flussdiagramme, Sequenzdiagramme, …), ohne Internet
+- **Seitenumbrüche:** `\newpage` oder `<!-- pagebreak -->` auf einer eigenen Zeile
+- **Lange Tabellen** laufen auf der nächsten Seite weiter und wiederholen dort ihre Kopfzeile
+- **Text:** `==Markierung==`, Fußnoten, Code mit Syntaxfarben, Formeln, typografische Anführungszeichen, deutsche Silbentrennung, Emojis (einfarbig, in Textfarbe)
+- **Fußzeile:** Kunde, Titel und Seitenzahlen
+- **PDF/A-2u:** das PDF erfüllt den Archivstandard. Bilder und Diagramme haben Alternativtexte; volle Barrierefreiheit nach PDF/UA wird nicht erzwungen, weil sonst alltägliche Notizen am Export scheitern würden (z. B. eine Notiz, die mit `###` beginnt)
 
-### Editor theme
+### Editor-Theme
 
-The editor theme works with every built-in Zettlr theme; Zettlr's *Appearance → Editor theme* setting no longer matters. Light and dark follow Zettlr's dark mode. It sets fonts, heading sizes (scale 1.25 for levels 1–3, body size from level 4), spacing and colors. To try Zettlr without it, comment out the first line of `custom.css` in Zettlr's *Assets Manager*.
+Das Editor-Theme wirkt mit jedem eingebauten Zettlr-Theme; die Einstellung *Darstellung → Editor-Theme* spielt keine Rolle mehr. Hell und dunkel folgen Zettlrs Dunkelmodus. Es setzt Schriften, Überschriftengrößen (Faktor 1,25 für Ebene 1–3, ab Ebene 4 Fließtextgröße), Abstände und Farben. Um Zettlr ohne das Theme zu sehen, die erste Zeile der `custom.css` im *Assets Manager* von Zettlr auskommentieren.
 
-Tags are shown in the accent color including their `#`. Zettlr does not support tag hierarchies: in Obsidian-style tags such as `#project/client` only `#project` is recognized and colored; the note itself stays unchanged.
+Tags erscheinen samt `#` in der Akzentfarbe. Zettlr unterstützt keine Tag-Hierarchien: Bei Tags im Obsidian-Stil wie `#projekt/kunde` erkennt und färbt Zettlr nur `#projekt`; die Notiz selbst bleibt unverändert.
 
-## Typography
+## Typografie
 
-- Old-style figures in running text and headings, lining tabular figures in tables, neutral figures in code – in the PDF and in Zettlr. Source Sans draws its old-style figures subtly, so they are easiest to spot in the Source Serif headings
-- Emoji are monochrome and follow the weight of the surrounding text. Exception in Zettlr: emoji written with an explicit color selector (e.g. ⚠️, ❤️) stay in color, because Chromium always renders those with the system color font
-- All text colors meet WCAG AA contrast, checked by `scripts/check_contrast.py`
+- Mediävalziffern im Fließtext und in Überschriften, Versalziffern in gleicher Breite in Tabellen, neutrale Ziffern im Code – im PDF und in Zettlr. Source Sans zeichnet ihre Mediävalziffern dezent, am deutlichsten sieht man sie in den Überschriften aus Source Serif
+- Emojis sind einfarbig und folgen der Strichstärke des umgebenden Texts. Ausnahme in Zettlr: Emojis mit ausdrücklichem Farb-Selektor (z. B. ⚠️, ❤️) bleiben farbig, weil Chromium sie immer mit der farbigen Systemschrift zeichnet
+- Alle Textfarben erfüllen den WCAG-AA-Kontrast, geprüft von `scripts/check_contrast.py`
 
-## Development
+## Entwicklung
 
 ```bash
-# Lint tooling
+# Prüfwerkzeuge
 npm install
 npm run lint:css
 shellcheck install.sh scripts/*.sh
 uvx ruff check scripts/
 
-# Color contrast of the Zettlr palette (WCAG AA)
+# Farbkontrast der Zettlr-Palette (WCAG AA)
 python3 scripts/check_contrast.py
 
-# Re-download fonts (Adobe releases, Noto Emoji from google/fonts)
+# Schriften neu laden (Adobe-Releases, Noto Emoji aus google/fonts)
 uv run scripts/fetch_fonts.py
 
-# Re-download the bundled Typst packages (Mermaid renderer)
+# Mitgelieferte Typst-Pakete neu laden (Mermaid-Renderer)
 python3 scripts/fetch_packages.py
 
-# End-to-end test: export tests/fixtures/*.md and all snippets like Zettlr
-# does (needs pandoc, typst and pdftotext or mutool)
+# Ende-zu-Ende-Test: tests/fixtures/*.md und alle Snippets so exportieren,
+# wie Zettlr es tut (braucht pandoc, typst und pdftotext oder mutool)
 ./scripts/test_pdf.sh
 
-# Build the release bundle and install it locally
+# Release-Bundle bauen und lokal installieren
 ./scripts/package.sh
 ./install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
 
-# PDF from the command line
+# PDF auf der Kommandozeile
 pandoc note.md -f markdown+hard_line_breaks+mark+alerts-smart -t pdf --pdf-engine=typst \
   --pdf-engine-opt=--ignore-system-fonts --pdf-engine-opt=--font-path=typst/fonts \
   --template=typst/source.typst --lua-filter=typst/source.lua \
   --shift-heading-level-by=-1 -o note.pdf
 ```
 
-CI lints everything, runs the installer on Ubuntu, macOS and Windows (PowerShell 5.1) and exports the test notes with Zettlr's Pandoc version through the installed profile.
+Die CI prüft alles, führt den Installer unter Ubuntu, macOS und Windows (PowerShell 5.1) aus und exportiert die Testnotizen mit Zettlrs Pandoc-Version über das installierte Profil.
 
-## Project Structure
+## Projektstruktur
 
 ```
-install.sh, install.ps1   – Installers (macOS/Linux, Windows)
-VERSION                   – Release version (CalVer)
-typst/source.typst        – Pandoc template for the PDF
-typst/source.lua          – Pandoc filter (alerts, quotes, images, logo, task tables, page breaks)
-typst/fonts/              – Fonts for Typst (variable OTF, Noto Emoji, static Regular for diagrams)
-typst/packages/           – Bundled Typst packages (mmdr for Mermaid)
-typst/example-meeting.md  – Example meeting note
-zettlr/                   – Zettlr editor theme, embedded fonts, export profile template, snippet
-scripts/                  – Font and package download, contrast check, bundle build, PDF test
-tests/fixtures/           – Test notes for the end-to-end PDF test
-docs/                     – README images
+install.sh, install.ps1   – Installer (macOS/Linux, Windows)
+VERSION                   – Release-Version (CalVer)
+typst/source.typst        – Pandoc-Vorlage für das PDF
+typst/source.lua          – Pandoc-Filter (Hinweisboxen, Anführungszeichen, Bilder, Logo, Aufgabentabellen, Seitenumbrüche)
+typst/fonts/              – Schriften für Typst (variable OTF, Noto Emoji, statische Regular für Diagramme)
+typst/packages/           – Mitgelieferte Typst-Pakete (mmdr für Mermaid)
+typst/example-meeting.md  – Beispiel einer Besprechungsnotiz
+zettlr/                   – Zettlr-Editor-Theme, eingebettete Schriften, Vorlage des Exportprofils, Snippets
+scripts/                  – Schrift- und Paket-Download, Kontrastprüfung, Bundle-Bau, PDF-Test
+tests/fixtures/           – Testnotizen für den Ende-zu-Ende-Test
+docs/                     – Bilder für die README
+README.md, README.en.md   – Dokumentation (Deutsch, Englisch)
 ```
 
-## Versioning
+## Versionierung
 
-[CalVer](https://calver.org/) in the format `YY.M.MICRO`, stored in `VERSION`. Pushing a tag `v<version>` builds the bundle and creates a GitHub release; the installers always fetch the latest release.
+[CalVer](https://calver.org/) im Format `YY.M.MICRO` (Jahr, Monat, laufende Nummer im Monat), gespeichert in `VERSION` und oben in beiden READMEs angegeben; die CI prüft, dass sie übereinstimmen. Ein Tag `v<Version>` baut das Bundle und erstellt ein GitHub-Release; die Installer holen immer das neueste Release.
 
-## License
+## Mitarbeit, Sicherheit, Änderungen
 
-Code and theme: MIT – see [LICENSE](LICENSE).
-Fonts: SIL Open Font License 1.1 – see `typst/fonts/OFL-*.txt`. Source is a trademark of Adobe; Noto is a trademark of Google.
-mmdr (Mermaid renderer): MIT – see `typst/packages/preview/mmdr/0.2.2/LICENSE`.
+- Ablauf und Prüfungen: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Sicherheitslücken melden: [SECURITY.md](SECURITY.md)
+- Änderungen je Version: [CHANGELOG.md](CHANGELOG.md)
+
+## Lizenz
+
+Code und Theme: MIT – siehe [LICENSE](LICENSE).
+Schriften: SIL Open Font License 1.1 – siehe `typst/fonts/OFL-*.txt`. Source ist eine Marke von Adobe; Noto ist eine Marke von Google.
+mmdr (Mermaid-Renderer): MIT – siehe `typst/packages/preview/mmdr/0.2.2/LICENSE`.

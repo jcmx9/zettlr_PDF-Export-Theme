@@ -35,9 +35,9 @@ Feature branches are squash-merged into `dev`; releases are rebase-merged from `
 
 - [ ] All checks above pass
 - [ ] New PDF features are covered by `tests/fixtures/` and `scripts/test_pdf.sh`
-- [ ] README updated (if applicable)
+- [ ] README.md (German) and README.en.md (English) updated together, same structure
 - [ ] CHANGELOG.md updated under `[Unreleased]`
-- [ ] `VERSION` bumped for user-visible changes
+- [ ] `VERSION` bumped for user-visible changes, together with the version line in both READMEs
 
 ## Code standards
 

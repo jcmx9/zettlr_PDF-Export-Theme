@@ -10,7 +10,7 @@ repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 readonly repo_dir
 readonly name="zettlr-pdf-export-theme"
 readonly files=(
-    VERSION LICENSE README.md
+    VERSION LICENSE README.md README.en.md CHANGELOG.md
     zettlr/source-zettlr.css zettlr/source-zettlr-fonts.css
     "zettlr/Source PDF.yaml.in" zettlr/snippets
     typst/source.typst typst/source.lua typst/fonts typst/packages
