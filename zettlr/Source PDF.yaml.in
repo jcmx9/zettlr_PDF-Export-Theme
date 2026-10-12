@@ -1,0 +1,29 @@
+# ZETTLR DEFAULTS FILE
+# ====================
+# Conversion: Markdown --> PDF with the Source layout (via Pandoc and Typst)
+# Written by the zettlr_PDF-Export-Theme installer; reinstalling overwrites it.
+# More info: https://pandoc.org/MANUAL.html
+#
+# - "# Title" becomes the document title, "## Section" the first level
+# - Every line break in the note is kept (hard_line_breaks)
+# - ==highlight==, > [!NOTE] alerts and typographic quotes are supported
+# - Front matter (optional): client, date, subtitle, author
+reader: markdown+hard_line_breaks+mark+alerts-smart
+writer: pdf
+standalone: true
+pdf-engine: '@TYPST@'
+pdf-engine-opts:
+  - --ignore-system-fonts
+  - '--font-path=@DIR@/typst/fonts'
+template: '@DIR@/typst/source.typst'
+filters:
+  - type: lua
+    path: '@DIR@/typst/source.lua'
+shift-heading-level-by: -1
+variables:
+  papersize: a4
+  lang: de
+metadata-files: []
+include-before-body: []
+include-after-body: []
+include-in-header: []

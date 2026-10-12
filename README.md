@@ -1,6 +1,13 @@
-# Source — Typora Theme
+# Zettlr PDF Export Theme
 
-> A calm, typographic Typora theme built on Adobe's Source superfamily.
+> Clean, client-ready PDFs from Zettlr notes – plus a matching editor theme for Zettlr and Typora, built on Adobe's Source type family.
+
+[![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks – and export them with one click as a calm, typographic A4 PDF. Everything involved is free and open source: Zettlr, Pandoc (ships with Zettlr) and [Typst](https://typst.app).
+
+![Example meeting note as PDF](docs/example-meeting.png)
 
 | Element  | Font            |
 | -------- | --------------- |
@@ -8,63 +15,131 @@
 | Body     | Source Sans 3   |
 | Code     | Source Code Pro |
 
-Two themes are included: **Source** (light) and **Source Dark**. All fonts are bundled as variable `woff2` files, so the theme works offline and makes no requests to Google.
+All fonts are Adobe's variable OTF builds, bundled with the theme; nothing is loaded from the internet at runtime.
 
-## Features
+## Install and update
 
-- Size scale of 1.25 for `h1`–`h3`; `h4`–`h6` stay at body size and differ by weight and style
-- More space above headings than below, reduced gaps for stacked headings
-- Styled alerts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`)
-- Custom syntax highlighting for light and dark
-- Focus mode fades all blocks except the one being edited
-- Print rules for PDF export: A4 margins, no page breaks inside code blocks, tables or quotes
+One line per system. Run the same line again to update.
 
-## Installation
-
-### With symlinks (recommended)
+**macOS / Linux**
 
 ```bash
-git clone https://github.com/jcmx9/Typora_Theme-Source.git
-cd Typora_Theme-Source
-./scripts/install.sh
+curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.sh | bash
 ```
 
-The script links `source.css`, `source-dark.css` and the `source/` folder into Typora's theme folder. Changes in the repository take effect after reloading Typora. Existing files with the same name are moved to `*.bak`.
+**Windows** (PowerShell, no admin rights needed)
 
-### Manual
+```powershell
+irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1 | iex
+```
 
-Copy `source.css`, `source-dark.css` and the `source/` folder into Typora's theme folder (*Preferences → Appearance → Open Theme Folder*).
+The installer
 
-Then restart Typora and choose **Themes → Source** or **Themes → Source Dark**.
+1. downloads the latest release and verifies its SHA-256 checksum,
+2. downloads Typst into its own folder if needed (no system changes),
+3. sets up **Zettlr** if installed: editor theme, export profile **Source PDF**, snippet **protokoll**,
+4. sets up **Typora** if installed: themes Source, Source Dark, Source Compact, Source Dark Compact.
 
-## PDF export
+Existing rules in Zettlr's `custom.css` are kept; a timestamped backup is written before every change.
 
-Page margins come from the theme. Page numbers and headers/footers are set in Typora under *Preferences → Export → PDF*, for example `${pageNo} / ${totalPages}` in the footer.
+| | macOS | Linux | Windows |
+| --- | --- | --- | --- |
+| Installer files | `~/.local/share/zettlr-pdf-export-theme` | `~/.local/share/zettlr-pdf-export-theme` | `%LOCALAPPDATA%\zettlr-pdf-export-theme` |
+| Zettlr | `~/Library/Application Support/zettlr` | `~/.config/zettlr` | `%APPDATA%\zettlr` |
+| Typora | `~/Library/Application Support/abnerworks.Typora/themes` | `~/.config/Typora/themes` | `%APPDATA%\Typora\themes` |
+
+### Uninstall
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.sh | bash -s -- --uninstall
+```
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
+```
+
+## Usage in Zettlr
+
+1. Restart Zettlr after installing.
+2. New note: type `:protokoll` and press Enter. Tab jumps through client, topic, agenda, participants, notes and tasks; the date is filled in automatically.
+3. Export: **File → Export…** (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>E</kbd>), profile **Source PDF**.
+
+Where the PDF is saved is set under *Preferences → Import and Export*.
+
+### What the PDF supports
+
+- **Title:** `# Topic` becomes the document title, `## Section` the section headings
+- **Front matter (optional):** `client`, `date` (defaults to the export date), `subtitle`, `author`
+- **Line breaks:** every line break in the note is kept
+- **Tasks:** `- [ ]` / `- [x]` render as check boxes
+- **Alerts:** `> [!NOTE]` (Info), `[!TIP]` (Tipp), `[!IMPORTANT]` (Wichtig), `[!WARNING]` (Hinweis, calm orange), `[!CAUTION]` (Achtung); German keywords such as `> [!HINWEIS]` work as well
+- **Text:** `==highlight==`, footnotes, tables, code with syntax colors, math, typographic quotes, German hyphenation
+- **Footer:** client, title and page numbers
+
+### Editor theme
+
+The editor theme works with every built-in Zettlr theme; Zettlr's *Appearance → Editor theme* setting no longer matters. Light and dark follow Zettlr's dark mode. It sets fonts, heading sizes (scale 1.25 for levels 1–3, body size from level 4), spacing and colors. To try Zettlr without it, comment out the first line of `custom.css` in Zettlr's *Assets Manager*.
+
+## Typora
+
+The installer adds four themes to Typora: **Source**, **Source Dark**, **Source Compact** and **Source Dark Compact**. Choose them from the **Themes** menu after restarting Typora. To switch with the system appearance, enable *Preferences → Appearance → Use separate theme in dark mode* and select **Source Dark**.
+
+Typora's own PDF export uses the active theme: A4 margins, no page breaks inside code blocks, tables or quotes. Page numbers are set under *Preferences → Export → PDF*, e.g. `${pageNo} / ${totalPages}` in the footer.
+
+## Typography
+
+- Old-style figures in running text, lining tabular figures in tables, neutral figures in code (Typora and Zettlr editor; in the PDF for Source Serif – Typst 0.15 does not apply the figure features of Source Sans yet)
+- All text colors meet WCAG AA contrast, checked by `scripts/check_contrast.py`
 
 ## Development
 
 ```bash
-# Re-download fonts and regenerate source/fonts.css
+# Lint tooling
+npm install
+npm run lint:css
+shellcheck install.sh scripts/*.sh
+uvx ruff check scripts/
+
+# Color contrast (WCAG AA) and Zettlr palette sync
+python3 scripts/check_contrast.py
+
+# Re-download fonts from Adobe's releases
 python3 scripts/fetch_fonts.py
 
-# Preview every element
-open -a Typora sample.md
+# Build the release bundle and install it locally
+./scripts/package.sh
+./install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
+
+# PDF from the command line
+pandoc note.md -f markdown+hard_line_breaks+mark+alerts-smart -t pdf --pdf-engine=typst \
+  --pdf-engine-opt=--ignore-system-fonts --pdf-engine-opt=--font-path=typst/fonts \
+  --template=typst/source.typst --lua-filter=typst/source.lua \
+  --shift-heading-level-by=-1 -o note.pdf
 ```
 
-All colors are CSS variables in `:root` of `source.css`. `source-dark.css` imports the light theme and overrides only those variables.
+CI lints everything and runs the installer on Ubuntu, macOS and Windows (PowerShell 5.1).
 
 ## Project Structure
 
 ```
-source.css          – Light theme (layout, typography, colors)
-source-dark.css     – Dark theme (color overrides only)
-source/fonts.css    – Generated @font-face rules
-source/fonts/       – Variable woff2 fonts and OFL licenses
-sample.md           – Sample document with all elements
-scripts/            – Install and font download scripts
+install.sh, install.ps1   – Installers (macOS/Linux, Windows)
+VERSION                   – Release version (CalVer)
+typst/source.typst        – Pandoc template for the PDF
+typst/source.lua          – Pandoc filter (alerts, typographic quotes)
+typst/fonts/              – Variable OTF fonts for Typst
+typst/example-meeting.md  – Example meeting note
+zettlr/                   – Zettlr editor theme, export profile template, snippet
+source*.css               – Typora themes
+source/                   – Web fonts (Typora) and embedded fonts (Zettlr)
+scripts/                  – Font download, contrast check, bundle build
+docs/                     – README images
 ```
+
+## Versioning
+
+[CalVer](https://calver.org/) in the format `YY.M.MICRO`, stored in `VERSION`. Pushing a tag `v<version>` builds the bundle and creates a GitHub release; the installers always fetch the latest release.
 
 ## License
 
-Theme: MIT – see [LICENSE](LICENSE).
-Fonts: SIL Open Font License 1.1 – see `source/fonts/OFL-*.txt`.
+Code and theme: MIT – see [LICENSE](LICENSE).
+Fonts: SIL Open Font License 1.1 – see `typst/fonts/OFL-*.txt`. Source is a trademark of Adobe.
