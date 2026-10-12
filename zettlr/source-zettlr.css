@@ -121,6 +121,7 @@ body .cm-editor {
     --zettlr-editor-accent-color: var(--src-bg);
     --zettlr-editor-accent-bg: var(--src-text-muted);
     --zettlr-editor-error-color: var(--src-alert-caution);
+    --zettlr-editor-line-decoration: none;
 
     /* Code syntax (Zettlr groups tokens by Solarized color names) */
     --zettlr-editor-code-base-00: var(--src-syntax-comment);
@@ -178,6 +179,20 @@ body .cm-editor .cm-line:has(.cm-header-6) {
     --zettlr-editor-header-style: italic 400;
     padding-top: 0.6em;
     color: var(--src-text-muted);
+}
+
+/* Same look for every built-in Zettlr theme (Bordeaux greys these out) */
+
+body .cm-editor .cm-link {
+    color: var(--src-accent);
+}
+
+body .cm-editor .cm-strong {
+    color: var(--src-heading);
+}
+
+body .cm-editor .cm-emphasis {
+    color: inherit;
 }
 
 /* Markdown syntax characters (#, *, `, …) recede */
