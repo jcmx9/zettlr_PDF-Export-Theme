@@ -9,13 +9,14 @@ Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks
 
 ![Example meeting note as PDF](docs/example-meeting.png)
 
-| Element  | Font            |
-| -------- | --------------- |
-| Headings | Source Serif 4  |
-| Body     | Source Sans 3   |
-| Code     | Source Code Pro |
+| Element     | Font            |
+| ----------- | --------------- |
+| Headings    | Source Serif 4  |
+| Body        | Source Sans 3   |
+| Code        | Source Code Pro |
+| Emoji (PDF) | Noto Emoji      |
 
-All fonts are Adobe's variable OTF builds, bundled with the theme; nothing is loaded from the internet at runtime.
+The Source fonts are Adobe's variable OTF builds. Emoji in the PDF use the monochrome Noto Emoji, so they take the text color; the editors use the system emoji font. All fonts are bundled with the theme; nothing is loaded from the internet at runtime.
 
 ## Install and update
 
@@ -73,7 +74,7 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 - **Line breaks:** every line break in the note is kept
 - **Tasks:** `- [ ]` / `- [x]` render as check boxes
 - **Alerts:** `> [!NOTE]` (Info), `[!TIP]` (Tipp), `[!IMPORTANT]` (Wichtig), `[!WARNING]` (Hinweis, calm orange), `[!CAUTION]` (Achtung); German keywords such as `> [!HINWEIS]` work as well
-- **Text:** `==highlight==`, footnotes, tables, code with syntax colors, math, typographic quotes, German hyphenation
+- **Text:** `==highlight==`, footnotes, tables, code with syntax colors, math, typographic quotes, German hyphenation, emoji (monochrome, in text color)
 - **Footer:** client, title and page numbers
 
 ### Editor theme
@@ -103,7 +104,7 @@ uvx ruff check scripts/
 # Color contrast (WCAG AA) and Zettlr palette sync
 python3 scripts/check_contrast.py
 
-# Re-download fonts from Adobe's releases
+# Re-download fonts (Adobe releases, Noto Emoji from google/fonts)
 python3 scripts/fetch_fonts.py
 
 # Build the release bundle and install it locally
@@ -142,4 +143,4 @@ docs/                     – README images
 ## License
 
 Code and theme: MIT – see [LICENSE](LICENSE).
-Fonts: SIL Open Font License 1.1 – see `typst/fonts/OFL-*.txt`. Source is a trademark of Adobe.
+Fonts: SIL Open Font License 1.1 – see `typst/fonts/OFL-*.txt`. Source is a trademark of Adobe; Noto is a trademark of Google.
