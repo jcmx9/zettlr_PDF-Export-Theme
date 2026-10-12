@@ -73,7 +73,7 @@ $endif$
   number-type: "old-style",
   number-width: "proportional",
 )
-#set par(leading: 0.7em, spacing: 1.1em)
+#set par(leading: 0.7em, spacing: 1.4em)
 
 $if(smart)$
 $else$
