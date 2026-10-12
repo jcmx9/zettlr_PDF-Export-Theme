@@ -210,8 +210,12 @@ remove_import() {
 write_profile() {
     local dir="$1" template content
     template="$(cat "${CURRENT}/zettlr/Source PDF.yaml.in")"
-    content="${template//@TYPST@/${TYPST_BIN}}"
-    content="${content//@DIR@/${CURRENT}}"
+    # Paths go into single-quoted YAML strings, where ' is written as ''
+    local q="'" typst_path dir_path
+    typst_path="${TYPST_BIN//${q}/${q}${q}}"
+    dir_path="${CURRENT//${q}/${q}${q}}"
+    content="${template//@TYPST@/${typst_path}}"
+    content="${content//@DIR@/${dir_path}}"
     mkdir -p "${dir}/defaults"
     printf '%s\n' "${content}" > "${dir}/defaults/${PROFILE_NAME}"
 }

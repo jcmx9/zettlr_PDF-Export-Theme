@@ -195,6 +195,30 @@ body .cm-editor .cm-emphasis {
     color: inherit;
 }
 
+/*
+ * Alert titles: Zettlr writes its own (translated) title into the span,
+ * e.g. "Notiz". Replace it with the titles used in Typora and the PDF.
+ */
+
+body .cm-editor .cm-admonition-title {
+    position: relative;
+    visibility: hidden;
+}
+
+body .cm-editor .cm-admonition-title::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: visible;
+    white-space: nowrap;
+}
+
+body .cm-editor .admonition-wrapper.note .cm-admonition-title::after { content: "Info"; }
+body .cm-editor .admonition-wrapper.tip .cm-admonition-title::after { content: "Tipp"; }
+body .cm-editor .admonition-wrapper.important .cm-admonition-title::after { content: "Wichtig"; }
+body .cm-editor .admonition-wrapper.warning .cm-admonition-title::after { content: "Hinweis"; }
+body .cm-editor .admonition-wrapper.caution .cm-admonition-title::after { content: "Achtung"; }
+
 /* Markdown syntax characters (#, *, `, …) recede */
 
 body .cm-editor .cm-code-mark {

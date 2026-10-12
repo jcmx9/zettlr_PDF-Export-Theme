@@ -32,7 +32,12 @@ main() {
     rm -f "${dist}/${name}".*
 
     cd "${repo_dir}"
-    COPYFILE_DISABLE=1 tar -czf "${dist}/${name}.tar.gz" --exclude '.DS_Store' "${files[@]}"
+    local tar_opts=(--exclude '.DS_Store')
+    if tar --version 2>/dev/null | grep -q bsdtar; then
+        # macOS: keep extended attributes out of the archive
+        tar_opts+=(--no-xattrs --no-mac-metadata)
+    fi
+    COPYFILE_DISABLE=1 tar -czf "${dist}/${name}.tar.gz" "${tar_opts[@]}" "${files[@]}"
     zip -qr -X "${dist}/${name}.zip" "${files[@]}" -x '*.DS_Store'
 
     checksum "${dist}/${name}.tar.gz"

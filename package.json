@@ -1,7 +1,7 @@
 {
-    "name": "typora-theme-source",
+    "name": "zettlr-pdf-export-theme",
     "private": true,
-    "description": "Lint tooling for the Source Typora theme",
+    "description": "Lint tooling for zettlr_PDF-Export-Theme",
     "license": "MIT",
     "scripts": {
         "lint:css": "stylelint \"*.css\" \"zettlr/*.css\""
