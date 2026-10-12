@@ -14,9 +14,9 @@ Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks
 | Headings    | Source Serif 4  |
 | Body        | Source Sans 3   |
 | Code        | Source Code Pro |
-| Emoji (PDF) | Noto Emoji      |
+| Emoji       | Noto Emoji      |
 
-The Source fonts are Adobe's variable OTF builds. Emoji in the PDF use the monochrome Noto Emoji, so they take the text color; the editors use the system emoji font. All fonts are bundled with the theme; nothing is loaded from the internet at runtime.
+The Source fonts are Adobe's variable OTF builds. Emoji use the monochrome Noto Emoji, so they follow the text color and weight in the PDF, Zettlr and Typora. All fonts are bundled with the theme; nothing is loaded from the internet at runtime.
 
 ## Install and update
 
@@ -89,7 +89,8 @@ Typora's own PDF export uses the active theme: A4 margins, no page breaks inside
 
 ## Typography
 
-- Old-style figures in running text, lining tabular figures in tables, neutral figures in code (Typora and Zettlr editor; in the PDF for Source Serif – Typst 0.15 does not apply the figure features of Source Sans yet)
+- Old-style figures in running text and headings, lining tabular figures in tables, neutral figures in code – in the PDF and both editors. Source Sans draws its old-style figures subtly, so they are easiest to spot in the Source Serif headings
+- Emoji are monochrome and follow the weight of the surrounding text. Exception in Zettlr: emoji written with an explicit color selector (e.g. ⚠️, ❤️) stay in color, because Chromium always renders those with the system color font
 - All text colors meet WCAG AA contrast, checked by `scripts/check_contrast.py`
 
 ## Development
@@ -105,7 +106,7 @@ uvx ruff check scripts/
 python3 scripts/check_contrast.py
 
 # Re-download fonts (Adobe releases, Noto Emoji from google/fonts)
-python3 scripts/fetch_fonts.py
+uv run scripts/fetch_fonts.py
 
 # Build the release bundle and install it locally
 ./scripts/package.sh
