@@ -5,6 +5,16 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.9] - 2026-10-12
+
+### Changed
+- Title and subtitle come from the front matter (`title`, `subtitle`); `#` headings in the text are real section headings. Notes without `title:` that start with `# Title` keep the old behavior
+- Footer shows at most two of client, title and subtitle, in this order
+- All snippets put the title into the front matter and use `#` for sections; client, title and subtitle are quoted so a colon cannot break the front matter
+
+### Fixed
+- A second `#` heading no longer turns into plain text in the PDF
+
 ## [26.10.8] - 2026-10-12
 
 ### Added
@@ -78,7 +88,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.8...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.9...HEAD
+[26.10.9]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.8...v26.10.9
 [26.10.8]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.7...v26.10.8
 [26.10.7]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.6...v26.10.7
 [26.10.6]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.5...v26.10.6

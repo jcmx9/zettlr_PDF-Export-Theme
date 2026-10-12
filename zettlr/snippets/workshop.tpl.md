@@ -1,34 +1,33 @@
 ---
-client: ${1:Kunde}
+client: "${1:Kunde}"
+title: "${2:Thema}"
 date: $CURRENT_DATE.$CURRENT_MONTH.$CURRENT_YEAR
-subtitle: Workshop
+subtitle: "Workshop"
 ---
 
-# ${2:Thema}
-
-## Ziel
+# Ziel
 
 ${3:Was soll am Ende des Workshops stehen?}
 
-## Ablauf
+# Ablauf
 
 | Zeit | Punkt | Wer |
 | :--- | :---- | :-- |
 | ${4:09:00} | ${5:Begrüßung} | |
 
-## Teilnehmer
+# Teilnehmer
 
 - ${6:Name}
 
-## Ergebnisse
+# Ergebnisse
 
 $7
 
-## Offene Fragen
+# Offene Fragen
 
 - 
 
-## Aufgaben
+# Aufgaben
 
 - [ ] ${8:Aufgabe} – ${9:Name}, bis 
 $0

@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.8** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.9** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben – Thema, Agenda, Teilnehmer, Mitschrift, Aufgaben – und mit einem Klick als ruhiges, typografisches A4-PDF exportieren. Alle Bausteine sind frei und quelloffen: Zettlr, Pandoc (in Zettlr enthalten) und [Typst](https://typst.app).
 
@@ -71,9 +71,9 @@ Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export
 
 ### Was das PDF kann
 
-- **Titel:** `# Thema` wird zum Dokumenttitel, `## Abschnitt` zu den Abschnittsüberschriften
+- **Titel und Überschriften:** Titel und Untertitel stehen im Front Matter (`title`, `subtitle`); `#`, `##`, … im Text sind echte Abschnittsüberschriften, beliebig oft. Titel mit Doppelpunkt in Anführungszeichen setzen: `title: "Relaunch: Kick-off"`. Ältere Notizen ohne `title:`, die mit `# Titel` beginnen, funktionieren weiter: Diese Überschrift wird zum Titel, die übrigen rücken eine Ebene hoch
 - **Front Matter (optional):**
-  - `client`, `subtitle`, `author`
+  - `title`, `subtitle`, `client`, `author`
   - `date` – ohne Angabe das Exportdatum
   - `logo` – Bild neben dem Titel, Pfad relativ zur Notiz (unter macOS/Linux auch absolut). Es behält seine Proportionen und passt in 20 mm Höhe und 60 mm Breite
   - `logo-height` – maximale Logohöhe statt 20 mm, z. B. `logo-height: 15mm`
@@ -91,7 +91,7 @@ Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export
 - **Seitenumbrüche:** `\newpage` oder `<!-- pagebreak -->` auf einer eigenen Zeile
 - **Lange Tabellen** laufen auf der nächsten Seite weiter und wiederholen dort ihre Kopfzeile
 - **Text:** `==Markierung==`, Fußnoten, Code mit Syntaxfarben, Formeln, typografische Anführungszeichen, deutsche Silbentrennung, Emojis (einfarbig, in Textfarbe)
-- **Fußzeile:** Kunde, Titel und Seitenzahlen
+- **Fußzeile:** höchstens zwei Angaben aus Kunde, Titel und Untertitel in dieser Reihenfolge (z. B. „Kunde · Titel“, ohne Kunde „Titel · Untertitel“) und die Seitenzahl
 - **PDF/A-2u:** das PDF erfüllt den Archivstandard. Bilder und Diagramme haben Alternativtexte; volle Barrierefreiheit nach PDF/UA wird nicht erzwungen, weil sonst alltägliche Notizen am Export scheitern würden (z. B. eine Notiz, die mit `###` beginnt)
 
 ### Editor-Theme
@@ -135,8 +135,7 @@ python3 scripts/fetch_packages.py
 # PDF auf der Kommandozeile
 pandoc note.md -f markdown+hard_line_breaks+mark+alerts-smart -t pdf --pdf-engine=typst \
   --pdf-engine-opt=--ignore-system-fonts --pdf-engine-opt=--font-path=typst/fonts \
-  --template=typst/source.typst --lua-filter=typst/source.lua \
-  --shift-heading-level-by=-1 -o note.pdf
+  --template=typst/source.typst --lua-filter=typst/source.lua -o note.pdf
 ```
 
 Die CI prüft alles, führt den Installer unter Ubuntu, macOS und Windows (PowerShell 5.1) aus und exportiert die Testnotizen mit Zettlrs Pandoc-Version über das installierte Profil.

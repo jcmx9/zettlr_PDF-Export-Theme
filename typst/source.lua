@@ -12,6 +12,9 @@
 -- 5. Task lists with owners ("- [ ] Task – Name, bis 17.10.") become a
 --    table with the columns task, owner, due date and status.
 -- 6. \newpage, \pagebreak and <!-- pagebreak --> start a new page.
+-- 7. The title comes from the front matter. A note without "title:" that
+--    starts with "# Title" keeps the old behavior: that heading becomes the
+--    title and the other headings move up one level.
 
 local TEXT = {
   de = {
@@ -114,6 +117,24 @@ local function image(img)
   end
   table.insert(args, "alt: " .. typst_string(alt))
   return pandoc.RawInline("typst", "#box(image(" .. table.concat(args, ", ") .. "))")
+end
+
+-- --- Title -------------------------------------------------------------------
+
+local function title_from_heading(doc)
+  local first = doc.blocks[1]
+  if doc.meta.title or not first or first.t ~= "Header" or first.level ~= 1 then
+    return nil
+  end
+  doc.meta.title = pandoc.MetaInlines(first.content)
+  doc.blocks:remove(1)
+  doc.blocks = doc.blocks:walk({
+    Header = function(h)
+      h.level = math.max(1, h.level - 1)
+      return h
+    end,
+  })
+  return doc
 end
 
 -- --- Metadata ----------------------------------------------------------------
@@ -341,6 +362,7 @@ local function quotes(str)
 end
 
 return {
+  { Pandoc = title_from_heading },
   { Meta = Meta },
   { BulletList = task_table, RawBlock = raw_block, Image = image },
   { Div = alert, BlockQuote = german_alert, Str = quotes },

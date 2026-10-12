@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.8** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
+**Version 26.10.9** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
 
 Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks – and export them with one click as a calm, typographic A4 PDF. Everything involved is free and open source: Zettlr, Pandoc (ships with Zettlr) and [Typst](https://typst.app).
 
@@ -71,9 +71,9 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 
 ### What the PDF supports
 
-- **Title:** `# Topic` becomes the document title, `## Section` the section headings
+- **Title and headings:** title and subtitle live in the front matter (`title`, `subtitle`); `#`, `##`, … in the text are real section headings, as many as needed. Quote titles that contain a colon: `title: "Relaunch: Kick-off"`. Older notes without `title:` that start with `# Title` keep working: that heading becomes the title and the others move up one level
 - **Front matter (optional):**
-  - `client`, `subtitle`, `author`
+  - `title`, `subtitle`, `client`, `author`
   - `date` – defaults to the export date
   - `logo` – image next to the title, path relative to the note (or absolute on macOS/Linux). It keeps its proportions and fits into 20 mm height and 60 mm width
   - `logo-height` – maximum logo height instead of 20 mm, e.g. `logo-height: 15mm`
@@ -91,7 +91,7 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 - **Page breaks:** `\newpage` or `<!-- pagebreak -->` on a line of its own
 - **Long tables** continue on the next page with their header repeated
 - **Text:** `==highlight==`, footnotes, code with syntax colors, math, typographic quotes, German hyphenation, emoji (monochrome, in text color)
-- **Footer:** client, title and page numbers
+- **Footer:** at most two of client, title and subtitle, in this order (e.g. “Client · Title”, without client “Title · Subtitle”), and the page number
 - **PDF/A-2u:** the PDF meets the archiving standard. Images and diagrams carry alt texts; full PDF/UA accessibility is not enforced, because it would make exports fail on everyday notes (e.g. a note starting with `###`)
 
 ### Editor theme
@@ -135,8 +135,7 @@ python3 scripts/fetch_packages.py
 # PDF from the command line
 pandoc note.md -f markdown+hard_line_breaks+mark+alerts-smart -t pdf --pdf-engine=typst \
   --pdf-engine-opt=--ignore-system-fonts --pdf-engine-opt=--font-path=typst/fonts \
-  --template=typst/source.typst --lua-filter=typst/source.lua \
-  --shift-heading-level-by=-1 -o note.pdf
+  --template=typst/source.typst --lua-filter=typst/source.lua -o note.pdf
 ```
 
 CI lints everything, runs the installer on Ubuntu, macOS and Windows (PowerShell 5.1) and exports the test notes with Zettlr's Pandoc version through the installed profile.

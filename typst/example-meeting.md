@@ -1,31 +1,30 @@
 ---
-client: Muster GmbH
+client: "Muster GmbH"
+title: "Relaunch Website – Kick-off"
 date: 12.10.2026
 ---
 
-# Relaunch Website – Kick-off
-
-## Agenda
+# Agenda
 
 1. Ziele und Rahmen des Projekts
 2. Zeitplan bis zum Go-live
 3. Nächste Schritte
 
-## Teilnehmer
+# Teilnehmer
 
 - Anna Beispiel (Muster GmbH, Marketing)
 - Ben Probe (Muster GmbH, IT)
 - jcmx9 (Beratung)
 
-## Mitschrift
+# Mitschrift
 
-### Ziele
+## Ziele
 
 Neue Website soll Anfragen messbar steigern.
 Fokus zuerst auf Leistungen und Kontakt.
 Bestehende Inhalte werden geprüft, nicht 1:1 übernommen.
 
-### Zeitplan
+## Zeitplan
 
 | Phase        | Zeitraum          | Verantwortlich |
 | ------------ | ----------------- | -------------- |
@@ -37,7 +36,7 @@ Bestehende Inhalte werden geprüft, nicht 1:1 übernommen.
 
 Technische Details, z. B. die Weiterleitung `www → apex`, klärt die IT direkt.
 
-## Aufgaben
+# Aufgaben
 
 - [ ] Sitemap-Entwurf erstellen – jcmx9, bis 17.10.
 - [ ] Zugänge zum bestehenden CMS bereitstellen – Ben Probe, bis 15.10.

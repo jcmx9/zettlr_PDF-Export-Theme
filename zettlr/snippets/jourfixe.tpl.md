@@ -1,28 +1,27 @@
 ---
-client: ${1:Kunde}
+client: "${1:Kunde}"
+title: "Jour fixe ${2:Projekt}"
 date: $CURRENT_DATE.$CURRENT_MONTH.$CURRENT_YEAR
 next: ${8:offen}
 ---
 
-# Jour fixe ${2:Projekt}
-
-## Teilnehmer
+# Teilnehmer
 
 - ${3:Name}
 
-## Stand
+# Stand
 
 ${4:Was ist seit dem letzten Termin passiert?}
 
-## Themen
+# Themen
 
 1. ${5:Thema}
 
-## Entscheidungen
+# Entscheidungen
 
 - 
 
-## Aufgaben
+# Aufgaben
 
 - [ ] ${6:Aufgabe} – ${7:Name}, bis 
 $0
