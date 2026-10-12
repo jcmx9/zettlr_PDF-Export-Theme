@@ -1,0 +1,43 @@
+name: Check for Typst updates
+
+# Typst is pinned in the installers and Dependabot cannot see it, so check
+# once a month and open an issue when a newer release exists.
+
+on:
+  schedule:
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Compare pinned and latest Typst
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          pinned="$(sed -n 's/^readonly TYPST_VERSION="\(.*\)"$/\1/p' install.sh)"
+          latest="$(gh api repos/typst/typst/releases/latest --jq .tag_name)"
+          latest="${latest#v}"
+          # Only plain version numbers go into the issue text
+          echo "${latest}" | grep -Eqx '[0-9]+(\.[0-9]+)*' || { echo "unexpected tag: ${latest}"; exit 1; }
+          echo "pinned: ${pinned}, latest: ${latest}"
+          if [ "${pinned}" = "${latest}" ]; then
+            exit 0
+          fi
+          title="Typst ${latest} is available (pinned: ${pinned})"
+          if gh issue list --state open --search "in:title \"${title}\"" --json number --jq 'length' | grep -qx 0; then
+            gh issue create --title "${title}" --body "Typst ${latest} was released: https://github.com/typst/typst/releases/tag/v${latest}
+
+          To update:
+          1. Set \`TYPST_VERSION\` in \`install.sh\` and \`\$TypstVersion\` in \`install.ps1\` to \`${latest}\`.
+          2. Run \`./scripts/test_pdf.sh\` with the new Typst and check the PDFs (figures, emoji, Mermaid).
+          3. Check that the mmdr package in \`typst/packages\` still supports it."
+          fi
