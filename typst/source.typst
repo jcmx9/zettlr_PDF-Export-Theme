@@ -1,0 +1,218 @@
+// Source — Pandoc template for Typst (A4 PDF, e.g. meeting notes for clients)
+// Headings: Source Serif 4 · Body: Source Sans 3 · Code: Source Code Pro
+// Colors mirror source.css. Fonts are expected via --font-path typst/fonts.
+//
+// Metadata (all optional): title, subtitle, client, date, author, lang.
+// Without a date, the export date is used.
+
+#let text-color = rgb("#2b2b2b")
+#let muted = rgb("#6b6b6b")
+#let heading-color = rgb("#1a1a1a")
+#let accent = rgb("#b5452b")
+#let border = rgb("#e4e1dc")
+#let code-bg = rgb("#f4f2ee")
+
+#let font-serif = ("Source Serif 4",)
+#let font-sans = ("SourceSans3VF",)
+#let font-mono = ("SourceCodeVF",)
+
+// Helpers referenced by Pandoc's Typst writer
+#let horizontalrule = block(above: 1.6em, below: 1.6em, line(length: 100%, stroke: 0.6pt + border))
+#let divider = horizontalrule
+
+#show figure.where(kind: table): set figure.caption(position: $if(table-caption-position)$$table-caption-position$$else$top$endif$)
+#show figure.where(kind: image): set figure.caption(position: $if(figure-caption-position)$$figure-caption-position$$else$bottom$endif$)
+
+$if(highlighting-definitions)$
+$highlighting-definitions$
+
+$endif$
+#let doc-title = $if(title)$[$title$]$else$none$endif$
+#let doc-client = $if(client)$[$client$]$else$none$endif$
+#let doc-date = $if(date)$[$date$]$else$datetime.today().display("[day].[month].[year]")$endif$
+
+#set document(
+$if(title)$
+  title: [$title$],
+$endif$
+$if(author)$
+  author: ($for(author)$"$author$"$sep$, $endfor$),
+$endif$
+)
+
+#set page(
+  paper: "$if(papersize)$$papersize$$else$a4$endif$",
+  margin: (top: 24mm, bottom: 26mm, x: 22mm),
+  footer: context {
+    set text(size: 8.5pt, fill: muted)
+    line(length: 100%, stroke: 0.5pt + border)
+    v(-4pt)
+    grid(
+      columns: (1fr, auto),
+      {
+        if doc-client != none [#doc-client]
+        if doc-client != none and doc-title != none [ · ]
+        if doc-title != none [#doc-title]
+      },
+      [Seite #counter(page).display() / #counter(page).final().first()],
+    )
+  },
+)
+
+#set text(
+  font: font-sans,
+  size: 10.5pt,
+  fill: text-color,
+  lang: "$if(lang)$$lang$$else$de$endif$",
+  hyphenate: true,
+)
+#set par(leading: 0.7em, spacing: 1.1em)
+
+$if(smart)$
+$else$
+#set smartquote(enabled: false)
+
+$endif$
+// Headings: section headings are level 1, because "# Title" becomes the
+// document title (shift-heading-level-by: -1 in the export profile).
+
+#show heading: set text(font: font-serif, fill: heading-color, weight: 600)
+#show heading: set block(sticky: true)
+#show heading.where(level: 1): set text(size: 14.5pt)
+#show heading.where(level: 1): set block(above: 2em, below: 0.8em)
+#show heading.where(level: 2): set text(size: 12pt)
+#show heading.where(level: 2): set block(above: 1.6em, below: 0.7em)
+#show heading.where(level: 3): set text(size: 10.5pt, weight: 700)
+#show heading.where(level: 3): set block(above: 1.4em, below: 0.6em)
+#show heading.where(level: 4): set text(size: 10.5pt, style: "italic")
+#show heading.where(level: 4): set block(above: 1.3em, below: 0.6em)
+#show heading.where(level: 5): set text(size: 10.5pt, style: "italic", weight: 400, fill: muted)
+
+// Text elements
+
+#show link: set text(fill: accent)
+#show strong: set text(weight: 700, fill: heading-color)
+#show highlight: set highlight(fill: rgb("#fbeab0"))
+
+#set list(indent: 0.3em, body-indent: 0.6em, marker: ([•], [–]))
+#set enum(indent: 0.3em, body-indent: 0.6em)
+#set terms(hanging-indent: 1.5em)
+
+// Task lists: Pandoc writes ☐ / ☒, drawn here as boxes
+#let task-box(done) = box(
+  width: 0.8em,
+  height: 0.8em,
+  baseline: 0.1em,
+  radius: 1.5pt,
+  stroke: 0.7pt + muted,
+  fill: if done { accent } else { none },
+  if done { align(center + horizon, text(fill: white, size: 0.65em, weight: 700)[✓]) },
+)
+#show "☐": task-box(false)
+#show "☒": task-box(true)
+
+// Lists whose items all start with a task box lose their bullet; the box
+// becomes the marker and wrapped lines align with the text.
+#let task-parts(body) = {
+  let children = if body.has("children") { body.children } else { (body,) }
+  if children.len() == 0 { return none }
+  let first = children.first()
+  if first.func() != text { return none }
+  for mark in ("☐", "☒") {
+    if first.text.starts-with(mark) {
+      let rest = first.text.trim(mark, at: start).trim(at: start)
+      return (done: mark == "☒", body: (text(rest),) + children.slice(1))
+    }
+  }
+  none
+}
+#show list: it => {
+  let tasks = it.children.map(item => task-parts(item.body))
+  if tasks.len() == 0 or tasks.contains(none) { return it }
+  block(above: 0.9em, below: 0.9em, for task in tasks {
+    block(above: 0.5em, below: 0.5em, grid(
+      columns: (1.4em, 1fr),
+      task-box(task.done), task.body.join(),
+    ))
+  })
+}
+
+#show quote.where(block: true): it => block(
+  stroke: (left: 2pt + accent),
+  inset: (left: 12pt, y: 3pt),
+  above: 1.2em,
+  below: 1.2em,
+  text(font: font-serif, style: "italic", fill: muted, it.body),
+)
+
+// Code
+
+#show raw: set text(font: font-mono, size: 0.88em)
+#show raw.where(block: false): it => box(
+  fill: code-bg,
+  inset: (x: 3pt),
+  outset: (y: 3pt),
+  radius: 2pt,
+  it,
+)
+#show raw.where(block: true): it => block(
+  width: 100%,
+  fill: code-bg,
+  stroke: 0.5pt + border,
+  radius: 4pt,
+  inset: 10pt,
+  text(size: 0.95em, it),
+)
+
+// Tables
+
+#set table(
+  inset: (x: 8pt, y: 6pt),
+  stroke: (_, y) => (
+    top: if y == 0 { 0.8pt + text-color } else { none },
+    bottom: if y == 0 { 0.8pt + text-color } else { 0.5pt + border },
+  ),
+)
+#show table.cell.where(y: 0): set text(weight: 600)
+// Pandoc wraps tables in align(center); keep them and their cells left-aligned
+#show figure.where(kind: table): it => {
+  show align: a => a.body
+  set align(start)
+  it
+}
+#show table: set text(number-type: "lining", number-width: "tabular")
+
+$for(header-includes)$
+$header-includes$
+
+$endfor$
+// Title block
+
+#if doc-client != none {
+  text(size: 9pt, fill: muted, tracking: 0.08em, upper(doc-client))
+  v(0.2em)
+}
+#if doc-title != none {
+  block(below: 1em, par(leading: 0.4em, text(font: font-serif, size: 2.1em, weight: 700, fill: heading-color, doc-title)))
+}
+$if(subtitle)$
+#block(below: 0.4em, text(font: font-serif, size: 1.25em, fill: muted)[$subtitle$])
+$endif$
+#text(size: 9.5pt, fill: muted)[#doc-date$if(author)$ · $for(author)$$author$$sep$, $endfor$$endif$]
+#v(0.3em)
+#line(length: 100%, stroke: 0.8pt + border)
+
+$for(include-before)$
+$include-before$
+
+$endfor$
+$if(toc)$
+#outline(title: auto, depth: $toc-depth$)
+
+$endif$
+$body$
+
+$for(include-after)$
+$include-after$
+
+$endfor$

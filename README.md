@@ -1,6 +1,6 @@
 # Source — Typora Theme
 
-> A calm, typographic theme for Typora and Zettlr built on Adobe's Source superfamily.
+> A calm, typographic theme for Typora and Zettlr, plus a Typst PDF export, built on Adobe's Source superfamily.
 
 [![CI](https://github.com/jcmx9/Typora_Theme-Source/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/Typora_Theme-Source/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -71,7 +71,31 @@ Differences to Typora:
 - Zettlr runs on Chromium, so it uses the TTF fonts, which are embedded in `source/fonts-ttf.css`; Zettlr's file protocol cannot serve font files across origins.
 - Exports run through Pandoc and are not affected by the theme.
 
-## PDF export
+## PDF export with Zettlr, Pandoc and Typst
+
+For client-ready PDFs (e.g. meeting notes written live during a call), Zettlr exports through Pandoc and [Typst](https://typst.app). Everything involved is free and open source, Pandoc ships with Zettlr, and Typst is a single binary without further dependencies.
+
+![Example meeting note as PDF](docs/example-meeting.png)
+
+- **Layout:** A4, client name and title block, section headings in Source Serif, body in Source Sans, footer with client, title and page numbers, German hyphenation
+- **Line breaks:** every line break in the note is kept in the PDF
+- **Title:** `# Topic` becomes the document title, `## Agenda`, `## Teilnehmer` … become the sections
+- **Front matter (optional):** `client`, `date` (defaults to the export date), `subtitle`, `author`
+- **Tasks:** `- [ ]` / `- [x]` lists render as check boxes
+
+`./scripts/install-zettlr.sh` writes the export profile **Source PDF (Typst)** with the absolute paths of this repository and of `typst` (from `PATH`, `~/.local/bin`, `~/.cargo/bin` or Homebrew). It also links the snippet `protokoll`: type `:protokoll` in a new note to get the structure with client, date, topic, agenda, participants, notes and tasks.
+
+Without the script (e.g. on another machine), copy `zettlr/Source PDF (Typst).yaml.in` to Zettlr's `defaults/` folder as `Source PDF (Typst).yaml`, replace `@TYPST@` with the path of the typst binary and `@REPO@` with the folder that contains `typst/`, and copy `zettlr/snippets/protokoll.tpl.md` to Zettlr's `snippets/` folder.
+
+Export from the command line:
+
+```bash
+pandoc note.md -f markdown+hard_line_breaks -t pdf --pdf-engine=typst \
+  --pdf-engine-opt=--ignore-system-fonts --pdf-engine-opt=--font-path=typst/fonts \
+  --template=typst/source.typst --shift-heading-level-by=-1 -o note.pdf
+```
+
+## PDF export from Typora
 
 Paper size (A4) and page margins come from the theme. Headers and footers are set in Typora under *Preferences → Export → PDF*:
 
@@ -124,6 +148,10 @@ source-dark-compact.css   – Compact dark variant
 zettlr/source-zettlr.css  – Zettlr theme (light and dark)
 source/fonts.css          – Generated @font-face rules (OTF files, Typora)
 source/fonts-ttf.css      – Generated @font-face rules (embedded TTF, Zettlr)
+typst/source.typst        – Pandoc template for the Typst PDF export
+typst/fonts/              – Variable TTF fonts for Typst
+typst/example-meeting.md  – Example meeting note
+zettlr/                   – Zettlr export profile template and snippet
 source/fonts/             – Variable OTF fonts (woff2) and OFL licenses
 sample.md                 – Sample document with all elements
 scripts/                  – Install (Typora, Zettlr), package, font download, contrast check

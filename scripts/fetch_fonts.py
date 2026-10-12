@@ -2,14 +2,15 @@
 """Download the Source font family from Adobe's GitHub releases.
 
 Unlike the Google Fonts builds, Adobe's variable fonts keep all OpenType
-features, e.g. old-style figures. Two variants are generated:
+features, e.g. old-style figures. Three variants are generated:
 
 - OTF (CFF2) files in source/fonts/ for Typora on macOS (WebKit),
   referenced by source/fonts.css
 - TTF embedded as data URIs in source/fonts-ttf.css for Chromium-based apps
   such as Zettlr, whose custom scheme cannot serve fonts across origins
+- Desktop TTF files in typst/fonts/ for the Pandoc/Typst PDF export
 
-The OFL license texts are stored in source/fonts/.
+The OFL license texts are stored next to the font files.
 """
 
 import base64
@@ -21,6 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 FONT_DIR = ROOT / "source" / "fonts"
+TYPST_FONT_DIR = ROOT / "typst" / "fonts"
 FONT_CSS = {
     "otf": ROOT / "source" / "fonts.css",
     "ttf": ROOT / "source" / "fonts-ttf.css",
@@ -63,6 +65,31 @@ FAMILIES = [
     ),
 ]
 
+# Desktop variable TTFs for Typst: repo, release tag, release asset, members
+TYPST_FONTS = [
+    (
+        "source-serif",
+        "4.005R",
+        "source-serif-4.005_Desktop.zip",
+        [
+            "source-serif-4.005_Desktop/VAR/SourceSerif4Variable-Roman.ttf",
+            "source-serif-4.005_Desktop/VAR/SourceSerif4Variable-Italic.ttf",
+        ],
+    ),
+    (
+        "source-sans",
+        "3.052R",
+        "VF-source-sans-3.052R.zip",
+        ["VF/SourceSans3VF-Upright.ttf", "VF/SourceSans3VF-Italic.ttf"],
+    ),
+    (
+        "source-code-pro",
+        "2.042R-u%2F1.062R-i%2F1.026R-vf",
+        "VF-source-code-VF-1.026R.zip",
+        ["VF/SourceCodeVF-Upright.ttf", "VF/SourceCodeVF-Italic.ttf"],
+    ),
+]
+
 FACE = """@font-face {{
     font-family: "{family}";
     font-style: {style};
@@ -76,6 +103,21 @@ FACE = """@font-face {{
 def fetch(url: str) -> bytes:
     with urllib.request.urlopen(url, timeout=60) as response:
         return response.read()
+
+
+def fetch_typst_fonts() -> None:
+    TYPST_FONT_DIR.mkdir(parents=True, exist_ok=True)
+    for stale in TYPST_FONT_DIR.glob("*.ttf"):
+        stale.unlink()
+    for repo, tag, asset, members in TYPST_FONTS:
+        url = RELEASES.format(repo=repo, tag=tag, asset=asset)
+        with zipfile.ZipFile(io.BytesIO(fetch(url))) as archive:
+            for member in members:
+                filename = Path(member).name
+                (TYPST_FONT_DIR / filename).write_bytes(archive.read(member))
+                print(f"  typst/fonts/{filename}")
+    for license_file in FONT_DIR.glob("OFL-*.txt"):
+        (TYPST_FONT_DIR / license_file.name).write_bytes(license_file.read_bytes())
 
 
 def main() -> int:
@@ -112,6 +154,8 @@ def main() -> int:
     for fmt, path in FONT_CSS.items():
         path.write_text(header + "\n".join(rules[fmt]))
         print(f"{len(rules[fmt])} {fmt} fonts, CSS written to {path.relative_to(ROOT)}")
+
+    fetch_typst_fonts()
     return 0
 
 
