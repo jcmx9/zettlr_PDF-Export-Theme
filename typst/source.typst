@@ -1,6 +1,6 @@
 // Source — Pandoc template for Typst (A4 PDF, e.g. meeting notes for clients)
 // Headings: Source Serif 4 · Body: Source Sans 3 · Code: Source Code Pro
-// Colors mirror source.css. Fonts are expected via --font-path typst/fonts.
+// Colors match zettlr/source-zettlr.css. Fonts are expected via --font-path typst/fonts.
 // Noto Emoji (monochrome) is the fallback for emoji and symbols, so they take
 // the text color and weight.
 //

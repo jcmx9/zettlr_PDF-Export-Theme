@@ -1,6 +1,6 @@
 # Zettlr PDF Export Theme
 
-> Clean, client-ready PDFs from Zettlr notes – plus a matching editor theme for Zettlr and Typora, built on Adobe's Source type family.
+> Clean, client-ready PDFs from Zettlr notes – plus a matching Zettlr editor theme, built on Adobe's Source type family.
 
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -16,7 +16,7 @@ Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks
 | Code        | Source Code Pro |
 | Emoji       | Noto Emoji      |
 
-The Source fonts are Adobe's variable OTF builds. Emoji use the monochrome Noto Emoji, so they follow the text color and weight in the PDF, Zettlr and Typora. All fonts are bundled with the theme; nothing is loaded from the internet at runtime.
+The Source fonts are Adobe's variable OTF builds. Emoji use the monochrome Noto Emoji, so they follow the text color and weight in the PDF and in Zettlr. All fonts are bundled with the theme; nothing is loaded from the internet at runtime.
 
 ## Install and update
 
@@ -38,8 +38,9 @@ The installer
 
 1. downloads the latest release and verifies its SHA-256 checksum,
 2. downloads Typst into its own folder if needed (no system changes),
-3. sets up **Zettlr** if installed: editor theme, export profile **Source PDF**, snippet **protokoll**,
-4. sets up **Typora** if installed: themes Source, Source Dark, Source Compact, Source Dark Compact.
+3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippet **protokoll**.
+
+Versions up to 26.10.4 also installed Typora themes; the installer removes them (only its own files).
 
 Existing rules in Zettlr's `custom.css` are kept; a timestamped backup is written before every change.
 
@@ -47,7 +48,6 @@ Existing rules in Zettlr's `custom.css` are kept; a timestamped backup is writte
 | --- | --- | --- | --- |
 | Installer files | `~/.local/share/zettlr-pdf-export-theme` | `~/.local/share/zettlr-pdf-export-theme` | `%LOCALAPPDATA%\zettlr-pdf-export-theme` |
 | Zettlr | `~/Library/Application Support/zettlr` | `~/.config/zettlr` | `%APPDATA%\zettlr` |
-| Typora | `~/Library/Application Support/abnerworks.Typora/themes` | `~/.config/Typora/themes` | `%APPDATA%\Typora\themes` |
 
 ### Uninstall
 
@@ -83,15 +83,9 @@ The editor theme works with every built-in Zettlr theme; Zettlr's *Appearance �
 
 Tags are shown in the accent color including their `#`. Zettlr does not support tag hierarchies: in Obsidian-style tags such as `#project/client` only `#project` is recognized and colored; the note itself stays unchanged.
 
-## Typora
-
-The installer adds four themes to Typora: **Source**, **Source Dark**, **Source Compact** and **Source Dark Compact**. Choose them from the **Themes** menu after restarting Typora. To switch with the system appearance, enable *Preferences → Appearance → Use separate theme in dark mode* and select **Source Dark**.
-
-Typora's own PDF export uses the active theme: A4 margins, no page breaks inside code blocks, tables or quotes. Page numbers are set under *Preferences → Export → PDF*, e.g. `${pageNo} / ${totalPages}` in the footer.
-
 ## Typography
 
-- Old-style figures in running text and headings, lining tabular figures in tables, neutral figures in code – in the PDF and both editors. Source Sans draws its old-style figures subtly, so they are easiest to spot in the Source Serif headings
+- Old-style figures in running text and headings, lining tabular figures in tables, neutral figures in code – in the PDF and in Zettlr. Source Sans draws its old-style figures subtly, so they are easiest to spot in the Source Serif headings
 - Emoji are monochrome and follow the weight of the surrounding text. Exception in Zettlr: emoji written with an explicit color selector (e.g. ⚠️, ❤️) stay in color, because Chromium always renders those with the system color font
 - All text colors meet WCAG AA contrast, checked by `scripts/check_contrast.py`
 
@@ -104,7 +98,7 @@ npm run lint:css
 shellcheck install.sh scripts/*.sh
 uvx ruff check scripts/
 
-# Color contrast (WCAG AA) and Zettlr palette sync
+# Color contrast of the Zettlr palette (WCAG AA)
 python3 scripts/check_contrast.py
 
 # Re-download fonts (Adobe releases, Noto Emoji from google/fonts)
@@ -132,9 +126,7 @@ typst/source.typst        – Pandoc template for the PDF
 typst/source.lua          – Pandoc filter (alerts, typographic quotes)
 typst/fonts/              – Variable OTF fonts for Typst
 typst/example-meeting.md  – Example meeting note
-zettlr/                   – Zettlr editor theme, export profile template, snippet
-source*.css               – Typora themes
-source/                   – Web fonts (Typora) and embedded fonts (Zettlr)
+zettlr/                   – Zettlr editor theme, embedded fonts, export profile template, snippet
 scripts/                  – Font download, contrast check, bundle build
 docs/                     – README images
 ```
