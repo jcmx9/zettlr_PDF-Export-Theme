@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.7** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
+**Version 26.10.8** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
 
 Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks – and export them with one click as a calm, typographic A4 PDF. Everything involved is free and open source: Zettlr, Pandoc (ships with Zettlr) and [Typst](https://typst.app).
 
@@ -40,7 +40,7 @@ The installer
 
 1. downloads the latest release and verifies its SHA-256 checksum,
 2. downloads Typst into its own folder if needed (no system changes),
-3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippets **protokoll**, **jourfixe**, **workshop** and **entscheidung**.
+3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippets **protokoll**, **jourfixe**, **workshop**, **entscheidung** and **kopfdaten**.
 
 Versions up to 26.10.4 also installed Typora themes; the installer removes them (only its own files).
 
@@ -64,7 +64,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
 ## Usage in Zettlr
 
 1. Restart Zettlr after installing.
-2. New note: type `:protokoll` and press Enter. Tab jumps through client, topic, agenda, participants, notes and tasks; the date is filled in automatically. Further snippets: `:jourfixe`, `:workshop` and `:entscheidung` (decision paper).
+2. New note: type `:protokoll` and press Enter. Tab jumps through client, topic, agenda, participants, notes and tasks; the date is filled in automatically. Further snippets: `:jourfixe`, `:workshop` and `:entscheidung` (decision paper). `:kopfdaten` inserts every front matter field with a default and a comment; empty fields are ignored on export.
 3. Export: **File → Export…** (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>E</kbd>), profile **Source PDF**.
 
 Where the PDF is saved is set under *Preferences → Import and Export*.
