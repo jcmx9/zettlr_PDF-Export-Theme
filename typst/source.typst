@@ -46,6 +46,7 @@ $highlighting-definitions$
 $endif$
 #let doc-title = $if(title)$[$title$]$else$none$endif$
 #let doc-client = $if(client)$[$client$]$else$none$endif$
+#let doc-subtitle = $if(subtitle)$[$subtitle$]$else$none$endif$
 #let doc-date = $if(date)$[$date$]$else$datetime.today().display("[day].[month].[year]")$endif$
 #let doc-logo-path = $if(logo-path)$$logo-path$$else$none$endif$
 // The logo keeps its proportions and fits into 20mm height and 60mm width
@@ -79,10 +80,10 @@ $endif$
     v(-4pt)
     grid(
       columns: (1fr, auto),
+      // At most two of client, title and subtitle, in this order
       {
-        if doc-client != none [#doc-client]
-        if doc-client != none and doc-title != none [ · ]
-        if doc-title != none [#doc-title]
+        let parts = (doc-client, doc-title, doc-subtitle).filter(p => p != none)
+        parts.slice(0, calc.min(2, parts.len())).join([ · ])
       },
       [#label-text("page") #counter(page).display() / #counter(page).final().first()],
     )
@@ -106,8 +107,8 @@ $else$
 #set smartquote(enabled: false)
 
 $endif$
-// Headings: section headings are level 1, because "# Title" becomes the
-// document title (shift-heading-level-by: -1 in the export profile).
+// Headings: "#" in the note is the first section level; the document title
+// comes from the front matter (see source.lua for notes without "title:").
 
 #show heading: set text(font: font-serif, fill: heading-color, weight: 600)
 #show heading: set block(sticky: true)

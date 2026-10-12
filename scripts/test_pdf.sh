@@ -120,6 +120,12 @@ main() {
     reject empty-fields.md "${text}" "Nächster Termin"
     echo "ok   empty-fields.md"
 
+    # Title from the front matter, several "#" sections, footer without client
+    text="$(render yaml-title.md "${profile}")"
+    expect yaml-title.md "${text}" "Kick-off: Relaunch" "Ziele" "Unterpunkt" "Aufgaben" \
+        "Kick-off: Relaunch · Workshop"
+    echo "ok   yaml-title.md"
+
     # Snippets with their placeholders filled in must export as well
     local snippet name
     # shellcheck disable=SC2016 # literal $ placeholders
