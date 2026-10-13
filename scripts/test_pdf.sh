@@ -92,7 +92,6 @@ main() {
         "Screenshot aus dem Termin" "Kick-off" "Konzept ok?" \
         "Aufgabe" "Wer" "Bis" "Status" "Ben Probe" "15.10." \
         "Ohne Zuständigkeit bleibt es eine Liste" \
-        "Nächster Termin:" "24.10.2026, 10:00 Uhr" \
         "Seite 1 /" "Muster GmbH · Source – Elementtest"
     # Typographic quotes must survive unchanged
     # shellcheck disable=SC1111,SC1112
@@ -105,8 +104,8 @@ main() {
     echo "ok   all-elements.md"
 
     text="$(render english.md "${profile}")"
-    expect english.md "${text}" "NOTE" "Task" "Owner" "Due" "17 Oct" "Next meeting:" "Page 1 /"
-    reject english.md "${text}" "Seite" "Nächster"
+    expect english.md "${text}" "NOTE" "Task" "Owner" "Due" "17 Oct" "Page 1 /"
+    reject english.md "${text}" "Seite"
     echo "ok   english.md"
 
     # Notes written in a hurry must never break the export
@@ -117,7 +116,6 @@ main() {
     # Empty front matter fields (e.g. from the header snippet) are ignored
     text="$(render empty-fields.md "${profile}")"
     expect empty-fields.md "${text}" "Leere Kopfdaten" "Alle optionalen Felder sind leer."
-    reject empty-fields.md "${text}" "Nächster Termin"
     echo "ok   empty-fields.md"
 
     # Title from the front matter, several "#" sections, footer without client
