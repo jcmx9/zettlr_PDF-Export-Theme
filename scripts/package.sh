@@ -11,7 +11,7 @@ readonly repo_dir
 readonly name="zettlr-rfdoc-export"
 readonly files=(
     VERSION LICENSE README.md README.en.md CHANGELOG.md
-    "zettlr/rf-doc.yaml.in" zettlr/rf-document.lua zettlr/snippets
+    "zettlr/rf-doc.yaml.in" zettlr/rf-document.lua zettlr/rfdoc-zettlr.css zettlr/snippets
 )
 
 checksum() {

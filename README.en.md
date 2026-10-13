@@ -1,13 +1,17 @@
 # Zettlr rfdoc Export
 
-> PDF export from Zettlr through [real-fast-document](https://github.com/jcmx9/real-fast-document) – plus snippets for meetings, phone calls and tasks.
+> Zettlr as a live view in the layout of [real-fast-document](https://github.com/jcmx9/real-fast-document): editor theme, snippets and PDF export through rf-document.
 
 [![CI](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.21** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
+**Version 26.10.22** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
 
-Write meeting notes live in Zettlr and create the client PDF with **File → Export → rf-doc**. The PDF is built by [real-fast-document](https://github.com/jcmx9/real-fast-document) (rf-document): layout, fonts, alerts, task tables and PDF/A come from there. This project connects Zettlr to rf-document and ships the snippets.
+Write meeting notes live in Zettlr and create the client PDF with **File → Export → rf-doc**. The PDF is built by [real-fast-document](https://github.com/jcmx9/real-fast-document) (rf-document): layout, fonts, alerts, task tables and PDF/A come from there. This project takes care of three things on the Zettlr side:
+
+1. **Live layout:** the editor looks like rf-document's PDF – same fonts (rf-document's own files), size ratios, weights, colors, alerts, tables and quotes.
+2. **Snippets** for meetings, phone calls, tasks and page breaks; `:header` is rf-document's `header.md` with every front matter key.
+3. **Export** to rf-document.
 
 ## Requirement
 
@@ -29,7 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/inst
 irm https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/install.ps1 | iex
 ```
 
-The installer downloads the latest release (SHA-256 verified), looks for rf-document and sets up the export profile **rf-doc** and the snippets in Zettlr. Snippets you changed are backed up before they are overwritten.
+The installer downloads the latest release (SHA-256 verified), looks for rf-document and sets up the editor theme, the export profile **rf-doc** and the snippets in Zettlr. It takes the theme's fonts and the `header` snippet from the rf-document installation, so run it again after updating rf-document. Your own rules in Zettlr's `custom.css` are kept and backed up before every change; so are snippets you changed.
 
 | | macOS | Linux | Windows |
 | --- | --- | --- | --- |
@@ -52,12 +56,17 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/inst
 2. New note from a snippet: type its name and press Enter; Tab jumps from field to field, date and time are filled in automatically.
    - `:meeting` – meeting: client and topic (as title), then participants, agenda, notes, tasks
    - `:telefonnotiz` – phone call: company, person (in the title), time, phone, reason, notes, tasks
+   - Both set `hard_breaks: true` (every line stays a line, as in the editor) and `embed_source: false` (no note inside the client PDF)
    - `:aufgabe` – one task line `- [ ] Task – Name, bis Date` with three tab stops
    - `:newpage` – page break in the PDF (`<!-- pagebreak -->`)
-   - `:header` – every front matter field with a default and a comment
+   - `:header` – rf-document's `header.md`: every front matter key with its default and a comment
 3. Export: **File → Export…** (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>E</kbd>), profile **rf-doc**.
 
 What the PDF supports (front matter, alerts, task tables, images, diagrams, …) is described in the [real-fast-document README](https://github.com/jcmx9/real-fast-document#readme).
+
+### Editor theme
+
+The theme (`rfdoc-zettlr.css`) takes its values from rf-document's `template.typ`: body text in Source Sans with old-style figures and justification, headings in Source Serif (`#` 1.4× with a hairline, `##` 1.2×, `###` underlined, italic from `####`), alerts in rf-document's colors, code on light grey, striped tables. The editor uses the nominal weights (400/500/600) – rf-document sets the PDF slightly lower because PDF viewers draw heavier, so both look the same. It works with every built-in Zettlr theme; light and dark follow Zettlr's dark mode.
 
 ## How the export works
 
@@ -91,7 +100,8 @@ CI checks the scripts, installs on Ubuntu, macOS and Windows (PowerShell 5.1) an
 install.sh, install.ps1        – Installers (macOS/Linux, Windows)
 zettlr/rf-doc.yaml.in      – Export profile template
 zettlr/rf-document.lua         – Messenger: hands the note to rf-document
-zettlr/snippets/               – Zettlr snippets
+zettlr/rfdoc-zettlr.css        – Editor theme in rf-document's layout
+zettlr/snippets/               – Zettlr snippets (header comes from rf-document)
 scripts/                       – Bundle build, messenger test
 VERSION                        – Release version (CalVer)
 README.md, README.en.md        – Documentation (German, English)

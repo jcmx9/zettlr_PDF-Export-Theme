@@ -70,11 +70,15 @@ jobs:
             zettlr="$HOME/.config/zettlr"
           fi
           mkdir -p "$zettlr"
+          printf '/* own rule */\n' > "$zettlr/custom.css"
+          cp "$zettlr/custom.css" original.css
 
           bash install.sh --bundle dist/zettlr-rfdoc-export.tar.gz
           bash install.sh --bundle dist/zettlr-rfdoc-export.tar.gz
           test -f "$zettlr/defaults/rf-doc.yaml"
           test -f "$zettlr/snippets/meeting.tpl.md"
+          test -f "$zettlr/rfdoc-zettlr.css" && test -f "$zettlr/rfdoc-zettlr-fonts.css"
+          head -n 1 "$zettlr/custom.css" | grep -qF 'rfdoc-zettlr.css'
 
           # End to end with Zettlr's Pandoc and a stub for rf-document
           if [ "$(uname -s)" = Darwin ]; then
@@ -89,6 +93,8 @@ jobs:
           ./scripts/test_messenger.sh "$zettlr/defaults/rf-doc.yaml"
 
           bash install.sh --uninstall
+          cmp "$zettlr/custom.css" original.css
+          test ! -e "$zettlr/rfdoc-zettlr.css"
           test ! -e "$zettlr/defaults/rf-doc.yaml"
           test ! -e "$zettlr/snippets/meeting.tpl.md"
           test ! -e "$HOME/.local/share/zettlr-rfdoc-export"
@@ -110,13 +116,16 @@ jobs:
           $ErrorActionPreference = "Stop"
           $zettlr = Join-Path $env:APPDATA "zettlr"
           New-Item -ItemType Directory -Force -Path $zettlr | Out-Null
+          [IO.File]::WriteAllText("$zettlr\custom.css", "/* own rule */`r`n")
+          Copy-Item "$zettlr\custom.css" original.css
 
           $code = Get-Content -Raw install.ps1
           & ([scriptblock]::Create($code)) -Bundle dist\zettlr-rfdoc-export.zip
           & ([scriptblock]::Create($code)) -Bundle dist\zettlr-rfdoc-export.zip
-          foreach ($f in @("$zettlr\defaults\rf-doc.yaml", "$zettlr\snippets\meeting.tpl.md")) {
+          foreach ($f in @("$zettlr\defaults\rf-doc.yaml", "$zettlr\snippets\meeting.tpl.md", "$zettlr\rfdoc-zettlr.css", "$zettlr\rfdoc-zettlr-fonts.css")) {
             if (-not (Test-Path -LiteralPath $f)) { throw "missing $f" }
           }
+          if (-not (Get-Content "$zettlr\custom.css" -First 1).Contains("rfdoc-zettlr.css")) { throw "import line missing" }
 
           # End to end with Zettlr's Pandoc and a stub for rf-document, in
           # folders with spaces (cmd.exe quoting)
@@ -155,6 +164,7 @@ jobs:
           Remove-Item Env:STUB_EXIT
 
           & ([scriptblock]::Create($code)) -Uninstall
+          if ((Get-FileHash "$zettlr\custom.css").Hash -ne (Get-FileHash original.css).Hash) { throw "custom.css not restored" }
           $app = Join-Path $env:LOCALAPPDATA "zettlr-rfdoc-export"
           if (Test-Path -LiteralPath $app) { throw "app folder left behind" }
           if (Test-Path -LiteralPath "$zettlr\defaults\rf-doc.yaml") { throw "profile left behind" }
