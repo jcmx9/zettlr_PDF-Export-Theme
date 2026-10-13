@@ -96,7 +96,7 @@ main() {
     # Typographic quotes must survive unchanged
     # shellcheck disable=SC1111,SC1112
     expect all-elements.md "${text}" '„Deutsche Anführungszeichen“' '‚einfache‘'
-    reject all-elements.md "${text}" "\\newpage" "[!HINWEIS]" "flowchart LR" "– jcmx9"
+    reject all-elements.md "${text}" "==markiert==" "\\newpage" "[!HINWEIS]" "flowchart LR" "– jcmx9"
     # The long table continues on page 3 with its header repeated
     local page3
     page3="$(awk 'BEGIN { RS = "\f" } NR == 3' <<<"${text}")"
@@ -123,6 +123,12 @@ main() {
     expect yaml-title.md "${text}" "Kick-off: Relaunch" "Ziele" "Unterpunkt" "Aufgaben" \
         "Kick-off: Relaunch · Workshop"
     echo "ok   yaml-title.md"
+
+    # Headings and lists without blank lines, as Zettlr's editor allows them
+    text="$(render no-blank-lines.md "${profile}")"
+    expect no-blank-lines.md "${text}" "Agenda" "Mitschrift" "Das ist zu tun" "Markierung" "Abschluss"
+    reject no-blank-lines.md "${text}" "# Mitschrift" "# Abschluss" "==Markierung=="
+    echo "ok   no-blank-lines.md"
 
     # Snippets with their placeholders filled in must export as well
     local snippet name

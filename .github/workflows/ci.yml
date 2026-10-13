@@ -178,7 +178,7 @@ jobs:
           Expand-Archive pandoc.zip -DestinationPath .
           $pandoc = Join-Path $PWD "pandoc-$env:PANDOC_VERSION\pandoc.exe"
           Push-Location tests\fixtures
-          foreach ($note in @("all-elements.md", "english.md", "edge-cases.md", "empty-fields.md", "yaml-title.md")) {
+          foreach ($note in @("all-elements.md", "english.md", "edge-cases.md", "empty-fields.md", "yaml-title.md", "no-blank-lines.md")) {
             & $pandoc -d "$zettlr\defaults\Source PDF.yaml" $note -o "$env:RUNNER_TEMP\$note.pdf"
             if ($LASTEXITCODE -ne 0 -or (Get-Item "$env:RUNNER_TEMP\$note.pdf").Length -eq 0) { throw "export of $note failed" }
           }

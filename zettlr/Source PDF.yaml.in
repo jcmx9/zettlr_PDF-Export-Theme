@@ -13,7 +13,7 @@
 # - Front matter (optional): title, subtitle, client, date, author, logo,
 #   logo-height, lang
 # - The PDF conforms to PDF/A-2u for archiving
-reader: markdown+hard_line_breaks+mark+alerts-smart
+reader: commonmark_x+hard_line_breaks+implicit_figures-smart-fancy_lists
 writer: pdf
 standalone: true
 pdf-engine: '@TYPST@'
