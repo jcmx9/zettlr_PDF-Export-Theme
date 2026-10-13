@@ -2,6 +2,8 @@
 client: "${1:Kunde}"
 title: "${2:Thema}"
 date: $CURRENT_DATE.$CURRENT_MONTH.$CURRENT_YEAR
+hard_breaks: true
+embed_source: false
 ---
 
 # Teilnehmer

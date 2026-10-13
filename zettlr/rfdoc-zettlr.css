@@ -1,0 +1,323 @@
+/*
+ * rf-doc — Zettlr editor theme
+ *
+ * The live view in Zettlr mirrors the PDF of real-fast-document: every value
+ * below comes from rf-document's template.typ (noted where it is not obvious).
+ * Fonts are rf-document's own files, embedded by the installer into
+ * rfdoc-zettlr-fonts.css (Zettlr's file protocol cannot load fonts by URL).
+ *
+ * Weights: Chromium draws the variable Source fonts lighter than PDF viewers.
+ * rf-document therefore sets its PDF slightly below the nominal values
+ * (text 380, headings 470, bold 560); the editor uses the nominal ones
+ * (400, 500, 600) so both look the same.
+ *
+ * Works with every built-in Zettlr theme; light/dark follows body.dark.
+ */
+
+@import url("rfdoc-zettlr-fonts.css");
+
+/* Palette (template.typ: luma() values as hex) */
+
+html:root {
+    --rfd-font-sans: "rfdoc Sans", "rfdoc Emoji", "rfdoc Symbols", "Source Sans 3", -apple-system, "Segoe UI", sans-serif;
+    --rfd-font-serif: "rfdoc Serif", "rfdoc Emoji", "rfdoc Symbols", "Source Serif 4", Georgia, serif;
+    --rfd-font-code: "rfdoc Code", "rfdoc Emoji", "Source Code Pro", Menlo, Consolas, monospace;
+
+    --rfd-bg: #fff;
+    --rfd-text: #212121;          /* luma(13%) */
+    --rfd-heading: #141414;       /* luma(8%) */
+    --rfd-chrome: #333;           /* luma(20%): list squares, done task boxes */
+    --rfd-task-border: #595959;   /* luma(35%) */
+    --rfd-hairline: #999;         /* luma(60%): line under # */
+    --rfd-faint: #9e9e9e;         /* Markdown marks (#, *, `) – not in the PDF */
+    --rfd-code-bg: #f5f5f5;       /* luma(245) */
+    --rfd-table-stripe: #f5f5f5;  /* luma(96%) */
+    --rfd-table-rule: #ccc;       /* luma(80%) */
+    --rfd-table-head-rule: #737373; /* luma(45%) */
+    --rfd-mark: #fbeab0;
+    --rfd-selection: #dcdcdc;
+
+    --rfd-alert-note: #2f6aa8;
+    --rfd-alert-tip: #3b7d3a;
+    --rfd-alert-important: #7a4fb0;
+    --rfd-alert-warning: #b05a1a;
+    --rfd-alert-caution: #b5452b;
+
+    /* Typst's default syntax colors, which rf-document keeps */
+    --rfd-syntax-comment: #8a8a8a;
+    --rfd-syntax-string: #298e0d;
+    --rfd-syntax-keyword: #d73a49;
+    --rfd-syntax-function: #4b69c6;
+    --rfd-syntax-number: #b60157;
+}
+
+/* Dark mode: the PDF has none; same structure with inverted tones */
+html body.dark {
+    --rfd-bg: #1e1e1e;
+    --rfd-text: #d9d9d9;
+    --rfd-heading: #f0f0f0;
+    --rfd-chrome: #c8c8c8;
+    --rfd-task-border: #a6a6a6;
+    --rfd-hairline: #6b6b6b;
+    --rfd-faint: #7a7a7a;
+    --rfd-code-bg: #2a2a2a;
+    --rfd-table-stripe: #262626;
+    --rfd-table-rule: #4d4d4d;
+    --rfd-table-head-rule: #8c8c8c;
+    --rfd-mark: #5c4a16;
+    --rfd-selection: #474747;
+
+    --rfd-alert-note: #6fa3dc;
+    --rfd-alert-tip: #79b46a;
+    --rfd-alert-important: #b08ce0;
+    --rfd-alert-warning: #e09a52;
+    --rfd-alert-caution: #e0805f;
+
+    --rfd-syntax-comment: #8f8f8f;
+    --rfd-syntax-string: #7cc46a;
+    --rfd-syntax-keyword: #ef7a85;
+    --rfd-syntax-function: #8fa8f0;
+    --rfd-syntax-number: #f07aa8;
+}
+
+/* Alerts (> [!NOTE] …): color, and a background lightened like the PDF's */
+
+html:root,
+html body.dark {
+    --zettlr-note-color: var(--rfd-alert-note);
+    --zettlr-tip-color: var(--rfd-alert-tip);
+    --zettlr-important-color: var(--rfd-alert-important);
+    --zettlr-warning-color: var(--rfd-alert-warning);
+    --zettlr-caution-color: var(--rfd-alert-caution);
+    --zettlr-note-bg: color-mix(in srgb, var(--rfd-alert-note) 7%, var(--rfd-bg));
+    --zettlr-tip-bg: color-mix(in srgb, var(--rfd-alert-tip) 7%, var(--rfd-bg));
+    --zettlr-important-bg: color-mix(in srgb, var(--rfd-alert-important) 7%, var(--rfd-bg));
+    --zettlr-warning-bg: color-mix(in srgb, var(--rfd-alert-warning) 7%, var(--rfd-bg));
+    --zettlr-caution-bg: color-mix(in srgb, var(--rfd-alert-caution) 7%, var(--rfd-bg));
+}
+
+/*
+ * Editor variables. Zettlr sets its theme on .cm-editor with a single class,
+ * so "body .cm-editor" wins without !important.
+ */
+
+body .cm-editor {
+    --zettlr-editor-font: var(--rfd-font-sans);
+    --zettlr-editor-code-font: var(--rfd-font-code);
+    /* Typst: leading 0.85em + cap height ≈ 1.5 line spacing */
+    --zettlr-editor-line-height: 1.5;
+
+    --zettlr-editor-header-style: 500;
+    --zettlr-editor-strong-style: 600;
+    --zettlr-editor-emphasis-style: italic;
+    --zettlr-editor-code-style: normal;
+
+    /* template.typ: body 10pt, # 14pt, ## 12pt, ### and below 10pt */
+    --zettlr-editor-header-1-size: 1.4em;
+    --zettlr-editor-header-2-size: 1.2em;
+    --zettlr-editor-header-3-size: 1em;
+    --zettlr-editor-header-4-size: 1em;
+    --zettlr-editor-header-5-size: 1em;
+    --zettlr-editor-header-6-size: 1em;
+
+    --zettlr-editor-primary-color: var(--rfd-text);
+    --zettlr-editor-secondary-color: var(--rfd-chrome);
+    --zettlr-editor-scroller-color: var(--rfd-text);
+    --zettlr-editor-scroller-bg: var(--rfd-bg);
+    --zettlr-editor-selection-color: var(--rfd-selection);
+    --zettlr-editor-highlight-color: var(--rfd-mark);
+    --zettlr-editor-citation-color: var(--rfd-chrome);
+    --zettlr-editor-citation-bg: var(--rfd-code-bg);
+    --zettlr-editor-code-color: var(--rfd-text);
+    --zettlr-editor-code-bg: var(--rfd-code-bg);
+    --zettlr-editor-escape-color: var(--rfd-faint);
+    --zettlr-editor-accent-color: var(--rfd-bg);
+    --zettlr-editor-accent-bg: var(--rfd-chrome);
+    --zettlr-editor-error-color: var(--rfd-alert-caution);
+    --zettlr-editor-line-decoration: none;
+
+    /* Code syntax (Zettlr groups tokens by Solarized color names) */
+    --zettlr-editor-code-base-00: var(--rfd-syntax-comment);
+    --zettlr-editor-code-green: var(--rfd-syntax-string);
+    --zettlr-editor-code-magenta: var(--rfd-syntax-keyword);
+    --zettlr-editor-code-red: var(--rfd-syntax-keyword);
+    --zettlr-editor-code-blue: var(--rfd-syntax-function);
+    --zettlr-editor-code-cyan: var(--rfd-syntax-function);
+    --zettlr-editor-code-violet: var(--rfd-syntax-number);
+    --zettlr-editor-code-orange: var(--rfd-syntax-number);
+    --zettlr-editor-code-yellow: var(--rfd-syntax-number);
+
+    color: var(--rfd-text);
+    background-color: var(--rfd-bg);
+    font-weight: 400;
+    /* Old-style figures in running text, like the PDF */
+    font-variant-numeric: oldstyle-nums proportional-nums;
+}
+
+/* Justified text with hyphenation, like the PDF (not in code and headings) */
+
+body .cm-editor .cm-content .cm-line {
+    text-align: justify;
+    hyphens: auto;
+}
+
+/* Headings: serif, dark; more space above than below */
+
+body .cm-editor .cm-line:has(.cm-header-1),
+body .cm-editor .cm-line:has(.cm-header-2),
+body .cm-editor .cm-line:has(.cm-header-3),
+body .cm-editor .cm-line:has(.cm-header-4),
+body .cm-editor .cm-line:has(.cm-header-5),
+body .cm-editor .cm-line:has(.cm-header-6) {
+    --zettlr-editor-font: var(--rfd-font-serif);
+    color: var(--rfd-heading);
+    text-align: left;
+    hyphens: manual;
+}
+
+/* # chapter: hairline right below, like the PDF */
+body .cm-editor .cm-line:has(.cm-header-1) {
+    padding-top: 1.4em;
+    padding-bottom: 0.1em;
+    margin-bottom: 0.4em;
+    border-bottom: 0.6pt solid var(--rfd-hairline);
+}
+
+body .cm-editor .cm-line:has(.cm-header-2) {
+    padding-top: 1em;
+    padding-bottom: 0.2em;
+}
+
+/* ### body size, regular weight, thin underline (not the # marks) */
+body .cm-editor .cm-line:has(.cm-header-3) {
+    --zettlr-editor-header-style: 400;
+    padding-top: 0.8em;
+    padding-bottom: 0.1em;
+}
+
+body .cm-editor .cm-header-3:not(.cm-code-mark) {
+    text-decoration: underline;
+    text-decoration-thickness: 0.5pt;
+    text-underline-offset: 2pt;
+}
+
+/* #### and below: body size, italic */
+body .cm-editor .cm-line:has(.cm-header-4),
+body .cm-editor .cm-line:has(.cm-header-5),
+body .cm-editor .cm-line:has(.cm-header-6) {
+    --zettlr-editor-header-style: italic 400;
+    padding-top: 0.8em;
+}
+
+/* Links and emphasis: plain text color, as in the PDF */
+
+body .cm-editor .cm-link,
+body .cm-editor .cm-url {
+    color: var(--rfd-text);
+    text-decoration: underline dotted var(--rfd-faint);
+}
+
+body .cm-editor .cm-strong {
+    color: var(--rfd-text);
+}
+
+body .cm-editor .cm-emphasis {
+    color: inherit;
+}
+
+/* Quotes: italic, indented on both sides */
+
+body .cm-editor .cm-line:has(.cm-quote) {
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+body .cm-editor .cm-quote {
+    font-style: italic;
+    color: var(--rfd-text);
+}
+
+/* Code: 9pt on 10pt body, light grey background */
+
+body .cm-editor .cm-monospace,
+body .cm-editor .code-block-line-background {
+    font-size: 0.9em;
+    font-variant-numeric: normal;
+}
+
+body .cm-editor .code-block-line-background {
+    background-color: var(--rfd-code-bg);
+}
+
+body .cm-editor .cm-gutters {
+    font-variant-numeric: normal;
+}
+
+/* Tasks: dark check boxes like the PDF's */
+
+body .cm-editor input[type="checkbox"] {
+    accent-color: var(--rfd-chrome);
+}
+
+/* Tables: 9pt, lining tabular figures, stripes and vertical rules */
+
+body .cm-editor table {
+    font-size: 0.9em;
+    font-variant-numeric: lining-nums tabular-nums;
+    border-collapse: collapse;
+}
+
+body .cm-editor table th {
+    border-bottom: 0.7pt solid var(--rfd-table-head-rule);
+}
+
+body .cm-editor table td + td,
+body .cm-editor table th + th {
+    border-left: 0.4pt solid var(--rfd-table-rule);
+}
+
+body .cm-editor table tr:nth-child(even) td {
+    background-color: var(--rfd-table-stripe);
+}
+
+/*
+ * Alert titles: Zettlr writes its own (translated) title into the span,
+ * e.g. "Notiz". Replace it with rf-document's titles and style: small,
+ * spaced capitals in the alert color.
+ */
+
+body .cm-editor .cm-admonition-title {
+    position: relative;
+    visibility: hidden;
+}
+
+body .cm-editor .cm-admonition-title::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: visible;
+    white-space: nowrap;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+body .cm-editor .admonition-wrapper.note .cm-admonition-title::after { content: "Info"; }
+body .cm-editor .admonition-wrapper.tip .cm-admonition-title::after { content: "Tipp"; }
+body .cm-editor .admonition-wrapper.important .cm-admonition-title::after { content: "Wichtig"; }
+body .cm-editor .admonition-wrapper.warning .cm-admonition-title::after { content: "Hinweis"; }
+body .cm-editor .admonition-wrapper.caution .cm-admonition-title::after { content: "Achtung"; }
+
+/* Markdown syntax characters (#, *, `, …) recede: they are not in the PDF */
+
+body .cm-editor .cm-code-mark {
+    color: var(--rfd-faint);
+}
+
+/* Tags: quiet; the # keeps the tag color (after the rule above) */
+
+body .cm-editor .cm-zkn-tag,
+body .cm-editor .cm-zkn-tag-mark {
+    color: var(--rfd-chrome);
+}

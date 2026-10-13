@@ -5,6 +5,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.22] - 2026-10-13
+
+### Added
+- Editor theme `rfdoc-zettlr.css`: the live view in Zettlr mirrors rf-document's PDF (fonts, size ratios, weights, colors, alerts, tables, quotes). The installer embeds rf-document's own font files, so nothing is duplicated
+- The `header` snippet is generated from rf-document's `header.md`
+
+### Changed
+- `meeting` and `telefonnotiz` set `hard_breaks: true` and `embed_source: false`
+
 ## [26.10.21] - 2026-10-13
 
 ### Changed
@@ -184,7 +193,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.21...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.22...HEAD
+[26.10.22]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.21...v26.10.22
 [26.10.21]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.20...v26.10.21
 [26.10.20]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.19...v26.10.20
 [26.10.19]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.18...v26.10.19
