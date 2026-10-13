@@ -4,7 +4,6 @@ subtitle: ""
 author: ""
 logo: ""
 logo-height: ""
-next: ""
 ---
 
 # Leere Kopfdaten

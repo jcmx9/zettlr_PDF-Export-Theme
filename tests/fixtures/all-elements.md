@@ -4,7 +4,6 @@ date: 12.10.2026
 subtitle: Testdokument mit allen Elementen
 author: jcmx9
 logo: logo.png
-next: 24.10.2026, 10:00 Uhr, Videokonferenz
 ---
 
 # Source – Elementtest
