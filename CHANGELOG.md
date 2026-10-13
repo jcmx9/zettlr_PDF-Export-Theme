@@ -5,6 +5,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.13] - 2026-10-13
+
+### Added
+- Snippet `aufgabe`: one task line with tab stops for task, owner and due date
+- SVG logos are covered by the tests
+
+### Fixed
+- A line such as `18. Oktober 2026` stays a date instead of becoming a numbered list starting at 18
+
 ## [26.10.12] - 2026-10-13
 
 ### Fixed
@@ -111,7 +120,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.12...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.13...HEAD
+[26.10.13]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.12...v26.10.13
 [26.10.12]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.11...v26.10.12
 [26.10.11]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.10...v26.10.11
 [26.10.10]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.9...v26.10.10

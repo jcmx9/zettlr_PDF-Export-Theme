@@ -126,7 +126,8 @@ main() {
 
     # Headings and lists without blank lines, as Zettlr's editor allows them
     text="$(render no-blank-lines.md "${profile}")"
-    expect no-blank-lines.md "${text}" "Agenda" "Mitschrift" "Das ist zu tun" "Markierung" "Abschluss"
+    expect no-blank-lines.md "${text}" "Agenda" "Mitschrift" "Das ist zu tun" "Markierung" "Abschluss" \
+        "18. Oktober 2026"
     reject no-blank-lines.md "${text}" "# Mitschrift" "# Abschluss" "==Markierung=="
     echo "ok   no-blank-lines.md"
 
@@ -141,7 +142,10 @@ main() {
             "${snippet}" > "${fixtures}/${name}"
         text="$(render "${name}" "${profile}")" || { rm -f "${fixtures}/${name}"; exit 1; }
         rm -f "${fixtures}/${name}"
-        expect "${name}" "${text}" "12.10.2026" "Seite 1 /"
+        expect "${name}" "${text}" "Seite 1 /"
+        if grep -q 'CURRENT_DATE' "${snippet}"; then
+            expect "${name}" "${text}" "12.10.2026"
+        fi
         reject "${name}" "${text}" '${' '$CURRENT'
         echo "ok   ${name}"
     done
