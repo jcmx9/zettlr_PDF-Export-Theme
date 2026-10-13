@@ -5,9 +5,9 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.19** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.20** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
-Besprechungsnotizen live in Zettlr schreiben und mit **Datei → Exportieren → Source PDF** als PDF für den Kunden erzeugen. Das PDF baut [real-fast-document](https://github.com/jcmx9/real-fast-document) (rf-document): Layout, Schriften, Hinweisboxen, Aufgabentabellen und PDF/A kommen von dort. Dieses Projekt verbindet Zettlr mit rf-document und bringt die Snippets mit.
+Besprechungsnotizen live in Zettlr schreiben und mit **Datei → Exportieren → rf-doc** als PDF für den Kunden erzeugen. Das PDF baut [real-fast-document](https://github.com/jcmx9/real-fast-document) (rf-document): Layout, Schriften, Hinweisboxen, Aufgabentabellen und PDF/A kommen von dort. Dieses Projekt verbindet Zettlr mit rf-document und bringt die Snippets mit.
 
 ## Voraussetzung
 
@@ -29,7 +29,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
 irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1 | iex
 ```
 
-Der Installer lädt das neueste Release (mit SHA-256-Prüfung), sucht rf-document und richtet in Zettlr das Exportprofil **Source PDF** und die Snippets ein. Snippets, die du geändert hast, werden vor dem Überschreiben gesichert.
+Der Installer lädt das neueste Release (mit SHA-256-Prüfung), sucht rf-document und richtet in Zettlr das Exportprofil **rf-doc** und die Snippets ein. Snippets, die du geändert hast, werden vor dem Überschreiben gesichert.
 
 | | macOS | Linux | Windows |
 | --- | --- | --- | --- |
@@ -55,13 +55,13 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
    - `:aufgabe` – eine Aufgabenzeile `- [ ] Aufgabe – Name, bis Datum` mit drei Tab-Stopps
    - `:newpage` – Seitenumbruch im PDF (`<!-- pagebreak -->`)
    - `:header` – alle Felder des Front Matters mit Standardwert und Kommentar
-3. Export: **Datei → Exportieren…** (<kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>E</kbd>), Profil **Source PDF**.
+3. Export: **Datei → Exportieren…** (<kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>E</kbd>), Profil **rf-doc**.
 
 Was im PDF möglich ist (Front Matter, Hinweisboxen, Aufgabentabellen, Bilder, Diagramme …), beschreibt die [README von real-fast-document](https://github.com/jcmx9/real-fast-document#readme).
 
 ## So funktioniert der Export
 
-Zettlr exportiert immer über Pandoc. Das Profil **Source PDF** nutzt Pandoc nur als Boten: Ein Lua-Filter (`zettlr/rf-document.lua`) ruft `rf-document <notiz.md> <ziel.pdf>` auf und beendet Pandoc mit dessen Ergebnis, bevor Pandoc selbst etwas schreibt.
+Zettlr exportiert immer über Pandoc. Das Profil **rf-doc** nutzt Pandoc nur als Boten: Ein Lua-Filter (`zettlr/rf-document.lua`) ruft `rf-document <notiz.md> <ziel.pdf>` auf und beendet Pandoc mit dessen Ergebnis, bevor Pandoc selbst etwas schreibt.
 
 - Das PDF landet dort, wo Zettlr es erwartet (*Einstellungen → Import und Export*).
 - Bei ungespeicherten Änderungen übergibt Zettlr eine temporäre Kopie. Der Filter setzt `RFD_BASE_DIR` auf den Ordner der Notiz, damit relative Bildpfade stimmen.
@@ -89,7 +89,7 @@ Die CI prüft die Skripte, installiert unter Ubuntu, macOS und Windows (PowerShe
 
 ```
 install.sh, install.ps1        – Installer (macOS/Linux, Windows)
-zettlr/Source PDF.yaml.in      – Vorlage des Exportprofils
+zettlr/rf-doc.yaml.in      – Vorlage des Exportprofils
 zettlr/rf-document.lua         – Bote: übergibt die Notiz an rf-document
 zettlr/snippets/               – Zettlr-Snippets
 scripts/                       – Bundle-Bau, Test des Boten

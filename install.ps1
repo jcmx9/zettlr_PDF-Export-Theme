@@ -7,7 +7,7 @@ Install or update (run the same line again to update):
 Uninstall:
   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
 
-Sets up Zettlr: the export profile "Source PDF", which hands the note to
+Sets up Zettlr: the export profile "rf-doc", which hands the note to
 rf-document (real-fast-document) for the PDF, and the snippets meeting,
 telefonnotiz, aufgabe, newpage and header. rf-document is installed
 separately: https://github.com/jcmx9/real-fast-document
@@ -24,7 +24,7 @@ $ProgressPreference = "SilentlyContinue"
 
 $Repo = "jcmx9/zettlr_PDF-Export-Theme"
 $BundleName = "zettlr-pdf-export-theme"
-$ProfileName = "Source PDF.yaml"
+$ProfileName = "rf-doc.yaml"
 $ProfileMarker = "zettlr_PDF-Export-Theme installer"
 
 $AppDir = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
@@ -130,7 +130,7 @@ function Convert-YamlPath([string]$Path) {
 function Install-Zettlr {
     Write-Host "Zettlr: $ZettlrDir"
 
-    $template = Read-Text ([IO.Path]::Combine($Current, "zettlr", "Source PDF.yaml.in"))
+    $template = Read-Text ([IO.Path]::Combine($Current, "zettlr", "rf-doc.yaml.in"))
     $content = $template.Replace("@DIR@", (Convert-YamlPath $Current))
     $defaults = Join-Path $ZettlrDir "defaults"
     New-Item -ItemType Directory -Force -Path $defaults | Out-Null
@@ -168,7 +168,7 @@ function Install-Zettlr {
             }
         }
     }
-    Write-Host '  export profile "Source PDF" and snippets installed'
+    Write-Host '  export profile "rf-doc" and snippets installed'
 }
 
 function Uninstall-Zettlr {
@@ -214,7 +214,7 @@ try {
     Write-Host ""
     Write-Host "Done. Restart Zettlr, then:"
     Write-Host "  - new meeting note: type :meeting"
-    Write-Host '  - PDF: File > Export, profile "Source PDF"'
+    Write-Host '  - PDF: File > Export, profile "rf-doc"'
 }
 finally {
     Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue
