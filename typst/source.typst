@@ -94,6 +94,9 @@ $endif$
 #set text(
   font: font-sans,
   size: 11pt,
+  // Slightly below 400: PDF viewers draw the variable fonts heavier than
+  // Zettlr (Chromium), so the PDF looks like the editor
+  weight: 380,
   fill: text-color,
   lang: "$if(lang)$$lang$$else$de$endif$",
   hyphenate: true,
@@ -101,7 +104,8 @@ $endif$
   number-type: "old-style",
   number-width: "proportional",
 )
-#set par(leading: 0.7em, spacing: 1.4em)
+// Line spacing about 1.5 (16.5pt at 11pt): cap height 0.66em + leading
+#set par(leading: 0.84em, spacing: 1.4em)
 
 $if(smart)$
 $else$
@@ -112,13 +116,13 @@ $endif$
 // comes from the front matter (see source.lua for notes without "title:").
 
 // Headings stay light: the serif already sets them apart from the sans text
-#show heading: set text(font: font-serif, fill: heading-color, weight: 400)
+#show heading: set text(font: font-serif, fill: heading-color, weight: 380)
 #show heading: set block(sticky: true)
 // Sizes: title 18pt, level 1 15pt, level 2 13pt, from level 3 on the body
 // size of 11pt
-#show heading.where(level: 1): set text(size: 15pt, weight: 500)
+#show heading.where(level: 1): set text(size: 15pt, weight: 470)
 #show heading.where(level: 1): set block(above: 2em, below: 0.8em)
-#show heading.where(level: 2): set text(size: 13pt, weight: 500)
+#show heading.where(level: 2): set text(size: 13pt, weight: 470)
 #show heading.where(level: 2): set block(above: 1.6em, below: 0.7em)
 #show heading.where(level: 3): set text(size: 11pt)
 // Level 3 has body size: a thin underline sets it apart
@@ -126,13 +130,15 @@ $endif$
 #show heading.where(level: 3): set block(above: 1.4em, below: 0.6em)
 #show heading.where(level: 4): set text(size: 11pt, style: "italic")
 #show heading.where(level: 4): set block(above: 1.3em, below: 0.6em)
-#show heading.where(level: 5): set text(size: 11pt, style: "italic", weight: 400, fill: muted)
-#show heading.where(level: 6): set text(size: 11pt, style: "italic", weight: 400, fill: muted)
+#show heading.where(level: 5): set text(size: 11pt, style: "italic", fill: muted)
+#show heading.where(level: 6): set text(size: 11pt, style: "italic", fill: muted)
 
 // Text elements
 
 #show link: set text(fill: accent)
-#show strong: set text(weight: 600, fill: heading-color)
+// Typst adds strong's delta to the current weight: 380 + 180 = 560
+#set strong(delta: 180)
+#show strong: set text(fill: heading-color)
 #show highlight: set highlight(fill: rgb("#fbeab0"))
 
 #set list(indent: 0.3em, body-indent: 0.6em, marker: ([•], [–]))
@@ -206,7 +212,7 @@ $endif$
     above: 1.2em,
     below: 1.2em,
     {
-      text(size: 0.8em, weight: 600, tracking: 0.06em, fill: color, upper(title))
+      text(size: 0.8em, weight: 560, tracking: 0.06em, fill: color, upper(title))
       v(0.1em)
       body
     },
@@ -252,7 +258,7 @@ $endif$
     bottom: if y == 0 { 0.8pt + text-color } else { 0.5pt + border },
   ),
 )
-#show table.cell.where(y: 0): set text(weight: 600)
+#show table.cell.where(y: 0): set text(weight: 560)
 // Pandoc wraps tables in align(center); keep them and their cells left-aligned
 #show figure.where(kind: table): it => {
   show align: a => a.body
@@ -313,7 +319,7 @@ $endfor$
     v(0.2em)
   }
   if doc-title != none {
-    block(below: 1em, par(leading: 0.4em, text(font: font-serif, size: 18pt, weight: 500, fill: heading-color, doc-title)))
+    block(below: 1em, par(leading: 0.4em, text(font: font-serif, size: 18pt, weight: 470, fill: heading-color, doc-title)))
   }
 $if(subtitle)$
   block(below: 0.4em, text(font: font-serif, size: 13pt, fill: muted)[$subtitle$])
