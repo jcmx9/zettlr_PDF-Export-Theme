@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.12** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
+**Version 26.10.13** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
 
 Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks – and export them with one click as a calm, typographic A4 PDF. Everything involved is free and open source: Zettlr, Pandoc (ships with Zettlr) and [Typst](https://typst.app).
 
@@ -40,7 +40,7 @@ The installer
 
 1. downloads the latest release and verifies its SHA-256 checksum,
 2. downloads Typst into its own folder if needed (no system changes),
-3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippets **meeting**, **telefonnotiz** and **header**. Snippets of earlier versions are removed on update unless you changed them.
+3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippets **meeting**, **telefonnotiz**, **aufgabe** and **header**. Snippets of earlier versions are removed on update unless you changed them.
 
 Versions up to 26.10.4 also installed Typora themes; the installer removes them (only its own files).
 
@@ -67,6 +67,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
 2. New note from a snippet: type its name and press Enter; Tab jumps from field to field, date and time are filled in automatically.
    - `:meeting` – meeting: client and topic (as title), then participants, agenda, notes, tasks
    - `:telefonnotiz` – phone call: company, person (in the title), time, phone, reason, notes, tasks
+   - `:aufgabe` – one task line `- [ ] Task – Name, bis Date` with three tab stops
    - `:header` – every front matter field with a default and a comment; empty fields are ignored on export
 3. Export: **File → Export…** (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>E</kbd>), profile **Source PDF**.
 
@@ -78,7 +79,7 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 - **Front matter (optional):**
   - `title`, `subtitle`, `client`, `author`
   - `date` – defaults to the export date
-  - `logo` – image next to the title, path relative to the note (or absolute on macOS/Linux). It keeps its proportions and fits into 20 mm height and 60 mm width
+  - `logo` – image next to the title (PNG, JPG or SVG), path relative to the note (or absolute on macOS/Linux). It keeps its proportions and fits into 20 mm height and 60 mm width
   - `logo-height` – maximum logo height instead of 20 mm, e.g. `logo-height: 15mm`
   - `lang: en` – English labels (Page, alert and table titles); German is the default
 - **Line breaks:** every line break in the note is kept
@@ -90,6 +91,7 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 - **Alerts:** `> [!NOTE]` (Info), `[!TIP]` (Tipp), `[!IMPORTANT]` (Wichtig), `[!WARNING]` (Hinweis, calm orange), `[!CAUTION]` (Achtung); German keywords such as `> [!HINWEIS]` work as well
 - **Images:** `![Caption](bilder/screen.png){width=50%}` with caption below; paths relative to the note. On Windows images must be in the note's folder or below it
 - **Diagrams:** ` ```mermaid ` code blocks are drawn in the theme's colors (flowcharts, sequence diagrams, …), offline
+- **Date lines:** `18. Oktober 2026` at the start of a line stays a date; Markdown would otherwise turn it into a list starting at 18 (applies to every line starting with number, period and month name)
 - **Page breaks:** `\newpage` or `<!-- pagebreak -->` on a line of its own
 - **Long tables** continue on the next page with their header repeated
 - **Text:** `==highlight==`, footnotes, code with syntax colors, math, typographic quotes, German hyphenation, emoji (monochrome, in text color)

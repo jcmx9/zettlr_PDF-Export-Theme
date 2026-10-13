@@ -12,6 +12,9 @@
 -- 5. Task lists with owners ("- [ ] Task – Name, bis 17.10.") become a
 --    table with the columns task, owner, due date and status.
 -- 6. \newpage, \pagebreak and <!-- pagebreak --> start a new page.
+-- 9. A line such as "18. Oktober 2026" is a date, not an ordered list
+--    starting at 18: numbered "lists" whose items start with a month name
+--    become plain paragraphs again.
 -- 8. ==highlight== becomes Typst's highlight (the CommonMark reader, which
 --    parses notes the way Zettlr's editor does, has no "mark" extension).
 -- 7. The title comes from the front matter. A note without "title:" that
@@ -322,6 +325,44 @@ local function task_table(list)
   return pandoc.utils.from_simple_table(simple)
 end
 
+-- --- Dates -------------------------------------------------------------------
+
+local MONTHS = {}
+for _, name in ipairs({
+  "januar", "jänner", "februar", "märz", "maerz", "april", "mai", "juni", "juli",
+  "august", "september", "oktober", "november", "dezember",
+  "jan", "feb", "mär", "mrz", "apr", "jun", "jul", "aug", "sep", "sept", "okt", "nov", "dez",
+  "january", "february", "march", "may", "june", "july", "october", "december", "mar", "oct", "dec",
+}) do
+  MONTHS[name] = true
+end
+
+local function starts_with_month(item)
+  if #item ~= 1 or (item[1].t ~= "Plain" and item[1].t ~= "Para") then
+    return false
+  end
+  local first = item[1].content[1]
+  return first ~= nil and first.t == "Str" and MONTHS[first.text:lower():gsub("[%.,]$", "")] == true
+end
+
+local function date_lines(list)
+  for _, item in ipairs(list.content) do
+    if not starts_with_month(item) then
+      return nil
+    end
+  end
+  -- One line per item, as typed
+  local inlines = pandoc.Inlines({})
+  for i, item in ipairs(list.content) do
+    if i > 1 then
+      inlines:insert(pandoc.LineBreak())
+    end
+    inlines:extend({ pandoc.Str((list.start + i - 1) .. "."), pandoc.Space() })
+    inlines:extend(item[1].content)
+  end
+  return pandoc.Para(inlines)
+end
+
 -- --- Page breaks -------------------------------------------------------------
 
 local PAGEBREAK = pandoc.RawBlock("typst", "#pagebreak(weak: true)")
@@ -453,6 +494,6 @@ return {
   { Pandoc = title_from_heading },
   { Blocks = merge_lists },
   { Meta = Meta },
-  { BulletList = task_table, RawBlock = raw_block, Para = pagebreak_para, Image = image, Inlines = highlight },
+  { BulletList = task_table, OrderedList = date_lines, RawBlock = raw_block, Para = pagebreak_para, Image = image, Inlines = highlight },
   { Div = alert, BlockQuote = german_alert, Str = quotes },
 }

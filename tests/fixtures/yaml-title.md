@@ -1,6 +1,7 @@
 ---
 title: "Kick-off: Relaunch"
 subtitle: "Workshop"
+logo: logo.svg
 ---
 
 # Ziele

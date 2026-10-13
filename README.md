@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.12** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.13** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben – Thema, Agenda, Teilnehmer, Mitschrift, Aufgaben – und mit einem Klick als ruhiges, typografisches A4-PDF exportieren. Alle Bausteine sind frei und quelloffen: Zettlr, Pandoc (in Zettlr enthalten) und [Typst](https://typst.app).
 
@@ -40,7 +40,7 @@ Der Installer
 
 1. lädt das neueste Release und prüft dessen SHA-256-Prüfsumme,
 2. lädt bei Bedarf Typst in seinen eigenen Ordner (keine Systemänderungen),
-3. richtet **Zettlr** ein: Editor-Theme, Exportprofil **Source PDF**, Snippets **meeting**, **telefonnotiz** und **header**. Snippets früherer Versionen werden beim Update entfernt, sofern du sie nicht geändert hast.
+3. richtet **Zettlr** ein: Editor-Theme, Exportprofil **Source PDF**, Snippets **meeting**, **telefonnotiz**, **aufgabe** und **header**. Snippets früherer Versionen werden beim Update entfernt, sofern du sie nicht geändert hast.
 
 Versionen bis 26.10.4 haben auch Typora-Themes installiert; der Installer entfernt sie (nur seine eigenen Dateien).
 
@@ -67,6 +67,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
 2. Neue Notiz aus einem Snippet: Name tippen und Enter drücken, Tab springt von Feld zu Feld, Datum und Uhrzeit werden automatisch eingesetzt.
    - `:meeting` – Besprechung: Kunde und Thema (als Titel), dann Teilnehmer, Agenda, Mitschrift, Aufgaben
    - `:telefonnotiz` – Telefonat: Firma, Gesprächspartner (im Titel), Uhrzeit, Telefon, Anlass, Notizen, Aufgaben
+   - `:aufgabe` – eine Aufgabenzeile `- [ ] Aufgabe – Name, bis Datum` mit drei Tab-Stopps
    - `:header` – alle Felder des Front Matters mit Standardwert und Kommentar; leere Felder werden beim Export ignoriert
 3. Export: **Datei → Exportieren…** (<kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>E</kbd>), Profil **Source PDF**.
 
@@ -78,7 +79,7 @@ Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export
 - **Front Matter (optional):**
   - `title`, `subtitle`, `client`, `author`
   - `date` – ohne Angabe das Exportdatum
-  - `logo` – Bild neben dem Titel, Pfad relativ zur Notiz (unter macOS/Linux auch absolut). Es behält seine Proportionen und passt in 20 mm Höhe und 60 mm Breite
+  - `logo` – Bild neben dem Titel (PNG, JPG oder SVG), Pfad relativ zur Notiz (unter macOS/Linux auch absolut). Es behält seine Proportionen und passt in 20 mm Höhe und 60 mm Breite
   - `logo-height` – maximale Logohöhe statt 20 mm, z. B. `logo-height: 15mm`
   - `lang: en` – englische Beschriftungen (Seite, Box- und Tabellentitel); Standard ist Deutsch
 - **Zeilenumbrüche:** jeder Zeilenumbruch der Notiz bleibt erhalten
@@ -90,6 +91,7 @@ Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export
 - **Hinweisboxen:** `> [!NOTE]` (Info), `[!TIP]` (Tipp), `[!IMPORTANT]` (Wichtig), `[!WARNING]` (Hinweis, ruhiges Orange), `[!CAUTION]` (Achtung); deutsche Schlüsselwörter wie `> [!HINWEIS]` funktionieren ebenso
 - **Bilder:** `![Bildunterschrift](bilder/screen.png){width=50%}` mit Unterschrift darunter; Pfade relativ zur Notiz. Unter Windows müssen Bilder im Ordner der Notiz oder darunter liegen
 - **Diagramme:** ` ```mermaid `-Codeblöcke werden in den Farben des Themes gezeichnet (Flussdiagramme, Sequenzdiagramme, …), ohne Internet
+- **Datumszeilen:** `18. Oktober 2026` am Zeilenanfang bleibt ein Datum; Markdown würde sonst eine Liste ab 18 daraus machen (gilt für alle Zeilen, die mit Zahl, Punkt und Monatsnamen beginnen)
 - **Seitenumbrüche:** `\newpage` oder `<!-- pagebreak -->` auf einer eigenen Zeile
 - **Lange Tabellen** laufen auf der nächsten Seite weiter und wiederholen dort ihre Kopfzeile
 - **Text:** `==Markierung==`, Fußnoten, Code mit Syntaxfarben, Formeln, typografische Anführungszeichen, deutsche Silbentrennung, Emojis (einfarbig, in Textfarbe)
