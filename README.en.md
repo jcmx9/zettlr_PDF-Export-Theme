@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.15** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
+**Version 26.10.16** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
 
 Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks – and export them with one click as a calm, typographic A4 PDF. Everything involved is free and open source: Zettlr, Pandoc (ships with Zettlr) and [Typst](https://typst.app).
 
@@ -40,7 +40,7 @@ The installer
 
 1. downloads the latest release and verifies its SHA-256 checksum,
 2. downloads Typst into its own folder if needed (no system changes),
-3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippets **meeting**, **telefonnotiz**, **aufgabe** and **header**. Snippets of earlier versions are removed on update unless you changed them.
+3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippets **meeting**, **telefonnotiz**, **aufgabe**, **newpage** and **header**. Snippets of earlier versions are removed on update unless you changed them.
 
 Existing rules in Zettlr's `custom.css` are kept; a timestamped backup is written before every change.
 
@@ -65,6 +65,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
 2. New note from a snippet: type its name and press Enter; Tab jumps from field to field, date and time are filled in automatically.
    - `:meeting` – meeting: client and topic (as title), then participants, agenda, notes, tasks
    - `:telefonnotiz` – phone call: company, person (in the title), time, phone, reason, notes, tasks
+   - `:newpage` – page break in the PDF (`<!-- pagebreak -->`)
    - `:aufgabe` – one task line `- [ ] Task – Name, bis Date` with three tab stops
    - `:header` – every front matter field with a default and a comment; empty fields are ignored on export
 3. Export: **File → Export…** (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>E</kbd>), profile **Source PDF**.
@@ -98,7 +99,7 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 
 ### Editor theme
 
-The editor theme works with every built-in Zettlr theme; Zettlr's *Appearance → Editor theme* setting no longer matters. Light and dark follow Zettlr's dark mode. It sets fonts, heading sizes (the same scale as the PDF: factor 1.2, body size from level 3), spacing and colors. To try Zettlr without it, comment out the first line of `custom.css` in Zettlr's *Assets Manager*.
+The editor theme works with every built-in Zettlr theme; Zettlr's *Appearance → Editor theme* setting no longer matters. Light and dark follow Zettlr's dark mode. It sets fonts, heading sizes (the same proportions as the PDF: level 1 15/11, level 2 13/11, body size from level 3), spacing and colors. To try Zettlr without it, comment out the first line of `custom.css` in Zettlr's *Assets Manager*.
 
 Tags are shown in the accent color including their `#`. Zettlr does not support tag hierarchies: in Obsidian-style tags such as `#project/client` only `#project` is recognized and colored; the note itself stays unchanged.
 

@@ -99,10 +99,10 @@ body .cm-editor {
     --zettlr-editor-emphasis-style: italic;
     --zettlr-editor-code-style: normal;
 
-    /* Same scale as the PDF (factor 1.2 on the body): # 15/10.5, ## 12.5/10.5,
-       ### body size in bold, then italic */
-    --zettlr-editor-header-1-size: 1.43em;
-    --zettlr-editor-header-2-size: 1.19em;
+    /* Same proportions as the PDF (body 11pt): # 15/11, ## 13/11,
+       ### body size in medium weight, then italic */
+    --zettlr-editor-header-1-size: 1.36em;
+    --zettlr-editor-header-2-size: 1.18em;
     --zettlr-editor-header-3-size: 1em;
     --zettlr-editor-header-4-size: 1em;
     --zettlr-editor-header-5-size: 1em;
