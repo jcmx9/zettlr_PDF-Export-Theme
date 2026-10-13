@@ -116,11 +116,13 @@ $endif$
 #show heading: set block(sticky: true)
 // Sizes: title 18pt, level 1 15pt, level 2 13pt, from level 3 on the body
 // size of 11pt
-#show heading.where(level: 1): set text(size: 15pt)
+#show heading.where(level: 1): set text(size: 15pt, weight: 500)
 #show heading.where(level: 1): set block(above: 2em, below: 0.8em)
-#show heading.where(level: 2): set text(size: 13pt)
+#show heading.where(level: 2): set text(size: 13pt, weight: 500)
 #show heading.where(level: 2): set block(above: 1.6em, below: 0.7em)
-#show heading.where(level: 3): set text(size: 11pt, weight: 500)
+#show heading.where(level: 3): set text(size: 11pt)
+// Level 3 has body size: a thin underline sets it apart
+#show heading.where(level: 3): it => underline(stroke: 0.5pt + heading-color, offset: 2pt, it)
 #show heading.where(level: 3): set block(above: 1.4em, below: 0.6em)
 #show heading.where(level: 4): set text(size: 11pt, style: "italic")
 #show heading.where(level: 4): set block(above: 1.3em, below: 0.6em)
@@ -130,7 +132,7 @@ $endif$
 // Text elements
 
 #show link: set text(fill: accent)
-#show strong: set text(weight: 700, fill: heading-color)
+#show strong: set text(weight: 600, fill: heading-color)
 #show highlight: set highlight(fill: rgb("#fbeab0"))
 
 #set list(indent: 0.3em, body-indent: 0.6em, marker: ([•], [–]))
@@ -204,7 +206,7 @@ $endif$
     above: 1.2em,
     below: 1.2em,
     {
-      text(size: 0.8em, weight: 700, tracking: 0.06em, fill: color, upper(title))
+      text(size: 0.8em, weight: 600, tracking: 0.06em, fill: color, upper(title))
       v(0.1em)
       body
     },
