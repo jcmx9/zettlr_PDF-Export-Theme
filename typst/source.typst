@@ -6,7 +6,7 @@
 //
 // Metadata (all optional): title, subtitle, client, date, author, lang,
 // logo (image path, shown next to the title), logo-height (maximum height,
-// default 20mm), next (next meeting).
+// default 20mm).
 // Without a date, the export date is used. Mermaid code blocks are drawn
 // with the bundled mmdr package (--package-cache-path typst/packages).
 
@@ -27,8 +27,8 @@
 // Labels in the document language (de, otherwise en)
 #let doc-lang = "$if(lang)$$lang$$else$de$endif$".slice(0, 2)
 #let labels = (
-  de: (page: "Seite", next: "Nächster Termin", diagram: "Diagramm"),
-  en: (page: "Page", next: "Next meeting", diagram: "Diagram"),
+  de: (page: "Seite", diagram: "Diagramm"),
+  en: (page: "Page", diagram: "Diagram"),
 )
 #let label-text(key) = labels.at(doc-lang, default: labels.en).at(key)
 
@@ -112,9 +112,11 @@ $endif$
 
 #show heading: set text(font: font-serif, fill: heading-color, weight: 600)
 #show heading: set block(sticky: true)
-#show heading.where(level: 1): set text(size: 14.5pt)
+// Type scale 1.2 on 10.5pt body: title 18pt, level 1 15pt, level 2 12.5pt,
+// level 3 body size in bold
+#show heading.where(level: 1): set text(size: 15pt)
 #show heading.where(level: 1): set block(above: 2em, below: 0.8em)
-#show heading.where(level: 2): set text(size: 12pt)
+#show heading.where(level: 2): set text(size: 12.5pt)
 #show heading.where(level: 2): set block(above: 1.6em, below: 0.7em)
 #show heading.where(level: 3): set text(size: 10.5pt, weight: 700)
 #show heading.where(level: 3): set block(above: 1.4em, below: 0.6em)
@@ -302,10 +304,10 @@ $endfor$
     v(0.2em)
   }
   if doc-title != none {
-    block(below: 1em, par(leading: 0.4em, text(font: font-serif, size: 2.1em, weight: 700, fill: heading-color, doc-title)))
+    block(below: 1em, par(leading: 0.4em, text(font: font-serif, size: 18pt, weight: 700, fill: heading-color, doc-title)))
   }
 $if(subtitle)$
-  block(below: 0.4em, text(font: font-serif, size: 1.25em, fill: muted)[$subtitle$])
+  block(below: 0.4em, text(font: font-serif, size: 12.5pt, fill: muted)[$subtitle$])
 $endif$
   text(size: 9.5pt, fill: muted)[#doc-date$if(author)$ · $for(author)$$author$$sep$, $endfor$$endif$]
 }
@@ -331,15 +333,6 @@ $if(toc)$
 
 $endif$
 $body$
-$if(next)$
-
-#block(above: 2em, sticky: false, {
-  line(length: 100%, stroke: 0.5pt + border)
-  v(0.2em)
-  text(weight: 600, fill: heading-color)[#label-text("next"):]
-  [ $next$]
-})
-$endif$
 
 $for(include-after)$
 $include-after$

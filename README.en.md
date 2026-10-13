@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.10** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
+**Version 26.10.11** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
 
 Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks – and export them with one click as a calm, typographic A4 PDF. Everything involved is free and open source: Zettlr, Pandoc (ships with Zettlr) and [Typst](https://typst.app).
 
@@ -80,8 +80,7 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
   - `date` – defaults to the export date
   - `logo` – image next to the title, path relative to the note (or absolute on macOS/Linux). It keeps its proportions and fits into 20 mm height and 60 mm width
   - `logo-height` – maximum logo height instead of 20 mm, e.g. `logo-height: 15mm`
-  - `next` – next meeting, printed at the end
-  - `lang: en` – English labels (Page, Next meeting, alert and table titles); German is the default
+  - `lang: en` – English labels (Page, alert and table titles); German is the default
 - **Line breaks:** every line break in the note is kept
 - **Tasks:** `- [ ]` / `- [x]` render as check boxes. A task list with owners becomes a table *Aufgabe · Wer · Bis · Status*:
   ```markdown

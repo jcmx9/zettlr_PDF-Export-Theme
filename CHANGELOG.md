@@ -5,6 +5,14 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.11] - 2026-10-13
+
+### Changed
+- Calmer type scale in the PDF (factor 1.2 on 10.5 pt body): title 18 pt (was 22 pt), subtitle 12.5 pt, `#` 15 pt, `##` 12.5 pt, `###` body size in bold
+
+### Removed
+- Front matter `next` (next meeting) and its line at the end of the PDF; removed from the snippets
+
 ## [26.10.10] - 2026-10-12
 
 ### Changed
@@ -94,7 +102,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.10...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.11...HEAD
+[26.10.11]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.10...v26.10.11
 [26.10.10]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.9...v26.10.10
 [26.10.9]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.8...v26.10.9
 [26.10.8]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.7...v26.10.8

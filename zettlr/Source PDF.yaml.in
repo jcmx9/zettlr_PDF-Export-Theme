@@ -11,7 +11,7 @@
 # - ==highlight==, > [!NOTE] alerts, typographic quotes, images, Mermaid
 #   diagrams, task tables and page breaks (\newpage) are supported
 # - Front matter (optional): title, subtitle, client, date, author, logo,
-#   logo-height, next, lang
+#   logo-height, lang
 # - The PDF conforms to PDF/A-2u for archiving
 reader: markdown+hard_line_breaks+mark+alerts-smart
 writer: pdf

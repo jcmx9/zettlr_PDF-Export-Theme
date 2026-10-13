@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.10** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.11** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben – Thema, Agenda, Teilnehmer, Mitschrift, Aufgaben – und mit einem Klick als ruhiges, typografisches A4-PDF exportieren. Alle Bausteine sind frei und quelloffen: Zettlr, Pandoc (in Zettlr enthalten) und [Typst](https://typst.app).
 
@@ -80,8 +80,7 @@ Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export
   - `date` – ohne Angabe das Exportdatum
   - `logo` – Bild neben dem Titel, Pfad relativ zur Notiz (unter macOS/Linux auch absolut). Es behält seine Proportionen und passt in 20 mm Höhe und 60 mm Breite
   - `logo-height` – maximale Logohöhe statt 20 mm, z. B. `logo-height: 15mm`
-  - `next` – nächster Termin, steht am Ende
-  - `lang: en` – englische Beschriftungen (Seite, nächster Termin, Box- und Tabellentitel); Standard ist Deutsch
+  - `lang: en` – englische Beschriftungen (Seite, Box- und Tabellentitel); Standard ist Deutsch
 - **Zeilenumbrüche:** jeder Zeilenumbruch der Notiz bleibt erhalten
 - **Aufgaben:** `- [ ]` / `- [x]` werden zu Kästchen. Eine Aufgabenliste mit Zuständigkeiten wird zur Tabelle *Aufgabe · Wer · Bis · Status*:
   ```markdown

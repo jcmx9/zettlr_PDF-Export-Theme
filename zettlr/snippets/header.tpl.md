@@ -7,8 +7,7 @@ date: $CURRENT_DATE.$CURRENT_MONTH.$CURRENT_YEAR  # leer lassen = Exportdatum
 author: $4  # Autor, steht neben dem Datum
 logo: $5  # Bild neben dem Titel, Pfad relativ zur Notiz, z. B. logo.png
 logo-height: ${6:20mm}  # maximale Logohöhe, Standard 20mm
-next: $7  # nächster Termin, steht am Ende des PDFs
-lang: ${8:de}  # de oder en: Beschriftungen und Silbentrennung
+lang: ${7:de}  # de oder en: Beschriftungen und Silbentrennung
 ---
 
 $0

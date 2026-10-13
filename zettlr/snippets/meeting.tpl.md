@@ -2,7 +2,6 @@
 client: "${1:Kunde}"
 title: "${2:Thema}"
 date: $CURRENT_DATE.$CURRENT_MONTH.$CURRENT_YEAR
-next: $9
 ---
 
 # Teilnehmer
