@@ -224,6 +224,8 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
           irm https://raw.githubusercontent.com/jcmx9/real-fast-document/main/scripts/bootstrap.ps1 | iex
+          # winget installed Typst for later sessions; load the new PATH here
+          $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")
           $zettlr = Join-Path $env:APPDATA "zettlr"
           New-Item -ItemType Directory -Force -Path $zettlr | Out-Null
           $code = Get-Content -Raw install.ps1
