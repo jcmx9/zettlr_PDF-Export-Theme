@@ -7,7 +7,7 @@
 // Metadata (all optional): title, subtitle, client, date, author, lang,
 // logo (image path, shown next to the title), logo-height (maximum height,
 // default 20mm).
-// Without a date, the export date is used. Mermaid code blocks are drawn
+// The date appears only when set. Mermaid code blocks are drawn
 // with the bundled mmdr package (--package-cache-path typst/packages).
 
 #let text-color = rgb("#2b2b2b")
@@ -47,7 +47,8 @@ $endif$
 #let doc-title = $if(title)$[$title$]$else$none$endif$
 #let doc-client = $if(client)$[$client$]$else$none$endif$
 #let doc-subtitle = $if(subtitle)$[$subtitle$]$else$none$endif$
-#let doc-date = $if(date)$[$date$]$else$datetime.today().display("[day].[month].[year]")$endif$
+#let doc-date = $if(date)$[$date$]$else$none$endif$
+#let doc-author = $if(author)$[$for(author)$$author$$sep$, $endfor$]$else$none$endif$
 #let doc-logo-path = $if(logo-path)$$logo-path$$else$none$endif$
 // The logo keeps its proportions and fits into 20mm height and 60mm width
 #let logo-max-height = $if(logo-height)$$logo-height$$else$20mm$endif$
@@ -314,7 +315,11 @@ $endfor$
 $if(subtitle)$
   block(below: 0.4em, text(font: font-serif, size: 12.5pt, fill: muted)[$subtitle$])
 $endif$
-  text(size: 9.5pt, fill: muted)[#doc-date$if(author)$ · $for(author)$$author$$sep$, $endfor$$endif$]
+  // Date and author line, only with what is set
+  let meta-line = (doc-date, doc-author).filter(p => p != none)
+  if meta-line.len() > 0 {
+    text(size: 9.5pt, fill: muted, meta-line.join([ · ]))
+  }
 }
 #if doc-logo == none {
   title-block

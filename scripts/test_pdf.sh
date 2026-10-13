@@ -121,6 +121,8 @@ main() {
     text="$(render yaml-title.md "${profile}")"
     expect yaml-title.md "${text}" "Kick-off: Relaunch" "Ziele" "Unterpunkt" "Aufgaben" \
         "Kick-off: Relaunch · Workshop"
+    # No date in the front matter: no date in the PDF
+    reject yaml-title.md "${text}" "$(date +%d.%m.%Y)"
     echo "ok   yaml-title.md"
 
     # Headings and lists without blank lines, as Zettlr's editor allows them
