@@ -95,7 +95,7 @@ body .cm-editor {
     --zettlr-editor-line-height: 1.65;
 
     --zettlr-editor-header-style: 400;
-    --zettlr-editor-strong-style: 700;
+    --zettlr-editor-strong-style: 600;
     --zettlr-editor-emphasis-style: italic;
     --zettlr-editor-code-style: normal;
 
@@ -151,19 +151,27 @@ body .cm-editor .cm-line:has(.cm-header-6) {
 }
 
 body .cm-editor .cm-line:has(.cm-header-1) {
+    --zettlr-editor-header-style: 500;
     padding-top: 1em;
     padding-bottom: 0.2em;
 }
 
 body .cm-editor .cm-line:has(.cm-header-2) {
+    --zettlr-editor-header-style: 500;
     padding-top: 0.8em;
     padding-bottom: 0.15em;
 }
 
 body .cm-editor .cm-line:has(.cm-header-3) {
-    --zettlr-editor-header-style: 500;
     padding-top: 0.7em;
     padding-bottom: 0.1em;
+}
+
+/* Level 3 has body size: an underline sets it apart (not the # marks) */
+body .cm-editor .cm-header-3:not(.cm-code-mark) {
+    text-decoration: underline;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.18em;
 }
 
 body .cm-editor .cm-line:has(.cm-header-4) {
