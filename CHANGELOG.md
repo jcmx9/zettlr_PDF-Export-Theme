@@ -5,6 +5,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.21] - 2026-10-13
+
+### Changed
+- Project and repository renamed to **zettlr_rfdoc-Export**; install lines, bundle (`zettlr-rfdoc-export.*`) and installer folder (`zettlr-rfdoc-export`) follow the new name
+
 ## [26.10.20] - 2026-10-13
 
 ### Changed
@@ -179,25 +184,26 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.20...HEAD
-[26.10.20]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.19...v26.10.20
-[26.10.19]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.18...v26.10.19
-[26.10.18]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.17...v26.10.18
-[26.10.17]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.16...v26.10.17
-[26.10.16]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.15...v26.10.16
-[26.10.15]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.14...v26.10.15
-[26.10.14]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.13...v26.10.14
-[26.10.13]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.12...v26.10.13
-[26.10.12]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.11...v26.10.12
-[26.10.11]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.10...v26.10.11
-[26.10.10]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.9...v26.10.10
-[26.10.9]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.8...v26.10.9
-[26.10.8]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.7...v26.10.8
-[26.10.7]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.6...v26.10.7
-[26.10.6]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.5...v26.10.6
-[26.10.5]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.4...v26.10.5
-[26.10.4]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.3...v26.10.4
-[26.10.3]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.2...v26.10.3
-[26.10.2]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.1...v26.10.2
-[26.10.1]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.0...v26.10.1
-[26.10.0]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/releases/tag/v26.10.0
+[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.21...HEAD
+[26.10.21]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.20...v26.10.21
+[26.10.20]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.19...v26.10.20
+[26.10.19]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.18...v26.10.19
+[26.10.18]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.17...v26.10.18
+[26.10.17]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.16...v26.10.17
+[26.10.16]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.15...v26.10.16
+[26.10.15]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.14...v26.10.15
+[26.10.14]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.13...v26.10.14
+[26.10.13]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.12...v26.10.13
+[26.10.12]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.11...v26.10.12
+[26.10.11]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.10...v26.10.11
+[26.10.10]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.9...v26.10.10
+[26.10.9]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.8...v26.10.9
+[26.10.8]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.7...v26.10.8
+[26.10.7]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.6...v26.10.7
+[26.10.6]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.5...v26.10.6
+[26.10.5]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.4...v26.10.5
+[26.10.4]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.3...v26.10.4
+[26.10.3]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.2...v26.10.3
+[26.10.2]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.1...v26.10.2
+[26.10.1]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.0...v26.10.1
+[26.10.0]: https://github.com/jcmx9/zettlr_rfdoc-Export/releases/tag/v26.10.0
