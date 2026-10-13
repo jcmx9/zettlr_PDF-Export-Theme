@@ -158,3 +158,5 @@ jobs:
           $app = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
           if (Test-Path -LiteralPath $app) { throw "app folder left behind" }
           if (Test-Path -LiteralPath "$zettlr\defaults\Source PDF.yaml") { throw "profile left behind" }
+          # The failure test above leaves exit code 3 behind on purpose
+          exit 0
