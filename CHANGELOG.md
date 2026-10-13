@@ -5,6 +5,14 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.16] - 2026-10-13
+
+### Added
+- Snippet `newpage`: a page break (`<!-- pagebreak -->`) on a line of its own
+
+### Changed
+- Sizes in the PDF: body text 11 pt (was 10.5), `#` 15 pt, `##` 13 pt, `###` and below 11 pt, subtitle 13 pt, title 18 pt; the Zettlr editor uses the same proportions
+
 ## [26.10.15] - 2026-10-13
 
 ### Changed
@@ -141,7 +149,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.15...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.16...HEAD
+[26.10.16]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.15...v26.10.16
 [26.10.15]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.14...v26.10.15
 [26.10.14]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.13...v26.10.14
 [26.10.13]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.12...v26.10.13

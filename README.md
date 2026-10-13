@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.15** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.16** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben – Thema, Agenda, Teilnehmer, Mitschrift, Aufgaben – und mit einem Klick als ruhiges, typografisches A4-PDF exportieren. Alle Bausteine sind frei und quelloffen: Zettlr, Pandoc (in Zettlr enthalten) und [Typst](https://typst.app).
 
@@ -40,7 +40,7 @@ Der Installer
 
 1. lädt das neueste Release und prüft dessen SHA-256-Prüfsumme,
 2. lädt bei Bedarf Typst in seinen eigenen Ordner (keine Systemänderungen),
-3. richtet **Zettlr** ein: Editor-Theme, Exportprofil **Source PDF**, Snippets **meeting**, **telefonnotiz**, **aufgabe** und **header**. Snippets früherer Versionen werden beim Update entfernt, sofern du sie nicht geändert hast.
+3. richtet **Zettlr** ein: Editor-Theme, Exportprofil **Source PDF**, Snippets **meeting**, **telefonnotiz**, **aufgabe**, **newpage** und **header**. Snippets früherer Versionen werden beim Update entfernt, sofern du sie nicht geändert hast.
 
 Eigene Regeln in Zettlrs `custom.css` bleiben erhalten; vor jeder Änderung wird eine Sicherung mit Zeitstempel angelegt.
 
@@ -65,6 +65,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/
 2. Neue Notiz aus einem Snippet: Name tippen und Enter drücken, Tab springt von Feld zu Feld, Datum und Uhrzeit werden automatisch eingesetzt.
    - `:meeting` – Besprechung: Kunde und Thema (als Titel), dann Teilnehmer, Agenda, Mitschrift, Aufgaben
    - `:telefonnotiz` – Telefonat: Firma, Gesprächspartner (im Titel), Uhrzeit, Telefon, Anlass, Notizen, Aufgaben
+   - `:newpage` – Seitenumbruch im PDF (`<!-- pagebreak -->`)
    - `:aufgabe` – eine Aufgabenzeile `- [ ] Aufgabe – Name, bis Datum` mit drei Tab-Stopps
    - `:header` – alle Felder des Front Matters mit Standardwert und Kommentar; leere Felder werden beim Export ignoriert
 3. Export: **Datei → Exportieren…** (<kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>E</kbd>), Profil **Source PDF**.
@@ -98,7 +99,7 @@ Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export
 
 ### Editor-Theme
 
-Das Editor-Theme wirkt mit jedem eingebauten Zettlr-Theme; die Einstellung *Darstellung → Editor-Theme* spielt keine Rolle mehr. Hell und dunkel folgen Zettlrs Dunkelmodus. Es setzt Schriften, Überschriftengrößen (dieselbe Stufung wie im PDF: Faktor 1,2, ab Ebene 3 Fließtextgröße), Abstände und Farben. Um Zettlr ohne das Theme zu sehen, die erste Zeile der `custom.css` im *Assets Manager* von Zettlr auskommentieren.
+Das Editor-Theme wirkt mit jedem eingebauten Zettlr-Theme; die Einstellung *Darstellung → Editor-Theme* spielt keine Rolle mehr. Hell und dunkel folgen Zettlrs Dunkelmodus. Es setzt Schriften, Überschriftengrößen (dieselben Verhältnisse wie im PDF: Ebene 1 15/11, Ebene 2 13/11, ab Ebene 3 Fließtextgröße), Abstände und Farben. Um Zettlr ohne das Theme zu sehen, die erste Zeile der `custom.css` im *Assets Manager* von Zettlr auskommentieren.
 
 Tags erscheinen samt `#` in der Akzentfarbe. Zettlr unterstützt keine Tag-Hierarchien: Bei Tags im Obsidian-Stil wie `#projekt/kunde` erkennt und färbt Zettlr nur `#projekt`; die Notiz selbst bleibt unverändert.
 

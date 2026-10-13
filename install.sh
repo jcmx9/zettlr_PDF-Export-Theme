@@ -10,7 +10,7 @@
 #                      of the latest GitHub release
 #
 # Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
-# snippets meeting, telefonnotiz, aufgabe and header. Typst is downloaded
+# snippets meeting, telefonnotiz, aufgabe, newpage and header. Typst is downloaded
 # into the installer's own folder; no admin rights needed.
 set -euo pipefail
 
