@@ -236,7 +236,9 @@ jobs:
           $target = Join-Path $env:RUNNER_TEMP "Export Ziel\notiz.pdf"
           New-Item -ItemType Directory -Force -Path "$notes\bilder", (Split-Path $target) | Out-Null
           [IO.File]::WriteAllText("$notes\bilder\grafik.svg", '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60"><rect width="200" height="60" fill="#1f6f6a"/></svg>')
-          [IO.File]::WriteAllText("$notes\notiz.md", "---`ntitle: `"Bote`"`nclient: `"Muster GmbH`"`n---`n`n# Test`n`n![Grafik](bilder/grafik.svg)`n`n- [ ] Aufgabe – Name, bis 17.10.`n")
+          # Windows PowerShell 5.1 reads this script as ANSI: build the dash from its code point
+          $dash = [char]0x2013
+          [IO.File]::WriteAllText("$notes\notiz.md", "---`ntitle: `"Bote`"`nclient: `"Muster GmbH`"`n---`n`n# Test`n`n![Grafik](bilder/grafik.svg)`n`n- [ ] Aufgabe $dash Name, bis 17.10.`n", (New-Object System.Text.UTF8Encoding $false))
           Push-Location $notes
           & $pandoc -d "$zettlr\defaults\rf-doc.yaml" notiz.md -o $target
           $exit = $LASTEXITCODE
