@@ -16,17 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: "22"
-          cache: npm
-
-      - name: Install lint tooling
-        run: npm ci
-
-      - name: Lint CSS (stylelint)
-        run: npm run lint:css
-
       - name: Lint shell scripts (shellcheck)
         run: shellcheck install.sh scripts/*.sh
 
@@ -36,15 +25,6 @@ jobs:
           $errors = $null
           [System.Management.Automation.Language.Parser]::ParseFile("$PWD/install.ps1", [ref]$null, [ref]$errors) | Out-Null
           if ($errors) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
-
-      - name: Lint Python scripts (ruff)
-        run: uvx ruff check scripts/
-
-      - name: Check color contrast (WCAG AA)
-        run: python3 scripts/check_contrast.py
 
       - name: Check version in both READMEs
         run: |
@@ -90,40 +70,28 @@ jobs:
             zettlr="$HOME/.config/zettlr"
           fi
           mkdir -p "$zettlr"
-          printf '/* own rule */\n' > "$zettlr/custom.css"
-          cp "$zettlr/custom.css" original.css
 
           bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
           bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
           test -f "$zettlr/defaults/Source PDF.yaml"
           test -f "$zettlr/snippets/meeting.tpl.md"
-          test -f "$zettlr/source-zettlr-fonts.css"
-          head -n 1 "$zettlr/custom.css" | grep -qF 'source-zettlr.css'
 
-          app="$HOME/.local/share/zettlr-pdf-export-theme"
-          printf '#set text(font: "SourceSans3VF")\nHallo\n' > t.typ
-          "$app/bin/typst" compile --ignore-system-fonts --font-path "$app/current/typst/fonts" t.typ t.pdf
-          test -s t.pdf
-          "$app/bin/typst" fonts --ignore-system-fonts --font-path "$app/current/typst/fonts" | grep -qx 'Noto Emoji'
-
-          # End to end: export the test notes with the installed profile
+          # End to end with Zettlr's Pandoc and a stub for rf-document
           if [ "$(uname -s)" = Darwin ]; then
             curl -fsSL -o pandoc.zip "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-arm64-macOS.zip"
             unzip -q pandoc.zip
             export PATH="$PWD/pandoc-$PANDOC_VERSION-arm64/bin:$PATH"
-            brew install --quiet poppler
           else
             curl -fsSL "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-linux-amd64.tar.gz" | tar -xz
             export PATH="$PWD/pandoc-$PANDOC_VERSION/bin:$PATH"
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq poppler-utils >/dev/null
           fi
           pandoc --version | head -n 1
-          ./scripts/test_pdf.sh "$zettlr/defaults/Source PDF.yaml"
+          ./scripts/test_messenger.sh "$zettlr/defaults/Source PDF.yaml"
 
           bash install.sh --uninstall
-          cmp "$zettlr/custom.css" original.css
-          test ! -e "$app"
+          test ! -e "$zettlr/defaults/Source PDF.yaml"
+          test ! -e "$zettlr/snippets/meeting.tpl.md"
+          test ! -e "$HOME/.local/share/zettlr-pdf-export-theme"
 
   bootstrap-windows:
     needs: bundle
@@ -142,38 +110,53 @@ jobs:
           $ErrorActionPreference = "Stop"
           $zettlr = Join-Path $env:APPDATA "zettlr"
           New-Item -ItemType Directory -Force -Path $zettlr | Out-Null
-          [IO.File]::WriteAllText("$zettlr\custom.css", "/* own rule */`r`n")
-          Copy-Item "$zettlr\custom.css" original.css
 
           $code = Get-Content -Raw install.ps1
           & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
           & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
-          foreach ($f in @("$zettlr\defaults\Source PDF.yaml", "$zettlr\snippets\meeting.tpl.md", "$zettlr\source-zettlr-fonts.css")) {
+          foreach ($f in @("$zettlr\defaults\Source PDF.yaml", "$zettlr\snippets\meeting.tpl.md")) {
             if (-not (Test-Path -LiteralPath $f)) { throw "missing $f" }
           }
 
-          $app = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
-          [IO.File]::WriteAllText("$PWD\t.typ", "#set text(font: `"SourceSans3VF`")`nHallo`n")
-          & "$app\bin\typst.exe" compile --ignore-system-fonts --font-path "$app\current\typst\fonts" t.typ t.pdf
-          if ($LASTEXITCODE -ne 0 -or -not (Test-Path t.pdf)) { throw "typst failed" }
-          $families = & "$app\bin\typst.exe" fonts --ignore-system-fonts --font-path "$app\current\typst\fonts"
-          if ($families -notcontains "Noto Emoji") { throw "Noto Emoji missing" }
-
-          # End to end: export the test notes with the installed profile
+          # End to end with Zettlr's Pandoc and a stub for rf-document, in
+          # folders with spaces (cmd.exe quoting)
           Invoke-WebRequest -UseBasicParsing -OutFile pandoc.zip "https://github.com/jgm/pandoc/releases/download/$env:PANDOC_VERSION/pandoc-$env:PANDOC_VERSION-windows-x86_64.zip"
           Expand-Archive pandoc.zip -DestinationPath .
           $pandoc = Join-Path $PWD "pandoc-$env:PANDOC_VERSION\pandoc.exe"
-          Push-Location tests\fixtures
-          # Absolute Windows path (same drive as the note) through a variable
-          $env:TEST_ASSETS = (Get-Location).Path
-          foreach ($note in @("all-elements.md", "english.md", "edge-cases.md", "empty-fields.md", "yaml-title.md", "no-blank-lines.md", "absolute-paths.md")) {
-            & $pandoc -d "$zettlr\defaults\Source PDF.yaml" $note -o "$env:RUNNER_TEMP\$note.pdf"
-            if ($LASTEXITCODE -ne 0 -or (Get-Item "$env:RUNNER_TEMP\$note.pdf").Length -eq 0) { throw "export of $note failed" }
-          }
-          $bytes = [IO.File]::ReadAllText("$env:RUNNER_TEMP\absolute-paths.md.pdf", [Text.Encoding]::GetEncoding(28591))
-          if ($bytes -notmatch "/Subtype\s*/Image") { throw "absolute image path was not embedded" }
+          $notes = Join-Path $env:RUNNER_TEMP "Notizen mit Leerzeichen"
+          New-Item -ItemType Directory -Force -Path $notes | Out-Null
+          [IO.File]::WriteAllText("$notes\notiz.md", "---`ntitle: Bote`n---`n`n# Test`n")
+          $stub = Join-Path $env:RUNNER_TEMP "stub dir\rf-document.cmd"
+          New-Item -ItemType Directory -Force -Path (Split-Path $stub) | Out-Null
+          $log = Join-Path $env:RUNNER_TEMP "stub.log"
+          [IO.File]::WriteAllText($stub, "@echo off`r`n> `"$log`" echo in=%~1`r`n>> `"$log`" echo out=%~2`r`n>> `"$log`" echo noopen=%RFD_NO_OPEN%`r`n>> `"$log`" echo base=%RFD_BASE_DIR%`r`nif not `"%STUB_EXIT%`"==`"`" exit /b %STUB_EXIT%`r`n> `"%~2`" echo %%PDF-1.7 stub`r`n")
+          $env:RF_DOCUMENT = $stub
+          $target = Join-Path $env:RUNNER_TEMP "out folder\notiz.pdf"
+          New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
+
+          Push-Location $notes
+          & $pandoc -d "$zettlr\defaults\Source PDF.yaml" notiz.md -o $target
+          $exit = $LASTEXITCODE
           Pop-Location
+          Get-Content $log
+          if ($exit -ne 0) { throw "export failed with $exit" }
+          if (-not (Test-Path -LiteralPath $target)) { throw "no PDF at the target path" }
+          $logText = Get-Content -Raw $log
+          if ($logText -notmatch [regex]::Escape("in=$notes\notiz.md")) { throw "input path not passed" }
+          if ($logText -notmatch "noopen=1") { throw "RFD_NO_OPEN not set" }
+          if ($logText -notmatch [regex]::Escape("base=$notes")) { throw "RFD_BASE_DIR not set" }
+
+          $env:STUB_EXIT = "3"
+          Push-Location $notes
+          & $pandoc -d "$zettlr\defaults\Source PDF.yaml" notiz.md -o $target
+          $exit = $LASTEXITCODE
+          Pop-Location
+          if ($exit -ne 3) { throw "exit code $exit instead of 3" }
+          Remove-Item Env:STUB_EXIT
 
           & ([scriptblock]::Create($code)) -Uninstall
-          if ((Get-FileHash "$zettlr\custom.css").Hash -ne (Get-FileHash original.css).Hash) { throw "custom.css not restored" }
+          $app = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
           if (Test-Path -LiteralPath $app) { throw "app folder left behind" }
+          if (Test-Path -LiteralPath "$zettlr\defaults\Source PDF.yaml") { throw "profile left behind" }
+          # The failure test above leaves exit code 3 behind on purpose
+          exit 0

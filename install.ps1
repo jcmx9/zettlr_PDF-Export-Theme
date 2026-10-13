@@ -7,9 +7,10 @@ Install or update (run the same line again to update):
 Uninstall:
   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
 
-Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
-snippets meeting, telefonnotiz, aufgabe, newpage and header. Typst is downloaded
-into the installer's own folder.
+Sets up Zettlr: the export profile "Source PDF", which hands the note to
+rf-document (real-fast-document) for the PDF, and the snippets meeting,
+telefonnotiz, aufgabe, newpage and header. rf-document is installed
+separately: https://github.com/jcmx9/real-fast-document
 #>
 param(
     [switch]$Uninstall,
@@ -23,14 +24,11 @@ $ProgressPreference = "SilentlyContinue"
 
 $Repo = "jcmx9/zettlr_PDF-Export-Theme"
 $BundleName = "zettlr-pdf-export-theme"
-$TypstVersion = "0.15.1"
-$ImportLine = '@import url("source-zettlr.css");'
 $ProfileName = "Source PDF.yaml"
 $ProfileMarker = "zettlr_PDF-Export-Theme installer"
 
 $AppDir = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
 $Current = Join-Path $AppDir "current"
-$TypstExe = ([IO.Path]::Combine($AppDir, "bin", "typst.exe"))
 $ZettlrDir = Join-Path $env:APPDATA "zettlr"
 
 $Utf8NoBom = New-Object System.Text.UTF8Encoding $false
@@ -96,71 +94,44 @@ function Install-Bundle([string]$Temp) {
     if ($old -eq $new) { Write-Host "Version $new (reinstalled)" } else { Write-Host "Version $old -> $new" }
 }
 
-function Install-Typst([string]$Temp) {
-    if (Test-Path -LiteralPath $TypstExe) {
-        try {
-            $version = & $TypstExe --version 2>$null
-            if ($version -match "typst $([regex]::Escape($TypstVersion))") { return }
-        }
-        catch {
-            Write-Host "  existing Typst could not be started, downloading again"
-        }
+# rf-document's command, as GUI apps such as Zettlr may not find it on PATH
+function Find-RfDocument {
+    $command = Get-Command "rf-document" -ErrorAction SilentlyContinue | Select-Object -First 1
+    $candidates = @()
+    if ($command) { $candidates += $command.Source }
+    $candidates += [IO.Path]::Combine($env:LOCALAPPDATA, "Microsoft", "WindowsApps", "rf-document.cmd")
+    foreach ($candidate in $candidates) {
+        if ($candidate -and (Test-Path -LiteralPath $candidate)) { return $candidate }
     }
-    $arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "aarch64" } else { "x86_64" }
-    $target = "$arch-pc-windows-msvc"
-    Write-Host "Downloading Typst $TypstVersion ..."
-    $archive = Join-Path $Temp "typst.zip"
-    Get-File "https://github.com/typst/typst/releases/download/v$TypstVersion/typst-$target.zip" $archive
-    $extracted = Join-Path $Temp "typst"
-    Expand-Archive -LiteralPath $archive -DestinationPath $extracted -Force
-    New-Item -ItemType Directory -Force -Path (Split-Path $TypstExe) | Out-Null
-    $exe = Get-ChildItem -LiteralPath $extracted -Recurse -Filter "typst.exe" | Select-Object -First 1
-    if (-not $exe) { throw "typst.exe not found in the Typst download" }
-    Copy-Item -LiteralPath $exe.FullName -Destination $TypstExe -Force
+    return $null
+}
+
+# Write rf-document's path into the filter; the filter also searches itself
+function Set-FilterPath {
+    $filter = [IO.Path]::Combine($Current, "zettlr", "rf-document.lua")
+    $path = Find-RfDocument
+    if (-not $path) {
+        Write-Warning "rf-document not found; install it before exporting: https://github.com/jcmx9/real-fast-document"
+        return
+    }
+    # Lua string literal: escape backslashes and double quotes
+    $escaped = $path.Replace("\", "\\").Replace('"', '\"')
+    Write-Text $filter ((Read-Text $filter).Replace("@RFD@", $escaped))
+    Write-Host "rf-document: $path"
 }
 
 # --- Zettlr -------------------------------------------------------------------
 
-function Add-Import([string]$Css) {
-    if (-not (Test-Path -LiteralPath $Css)) {
-        Write-Text $Css "$ImportLine`n"
-        return
-    }
-    $text = Read-Text $Css
-    if ($text.Contains($ImportLine)) { return }
-    Backup-File $Css
-    # @import must come before all other rules
-    Write-Text $Css "$ImportLine`n`n$text"
-}
-
-function Remove-Import([string]$Css) {
-    if (-not (Test-Path -LiteralPath $Css)) { return }
-    $text = Read-Text $Css
-    if (-not $text.Contains($ImportLine)) { return }
-    Backup-File $Css
-    foreach ($prefix in @("$ImportLine`n`n", "$ImportLine`r`n`r`n")) {
-        if ($text.StartsWith($prefix)) {
-            Write-Text $Css $text.Substring($prefix.Length)
-            return
-        }
-    }
-    $lines = $text -split "`r?`n" | Where-Object { $_ -ne $ImportLine }
-    Write-Text $Css ($lines -join "`n")
-}
-
 function Convert-YamlPath([string]$Path) {
-    # Forward slashes work for Pandoc and Typst; ' is escaped for single-quoted YAML
+    # Forward slashes work for Pandoc; ' is escaped for single-quoted YAML
     return $Path.Replace("\", "/").Replace("'", "''")
 }
 
 function Install-Zettlr {
     Write-Host "Zettlr: $ZettlrDir"
-    Copy-Item -LiteralPath ([IO.Path]::Combine($Current, "zettlr", "source-zettlr.css")) -Destination (Join-Path $ZettlrDir "source-zettlr.css") -Force
-    Copy-Item -LiteralPath ([IO.Path]::Combine($Current, "zettlr", "source-zettlr-fonts.css")) -Destination (Join-Path $ZettlrDir "source-zettlr-fonts.css") -Force
-    Add-Import (Join-Path $ZettlrDir "custom.css")
 
     $template = Read-Text ([IO.Path]::Combine($Current, "zettlr", "Source PDF.yaml.in"))
-    $content = $template.Replace("@TYPST@", (Convert-YamlPath $TypstExe)).Replace("@DIR@", (Convert-YamlPath $Current))
+    $content = $template.Replace("@DIR@", (Convert-YamlPath $Current))
     $defaults = Join-Path $ZettlrDir "defaults"
     New-Item -ItemType Directory -Force -Path $defaults | Out-Null
     Write-Text (Join-Path $defaults $ProfileName) $content
@@ -192,20 +163,16 @@ function Install-Zettlr {
                     Remove-Item -LiteralPath $target -Force
                 }
                 else {
-                    Write-Warning "kept $target (changed; no longer part of the theme)"
+                    Write-Warning "kept $target (changed; no longer shipped)"
                 }
             }
         }
     }
-    Write-Host '  theme, export profile "Source PDF" and snippets installed'
+    Write-Host '  export profile "Source PDF" and snippets installed'
 }
 
 function Uninstall-Zettlr {
     Write-Host "Zettlr: $ZettlrDir"
-    Remove-Import (Join-Path $ZettlrDir "custom.css")
-    foreach ($file in @("source-zettlr.css", "source-zettlr-fonts.css")) {
-        Remove-Item -LiteralPath (Join-Path $ZettlrDir $file) -Force -ErrorAction SilentlyContinue
-    }
     $profilePath = ([IO.Path]::Combine($ZettlrDir, "defaults", $ProfileName))
     if ((Test-Path -LiteralPath $profilePath) -and (Read-Text $profilePath).Contains($ProfileMarker)) {
         Remove-Item -LiteralPath $profilePath -Force
@@ -238,7 +205,7 @@ $temp = Join-Path ([IO.Path]::GetTempPath()) ("$BundleName-" + [Guid]::NewGuid()
 New-Item -ItemType Directory -Path $temp | Out-Null
 try {
     Install-Bundle $temp
-    Install-Typst $temp
+    Set-FilterPath
     $found = $false
     if (Test-Path -LiteralPath $ZettlrDir) { Install-Zettlr; $found = $true }
     if (-not $found) {

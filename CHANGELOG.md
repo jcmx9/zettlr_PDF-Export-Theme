@@ -5,6 +5,17 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.19] - 2026-10-13
+
+### Changed
+- The PDF is now built by [real-fast-document](https://github.com/jcmx9/real-fast-document). The export profile **Source PDF** uses Pandoc only as a messenger: a Lua filter hands the note to `rf-document` and ends Pandoc with its exit code. With unsaved changes the note's folder is passed as `RFD_BASE_DIR`; `RFD_NO_OPEN=1` is set
+- The installer no longer downloads Typst; it looks for rf-document and writes its path into the filter
+
+### Removed
+- The Typst template, the Pandoc Lua filter for the layout, the bundled fonts and Typst packages – all of this lives in real-fast-document now
+- The Zettlr editor theme
+- The end-to-end PDF tests, contrast check and font scripts; a messenger test replaces them
+
 ## [26.10.18] - 2026-10-13
 
 ### Fixed
@@ -163,7 +174,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.18...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.19...HEAD
+[26.10.19]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.18...v26.10.19
 [26.10.18]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.17...v26.10.18
 [26.10.17]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.16...v26.10.17
 [26.10.16]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.15...v26.10.16
