@@ -5,6 +5,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.17] - 2026-10-13
+
+### Changed
+- `#` and `##` headings in Medium (500); `###` in Regular with a thin underline, since it has body size – in the PDF and the Zettlr editor
+- Bold text is Semibold (600) instead of Bold (700), also the alert titles in the PDF
+
 ## [26.10.16] - 2026-10-13
 
 ### Added
@@ -149,7 +155,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.16...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.17...HEAD
+[26.10.17]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.16...v26.10.17
 [26.10.16]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.15...v26.10.16
 [26.10.15]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.14...v26.10.15
 [26.10.14]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.13...v26.10.14
