@@ -5,6 +5,14 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.18] - 2026-10-13
+
+### Fixed
+- Bold text in the PDF was nearly black: Typst adds the strong delta (+300) to the weight that was already set. Bold is now Semibold like in the editor
+
+### Changed
+- The PDF looks like the Zettlr editor: line spacing about 1.5 (16.5 pt at 11 pt), weights slightly reduced because PDF viewers draw the variable fonts heavier than Chromium (text 380, headings 470, bold 560)
+
 ## [26.10.17] - 2026-10-13
 
 ### Changed
@@ -155,7 +163,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.17...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.18...HEAD
+[26.10.18]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.17...v26.10.18
 [26.10.17]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.16...v26.10.17
 [26.10.16]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.15...v26.10.16
 [26.10.15]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.14...v26.10.15
