@@ -9,7 +9,7 @@
 #   --bundle <file>    install from a local bundle (scripts/package.sh) instead
 #                      of the latest GitHub release
 #
-# Sets up Zettlr: the export profile "Source PDF", which hands the note to
+# Sets up Zettlr: the export profile "rf-doc", which hands the note to
 # rf-document (real-fast-document) for the PDF, and the snippets meeting,
 # telefonnotiz, aufgabe, newpage and header. rf-document is installed
 # separately: https://github.com/jcmx9/real-fast-document
@@ -19,7 +19,7 @@ shopt -u patsub_replacement 2>/dev/null || true
 
 readonly REPO="jcmx9/zettlr_PDF-Export-Theme"
 readonly BUNDLE="zettlr-pdf-export-theme"
-readonly PROFILE_NAME="Source PDF.yaml"
+readonly PROFILE_NAME="rf-doc.yaml"
 readonly PROFILE_MARKER="zettlr_PDF-Export-Theme installer"
 
 readonly APP_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/zettlr-pdf-export-theme"
@@ -155,7 +155,7 @@ find_rf_document() {
 
 write_profile() {
     local dir="$1" template content
-    template="$(cat "${CURRENT}/zettlr/Source PDF.yaml.in")"
+    template="$(cat "${CURRENT}/zettlr/rf-doc.yaml.in")"
     # The path goes into a single-quoted YAML string, where ' is written as ''
     local q="'" dir_path
     dir_path="${CURRENT//${q}/${q}${q}}"
@@ -214,7 +214,7 @@ setup_zettlr() {
             fi
         fi
     done
-    info "  export profile \"Source PDF\" and snippets installed"
+    info "  export profile \"rf-doc\" and snippets installed"
 }
 
 remove_zettlr() {
@@ -262,7 +262,7 @@ EOF
     info ""
     info "Done. Restart Zettlr, then:"
     info "  - new meeting note: type :meeting"
-    info "  - PDF: File > Export, profile \"Source PDF\""
+    info "  - PDF: File > Export, profile \"rf-doc\""
 }
 
 uninstall_all() {

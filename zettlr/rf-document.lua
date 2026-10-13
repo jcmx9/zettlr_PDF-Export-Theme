@@ -1,4 +1,4 @@
--- Pandoc Lua filter for the Zettlr export profile "Source PDF".
+-- Pandoc Lua filter for the Zettlr export profile "rf-doc".
 --
 -- Pandoc is only the messenger: the note is handed to rf-document
 -- (https://github.com/jcmx9/real-fast-document), which builds the PDF.
@@ -102,11 +102,11 @@ function Pandoc()
   local input = PANDOC_STATE.input_files[1]
   local output = PANDOC_STATE.output_file
   if not input or input == "-" or not output then
-    fail("Source PDF: Zettlr hat keine Notiz oder kein Ziel übergeben.")
+    fail("rf-doc: Zettlr hat keine Notiz oder kein Ziel übergeben.")
   end
   local rf_document = find_rf_document()
   if not rf_document then
-    fail("Source PDF: rf-document wurde nicht gefunden. Installation: " .. INSTALL_HINT)
+    fail("rf-doc: rf-document wurde nicht gefunden. Installation: " .. INSTALL_HINT)
   end
   local ok, _, code = os.execute(command(
     rf_document,

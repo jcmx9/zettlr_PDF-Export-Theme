@@ -5,6 +5,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.20] - 2026-10-13
+
+### Changed
+- The export profile is called **rf-doc** (was "Source PDF")
+
 ## [26.10.19] - 2026-10-13
 
 ### Changed
@@ -174,7 +179,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.19...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.20...HEAD
+[26.10.20]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.19...v26.10.20
 [26.10.19]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.18...v26.10.19
 [26.10.18]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.17...v26.10.18
 [26.10.17]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.16...v26.10.17
