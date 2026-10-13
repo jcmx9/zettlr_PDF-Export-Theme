@@ -1,11 +1,11 @@
 <#
-zettlr_PDF-Export-Theme installer for Windows (PowerShell 5.1 or later, no admin rights).
+zettlr_rfdoc-Export installer for Windows (PowerShell 5.1 or later, no admin rights).
 
 Install or update (run the same line again to update):
-  irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1 | iex
+  irm https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/install.ps1 | iex
 
 Uninstall:
-  & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
+  & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/install.ps1))) -Uninstall
 
 Sets up Zettlr: the export profile "rf-doc", which hands the note to
 rf-document (real-fast-document) for the PDF, and the snippets meeting,
@@ -22,12 +22,12 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-$Repo = "jcmx9/zettlr_PDF-Export-Theme"
-$BundleName = "zettlr-pdf-export-theme"
+$Repo = "jcmx9/zettlr_rfdoc-Export"
+$BundleName = "zettlr-rfdoc-export"
 $ProfileName = "rf-doc.yaml"
-$ProfileMarker = "zettlr_PDF-Export-Theme installer"
+$ProfileMarker = "zettlr_rfdoc-Export installer"
 
-$AppDir = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
+$AppDir = Join-Path $env:LOCALAPPDATA "zettlr-rfdoc-export"
 $Current = Join-Path $AppDir "current"
 $ZettlrDir = Join-Path $env:APPDATA "zettlr"
 

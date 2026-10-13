@@ -1,11 +1,11 @@
-# Zettlr PDF Export
+# Zettlr rfdoc Export
 
 > PDF-Export aus Zettlr über [real-fast-document](https://github.com/jcmx9/real-fast-document) – dazu Snippets für Besprechungen, Telefonate und Aufgaben.
 
-[![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
+[![CI](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.20** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.21** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben und mit **Datei → Exportieren → rf-doc** als PDF für den Kunden erzeugen. Das PDF baut [real-fast-document](https://github.com/jcmx9/real-fast-document) (rf-document): Layout, Schriften, Hinweisboxen, Aufgabentabellen und PDF/A kommen von dort. Dieses Projekt verbindet Zettlr mit rf-document und bringt die Snippets mit.
 
@@ -20,30 +20,30 @@ Eine Zeile pro System. Dieselbe Zeile aktualisiert auch.
 **macOS / Linux**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/install.sh | bash
 ```
 
 **Windows** (PowerShell, ohne Administratorrechte)
 
 ```powershell
-irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/install.ps1 | iex
 ```
 
 Der Installer lädt das neueste Release (mit SHA-256-Prüfung), sucht rf-document und richtet in Zettlr das Exportprofil **rf-doc** und die Snippets ein. Snippets, die du geändert hast, werden vor dem Überschreiben gesichert.
 
 | | macOS | Linux | Windows |
 | --- | --- | --- | --- |
-| Installer-Dateien | `~/.local/share/zettlr-pdf-export-theme` | `~/.local/share/zettlr-pdf-export-theme` | `%LOCALAPPDATA%\zettlr-pdf-export-theme` |
+| Installer-Dateien | `~/.local/share/zettlr-rfdoc-export` | `~/.local/share/zettlr-rfdoc-export` | `%LOCALAPPDATA%\zettlr-rfdoc-export` |
 | Zettlr | `~/Library/Application Support/zettlr` | `~/.config/zettlr` | `%APPDATA%\zettlr` |
 
 ### Deinstallieren
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.sh | bash -s -- --uninstall
+curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/install.sh | bash -s -- --uninstall
 ```
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/install.ps1))) -Uninstall
 ```
 
 ## Verwendung in Zettlr
@@ -80,7 +80,7 @@ shellcheck install.sh scripts/*.sh
 
 # Release-Bundle bauen und lokal installieren
 ./scripts/package.sh
-./install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
+./install.sh --bundle dist/zettlr-rfdoc-export.tar.gz
 ```
 
 Die CI prüft die Skripte, installiert unter Ubuntu, macOS und Windows (PowerShell 5.1) und testet den Boten mit Zettlrs Pandoc-Version.

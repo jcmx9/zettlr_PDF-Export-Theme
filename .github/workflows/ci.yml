@@ -71,8 +71,8 @@ jobs:
           fi
           mkdir -p "$zettlr"
 
-          bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
-          bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
+          bash install.sh --bundle dist/zettlr-rfdoc-export.tar.gz
+          bash install.sh --bundle dist/zettlr-rfdoc-export.tar.gz
           test -f "$zettlr/defaults/rf-doc.yaml"
           test -f "$zettlr/snippets/meeting.tpl.md"
 
@@ -91,7 +91,7 @@ jobs:
           bash install.sh --uninstall
           test ! -e "$zettlr/defaults/rf-doc.yaml"
           test ! -e "$zettlr/snippets/meeting.tpl.md"
-          test ! -e "$HOME/.local/share/zettlr-pdf-export-theme"
+          test ! -e "$HOME/.local/share/zettlr-rfdoc-export"
 
   bootstrap-windows:
     needs: bundle
@@ -112,8 +112,8 @@ jobs:
           New-Item -ItemType Directory -Force -Path $zettlr | Out-Null
 
           $code = Get-Content -Raw install.ps1
-          & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
-          & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
+          & ([scriptblock]::Create($code)) -Bundle dist\zettlr-rfdoc-export.zip
+          & ([scriptblock]::Create($code)) -Bundle dist\zettlr-rfdoc-export.zip
           foreach ($f in @("$zettlr\defaults\rf-doc.yaml", "$zettlr\snippets\meeting.tpl.md")) {
             if (-not (Test-Path -LiteralPath $f)) { throw "missing $f" }
           }
@@ -155,7 +155,7 @@ jobs:
           Remove-Item Env:STUB_EXIT
 
           & ([scriptblock]::Create($code)) -Uninstall
-          $app = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
+          $app = Join-Path $env:LOCALAPPDATA "zettlr-rfdoc-export"
           if (Test-Path -LiteralPath $app) { throw "app folder left behind" }
           if (Test-Path -LiteralPath "$zettlr\defaults\rf-doc.yaml") { throw "profile left behind" }
           # The failure test above leaves exit code 3 behind on purpose
