@@ -9,6 +9,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ### Changed
 - The date below the title appears only when `date:` is set in the front matter (it used to default to the export date)
+- Lighter headings in the PDF and the Zettlr editor: title Medium (500), `#` and `##` Regular (400), `###` Medium, `####` italic Regular; the serif already sets them apart from the sans text
 
 ## [26.10.14] - 2026-10-13
 
