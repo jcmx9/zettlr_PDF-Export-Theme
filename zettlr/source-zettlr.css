@@ -94,7 +94,7 @@ body .cm-editor {
     --zettlr-editor-code-font: var(--src-font-mono);
     --zettlr-editor-line-height: 1.65;
 
-    --zettlr-editor-header-style: 600;
+    --zettlr-editor-header-style: 400;
     --zettlr-editor-strong-style: 700;
     --zettlr-editor-emphasis-style: italic;
     --zettlr-editor-code-style: normal;
@@ -161,13 +161,13 @@ body .cm-editor .cm-line:has(.cm-header-2) {
 }
 
 body .cm-editor .cm-line:has(.cm-header-3) {
-    --zettlr-editor-header-style: 700;
+    --zettlr-editor-header-style: 500;
     padding-top: 0.7em;
     padding-bottom: 0.1em;
 }
 
 body .cm-editor .cm-line:has(.cm-header-4) {
-    --zettlr-editor-header-style: italic 600;
+    --zettlr-editor-header-style: italic 400;
     padding-top: 0.6em;
 }
 
