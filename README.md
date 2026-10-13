@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.22** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.23** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben und mit **Datei → Exportieren → rf-doc** als PDF für den Kunden erzeugen. Das PDF baut [real-fast-document](https://github.com/jcmx9/real-fast-document) (rf-document): Layout, Schriften, Hinweisboxen, Aufgabentabellen und PDF/A kommen von dort. Dieses Projekt sorgt auf der Zettlr-Seite für drei Dinge:
 
@@ -67,6 +67,8 @@ Was im PDF möglich ist (Front Matter, Hinweisboxen, Aufgabentabellen, Bilder, D
 ### Editor-Theme
 
 Das Theme (`rfdoc-zettlr.css`) übernimmt die Werte aus rf-documents `template.typ`: Fließtext in Source Sans mit Mediävalziffern und Blocksatz, Überschriften in Source Serif (`#` 1,4-fach mit Haarlinie, `##` 1,2-fach, `###` unterstrichen, ab `####` kursiv), Hinweisboxen in rf-documents Farben, Code auf hellgrauem Grund, Tabellen mit Streifen. Die Strichstärken sind im Editor die Nennwerte (400/500/600) – rf-document setzt das PDF bewusst leicht darunter, weil PDF-Viewer kräftiger zeichnen; so wirken beide gleich. Es wirkt mit jedem eingebauten Zettlr-Theme, hell und dunkel folgen Zettlrs Dunkelmodus.
+
+Zwei Dinge kann der Editor nicht nachbilden: Reine Aufgabenlisten bleiben im Editor Listen (im PDF werden sie zur Tabelle), und Hinweisboxen mit deutschen Schlüsselwörtern (`> [!HINWEIS]`) zeigt Zettlr als Zitat – im PDF sind beide Schreibweisen gleich.
 
 ## So funktioniert der Export
 

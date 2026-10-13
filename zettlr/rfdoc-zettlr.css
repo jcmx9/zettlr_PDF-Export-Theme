@@ -107,7 +107,8 @@ body .cm-editor {
     /* Typst: leading 0.85em + cap height ≈ 1.5 line spacing */
     --zettlr-editor-line-height: 1.5;
 
-    --zettlr-editor-header-style: 500;
+    /* Serif headings look lighter in Chromium than the PDF's 470 */
+    --zettlr-editor-header-style: 560;
     --zettlr-editor-strong-style: 600;
     --zettlr-editor-emphasis-style: italic;
     --zettlr-editor-code-style: normal;
@@ -129,7 +130,8 @@ body .cm-editor {
     --zettlr-editor-citation-color: var(--rfd-chrome);
     --zettlr-editor-citation-bg: var(--rfd-code-bg);
     --zettlr-editor-code-color: var(--rfd-text);
-    --zettlr-editor-code-bg: var(--rfd-code-bg);
+    /* Inline code has no background in the PDF; code blocks do (see below) */
+    --zettlr-editor-code-bg: transparent;
     --zettlr-editor-escape-color: var(--rfd-faint);
     --zettlr-editor-accent-color: var(--rfd-bg);
     --zettlr-editor-accent-bg: var(--rfd-chrome);
@@ -177,22 +179,13 @@ body .cm-editor .cm-line:has(.cm-header-6) {
 
 /* # chapter: hairline right below, like the PDF */
 body .cm-editor .cm-line:has(.cm-header-1) {
-    padding-top: 1.4em;
     padding-bottom: 0.1em;
-    margin-bottom: 0.4em;
     border-bottom: 0.6pt solid var(--rfd-hairline);
-}
-
-body .cm-editor .cm-line:has(.cm-header-2) {
-    padding-top: 1em;
-    padding-bottom: 0.2em;
 }
 
 /* ### body size, regular weight, thin underline (not the # marks) */
 body .cm-editor .cm-line:has(.cm-header-3) {
     --zettlr-editor-header-style: 400;
-    padding-top: 0.8em;
-    padding-bottom: 0.1em;
 }
 
 body .cm-editor .cm-header-3:not(.cm-code-mark) {
@@ -206,7 +199,53 @@ body .cm-editor .cm-line:has(.cm-header-4),
 body .cm-editor .cm-line:has(.cm-header-5),
 body .cm-editor .cm-line:has(.cm-header-6) {
     --zettlr-editor-header-style: italic 400;
-    padding-top: 0.8em;
+}
+
+/*
+ * Spacing like the PDF. In the editor, the gaps are the blank lines between
+ * blocks, so they get the PDF's distances (template.typ): 1.1em between
+ * paragraphs, 2em / 1.5em / 1.25em above #, ## and ###+, about 0.6em below
+ * a heading.
+ */
+
+body .cm-editor .cm-line:has(> br:only-child) {
+    line-height: 1.1em;
+}
+
+body .cm-editor .cm-line:has(> br:only-child):has(+ .cm-line .cm-header-1) {
+    line-height: 2em;
+}
+
+body .cm-editor .cm-line:has(> br:only-child):has(+ .cm-line .cm-header-2) {
+    line-height: 1.5em;
+}
+
+body .cm-editor .cm-line:has(> br:only-child):has(+ .cm-line :is(.cm-header-3, .cm-header-4, .cm-header-5, .cm-header-6)) {
+    line-height: 1.25em;
+}
+
+body .cm-editor .cm-line:has(:is(.cm-header-1, .cm-header-2, .cm-header-3, .cm-header-4, .cm-header-5, .cm-header-6)) + .cm-line:has(> br:only-child) {
+    line-height: 0.6em;
+}
+
+/* Bullets: rf-document's small square instead of Zettlr's round bullet */
+
+body .cm-editor .rendered-bullet {
+    position: relative;
+    display: inline-block;
+    width: 0.72em;
+    color: transparent;
+}
+
+body .cm-editor .rendered-bullet::before {
+    position: absolute;
+    top: 50%;
+    left: 0.2em;
+    width: 0.32em;
+    height: 0.32em;
+    background-color: var(--rfd-chrome);
+    content: "";
+    transform: translateY(-35%);
 }
 
 /* Links and emphasis: plain text color, as in the PDF */
@@ -253,31 +292,92 @@ body .cm-editor .cm-gutters {
     font-variant-numeric: normal;
 }
 
-/* Tasks: dark check boxes like the PDF's */
+/* Code is 9pt on the 10pt body, in rf-document's code font */
+body .cm-editor span.code {
+    font-family: var(--rfd-font-code);
+    font-size: 0.9em;
+    font-variant-numeric: normal;
+}
+
+/* Syntax colors as Typst draws them (Zettlr's token classes) */
+body .cm-editor span.code :is(.cm-keyword, .cm-definition-keyword, .cm-module-keyword, .cm-control-keyword, .cm-operator-keyword, .cm-bool, .cm-null) {
+    color: var(--rfd-syntax-keyword);
+}
+
+body .cm-editor span.code :is(.cm-function, .cm-property-name, .cm-type-name, .cm-class-name, .cm-macro-name) {
+    color: var(--rfd-syntax-function);
+}
+
+body .cm-editor span.code :is(.cm-string, .cm-string2, .cm-regexp) {
+    color: var(--rfd-syntax-string);
+}
+
+body .cm-editor span.code :is(.cm-number, .cm-atom) {
+    color: var(--rfd-syntax-number);
+}
+
+body .cm-editor span.code :is(.cm-comment, .cm-line-comment, .cm-block-comment, .cm-doc-comment) {
+    color: var(--rfd-syntax-comment);
+}
+
+body .cm-editor span.code :is(.cm-variable-name, .cm-variable, .cm-operator, .cm-punctuation) {
+    color: var(--rfd-text);
+}
+
+/* Tasks: dark check boxes like the PDF's; the box replaces the bullet */
+
+body .cm-editor .cm-line:has(input[type="checkbox"]) .rendered-bullet {
+    display: none;
+}
 
 body .cm-editor input[type="checkbox"] {
     accent-color: var(--rfd-chrome);
 }
 
-/* Tables: 9pt, lining tabular figures, stripes and vertical rules */
+/*
+ * Tables like rf-document's: 9pt medium text, lining tabular figures, no
+ * outer frame and no horizontal rules, only vertical rules between columns,
+ * a rule under the centered head row, light stripes. Zettlr's own table
+ * rules are specific (.ͼ1 div.cm-table-editor-widget-wrapper table td), so
+ * these selectors name the wrapper too.
+ */
 
-body .cm-editor table {
+body .cm-editor div.cm-table-editor-widget-wrapper table {
     font-size: 0.9em;
     font-variant-numeric: lining-nums tabular-nums;
     border-collapse: collapse;
 }
 
-body .cm-editor table th {
-    border-bottom: 0.7pt solid var(--rfd-table-head-rule);
+body .cm-editor div.cm-table-editor-widget-wrapper table td,
+body .cm-editor div.cm-table-editor-widget-wrapper table th {
+    border: none;
+    color: var(--rfd-text);
+    font-weight: 500;
 }
 
-body .cm-editor table td + td,
-body .cm-editor table th + th {
+body .cm-editor div.cm-table-editor-widget-wrapper table td + td,
+body .cm-editor div.cm-table-editor-widget-wrapper table th + th {
     border-left: 0.4pt solid var(--rfd-table-rule);
 }
 
-body .cm-editor table tr:nth-child(even) td {
+body .cm-editor div.cm-table-editor-widget-wrapper table th {
+    border-bottom: 0.7pt solid var(--rfd-table-head-rule);
+    font-weight: 600;
+    text-align: center;
+}
+
+body .cm-editor div.cm-table-editor-widget-wrapper table tr:nth-child(odd) td {
     background-color: var(--rfd-table-stripe);
+}
+
+body .cm-editor div.cm-table-editor-widget-wrapper table tr:nth-child(even) td {
+    background-color: transparent;
+}
+
+body .cm-editor div.cm-table-editor-widget-wrapper table code {
+    font-family: var(--rfd-font-code);
+    font-size: 0.94em;
+    font-weight: 400;
 }
 
 /*
@@ -303,16 +403,43 @@ body .cm-editor .cm-admonition-title::after {
     text-transform: uppercase;
 }
 
-body .cm-editor .admonition-wrapper.note .cm-admonition-title::after { content: "Info"; }
-body .cm-editor .admonition-wrapper.tip .cm-admonition-title::after { content: "Tipp"; }
-body .cm-editor .admonition-wrapper.important .cm-admonition-title::after { content: "Wichtig"; }
-body .cm-editor .admonition-wrapper.warning .cm-admonition-title::after { content: "Hinweis"; }
-body .cm-editor .admonition-wrapper.caution .cm-admonition-title::after { content: "Achtung"; }
+body .cm-editor .admonition-wrapper.note .cm-admonition-title::after { content: "Info"; color: var(--rfd-alert-note); }
+body .cm-editor .admonition-wrapper.tip .cm-admonition-title::after { content: "Tipp"; color: var(--rfd-alert-tip); }
+body .cm-editor .admonition-wrapper.important .cm-admonition-title::after { content: "Wichtig"; color: var(--rfd-alert-important); }
+body .cm-editor .admonition-wrapper.warning .cm-admonition-title::after { content: "Hinweis"; color: var(--rfd-alert-warning); }
+body .cm-editor .admonition-wrapper.caution .cm-admonition-title::after { content: "Achtung"; color: var(--rfd-alert-caution); }
+
+/*
+ * Alert boxes like rf-document's: a 2.5pt bar on the left only, slightly
+ * rounded on the right, body text in the normal text color. Zettlr draws a
+ * full rounded frame in the alert color (.ͼ1 .admonition-wrapper.note).
+ */
+
+body .cm-editor .cm-content .admonition-wrapper {
+    margin-left: 0;
+    padding: 0.5em 0.8em 0.5em 1em;
+    border: none;
+    border-left: 2.5pt solid;
+    border-radius: 0 3px 3px 0;
+    color: var(--rfd-text);
+}
+
+body .cm-editor .cm-content .admonition-wrapper.note { border-left-color: var(--rfd-alert-note); }
+body .cm-editor .cm-content .admonition-wrapper.tip { border-left-color: var(--rfd-alert-tip); }
+body .cm-editor .cm-content .admonition-wrapper.important { border-left-color: var(--rfd-alert-important); }
+body .cm-editor .cm-content .admonition-wrapper.warning { border-left-color: var(--rfd-alert-warning); }
+body .cm-editor .cm-content .admonition-wrapper.caution { border-left-color: var(--rfd-alert-caution); }
 
 /* Markdown syntax characters (#, *, `, …) recede: they are not in the PDF */
 
 body .cm-editor .cm-code-mark {
     color: var(--rfd-faint);
+}
+
+/* …except list numbers, which the PDF prints in the text color */
+
+body .cm-editor .cm-list.cm-code-mark {
+    color: var(--rfd-text);
 }
 
 /* Tags: quiet; the # keeps the tag color (after the rule above) */

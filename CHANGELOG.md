@@ -5,6 +5,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.23] - 2026-10-13
+
+### Changed
+- Editor theme checked against rf-document's PDF inside Zettlr and adjusted: spacing from the blank lines like the PDF's paragraph and heading distances, square bullets, the box instead of the bullet for tasks, tables without frame and horizontal rules (centered head, stripes, vertical rules), alerts with a left bar only and black text, list numbers in the text color, inline code without background, code at 9/10 with Typst's syntax colors, heavier serif headings
+
 ## [26.10.22] - 2026-10-13
 
 ### Added
@@ -193,7 +198,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.22...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.23...HEAD
+[26.10.23]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.22...v26.10.23
 [26.10.22]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.21...v26.10.22
 [26.10.21]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.20...v26.10.21
 [26.10.20]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.19...v26.10.20
