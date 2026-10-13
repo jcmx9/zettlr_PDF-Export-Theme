@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.13** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
+**Version 26.10.14** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
 
 Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks – and export them with one click as a calm, typographic A4 PDF. Everything involved is free and open source: Zettlr, Pandoc (ships with Zettlr) and [Typst](https://typst.app).
 
@@ -42,8 +42,6 @@ The installer
 2. downloads Typst into its own folder if needed (no system changes),
 3. sets up **Zettlr**: editor theme, export profile **Source PDF**, snippets **meeting**, **telefonnotiz**, **aufgabe** and **header**. Snippets of earlier versions are removed on update unless you changed them.
 
-Versions up to 26.10.4 also installed Typora themes; the installer removes them (only its own files).
-
 Existing rules in Zettlr's `custom.css` are kept; a timestamped backup is written before every change.
 
 | | macOS | Linux | Windows |
@@ -79,17 +77,17 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 - **Front matter (optional):**
   - `title`, `subtitle`, `client`, `author`
   - `date` – defaults to the export date
-  - `logo` – image next to the title (PNG, JPG or SVG), path relative to the note (or absolute on macOS/Linux). It keeps its proportions and fits into 20 mm height and 60 mm width
+  - `logo` – image next to the title (PNG, JPG or SVG), path as for images (see below). It keeps its proportions and fits into 20 mm height and 60 mm width
   - `logo-height` – maximum logo height instead of 20 mm, e.g. `logo-height: 15mm`
   - `lang: en` – English labels (Page, alert and table titles); German is the default
 - **Line breaks:** every line break in the note is kept
-- **Tasks:** `- [ ]` / `- [x]` render as check boxes. A task list with owners becomes a table *Aufgabe · Wer · Bis · Status*:
+- **Tasks:** a list made only of tasks (`- [ ]` / `- [x]`) becomes a table *Aufgabe · Wer · Bis · Status*. Owner and due date come from `– Name, bis Date`; columns that would be empty everywhere are dropped. In mixed lists the box replaces the bullet:
   ```markdown
   - [ ] Draft the sitemap – jcmx9, bis 17.10.
   - [x] Book the review – Anna Beispiel
   ```
 - **Alerts:** `> [!NOTE]` (Info), `[!TIP]` (Tipp), `[!IMPORTANT]` (Wichtig), `[!WARNING]` (Hinweis, calm orange), `[!CAUTION]` (Achtung); German keywords such as `> [!HINWEIS]` work as well
-- **Images:** `![Caption](bilder/screen.png){width=50%}` with caption below; paths relative to the note. On Windows images must be in the note's folder or below it
+- **Images:** `![Caption](bilder/screen.png){width=50%}` with caption below. Paths relative to the note or absolute; `~`, `$USER`, `$HOME`, `${VAR}` and `%USERPROFILE%` are expanded, e.g. `~/Pictures/logo.svg`. On Windows absolute paths must be on the note's drive. A missing image does not break the export; the PDF shows “[Bild fehlt: …]” instead
 - **Diagrams:** ` ```mermaid ` code blocks are drawn in the theme's colors (flowcharts, sequence diagrams, …), offline
 - **Date lines:** `18. Oktober 2026` at the start of a line stays a date; Markdown would otherwise turn it into a list starting at 18 (applies to every line starting with number, period and month name)
 - **Page breaks:** `\newpage` or `<!-- pagebreak -->` on a line of its own
@@ -100,7 +98,7 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 
 ### Editor theme
 
-The editor theme works with every built-in Zettlr theme; Zettlr's *Appearance → Editor theme* setting no longer matters. Light and dark follow Zettlr's dark mode. It sets fonts, heading sizes (scale 1.25 for levels 1–3, body size from level 4), spacing and colors. To try Zettlr without it, comment out the first line of `custom.css` in Zettlr's *Assets Manager*.
+The editor theme works with every built-in Zettlr theme; Zettlr's *Appearance → Editor theme* setting no longer matters. Light and dark follow Zettlr's dark mode. It sets fonts, heading sizes (the same scale as the PDF: factor 1.2, body size from level 3), spacing and colors. To try Zettlr without it, comment out the first line of `custom.css` in Zettlr's *Assets Manager*.
 
 Tags are shown in the accent color including their `#`. Zettlr does not support tag hierarchies: in Obsidian-style tags such as `#project/client` only `#project` is recognized and colored; the note itself stays unchanged.
 
@@ -139,6 +137,7 @@ python3 scripts/fetch_packages.py
 # PDF from the command line
 pandoc note.md -f commonmark_x+hard_line_breaks+implicit_figures-smart-fancy_lists -t pdf --pdf-engine=typst \
   --pdf-engine-opt=--ignore-system-fonts --pdf-engine-opt=--font-path=typst/fonts \
+  --pdf-engine-opt=--package-cache-path=typst/packages --pdf-engine-opt=--root=/ \
   --template=typst/source.typst --lua-filter=typst/source.lua -o note.pdf
 ```
 
@@ -150,7 +149,7 @@ CI lints everything, runs the installer on Ubuntu, macOS and Windows (PowerShell
 install.sh, install.ps1   – Installers (macOS/Linux, Windows)
 VERSION                   – Release version (CalVer)
 typst/source.typst        – Pandoc template for the PDF
-typst/source.lua          – Pandoc filter (alerts, quotes, images, logo, task tables, page breaks)
+typst/source.lua          – Pandoc filter (title, alerts, quotes, image paths, logo, task tables, date lines, highlights, page breaks)
 typst/fonts/              – Fonts for Typst (variable OTF, Noto Emoji, static Regular for diagrams)
 typst/packages/           – Bundled Typst packages (mmdr for Mermaid)
 typst/example-meeting.md  – Example meeting note

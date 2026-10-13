@@ -123,6 +123,7 @@ $endif$
 #show heading.where(level: 4): set text(size: 10.5pt, style: "italic")
 #show heading.where(level: 4): set block(above: 1.3em, below: 0.6em)
 #show heading.where(level: 5): set text(size: 10.5pt, style: "italic", weight: 400, fill: muted)
+#show heading.where(level: 6): set text(size: 10.5pt, style: "italic", weight: 400, fill: muted)
 
 // Text elements
 
@@ -147,8 +148,7 @@ $endif$
 #show "☐": task-box(false)
 #show "☒": task-box(true)
 
-// Lists whose items all start with a task box lose their bullet; the box
-// becomes the marker and wrapped lines align with the text.
+// A list item starting with ☐ / ☒: its state and the text after the box
 #let task-parts(body) = {
   let children = if body.has("children") { body.children } else { (body,) }
   if children.len() == 0 { return none }
@@ -162,18 +162,23 @@ $endif$
   }
   none
 }
-// It stays a real list, so the PDF keeps its list structure (PDF/UA).
+
+// Lists with task items: the box replaces the bullet of those items, and
+// wrapped lines align with the text. It stays a real list, so the PDF keeps
+// its list structure.
 #show list: it => {
   let tasks = it.children.map(item => task-parts(item.body))
-  if tasks.len() == 0 or tasks.contains(none) { return it }
+  if tasks.all(task => task == none) { return it }
   list(
     marker: [],
-    indent: 0pt,
+    indent: 0.2em,
     body-indent: 0pt,
-    spacing: 0.5em,
-    ..tasks.map(task => list.item(grid(
-      columns: (1.4em, 1fr),
-      task-box(task.done), task.body.join(),
+    spacing: if it.tight { auto } else { it.spacing },
+    ..it.children.zip(tasks).map(((item, task)) => list.item(grid(
+      // Text starts where it does in plain lists (indent + bullet + gap)
+      columns: (1.05em, 1fr),
+      if task == none { h(0.1em) + [•] } else { task-box(task.done) },
+      if task == none { item.body } else { task.body.join() },
     ))),
   )
 }
