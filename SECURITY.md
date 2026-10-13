@@ -19,6 +19,5 @@ We aim to acknowledge reports within 48 hours and to provide a fix within 14 day
 
 ## Scope notes
 
-- The installers download the release bundle and Typst over HTTPS from GitHub and verify the bundle's SHA-256 checksum.
-- The export profile lets Typst read files from `/` (on Windows: the root of the note's drive), so images anywhere on the disk can be included. Typst only reads files the note references.
-- `npm audit` reports issues in stylelint's dependencies. stylelint is used for linting in CI only; it is not part of the release bundle and never runs on users' machines.
+- The installers download the release bundle over HTTPS from GitHub and verify its SHA-256 checksum.
+- The export profile runs a Lua filter that starts `rf-document` with the note's path. It uses the path the installer found or looks in a fixed list of places (`RF_DOCUMENT`, `~/.local/bin`, Homebrew, `%LOCALAPPDATA%\Microsoft\WindowsApps`, `PATH`); anyone who can place a program there can run code in your session anyway.

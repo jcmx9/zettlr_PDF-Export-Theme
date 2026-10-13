@@ -9,24 +9,23 @@
 #   --bundle <file>    install from a local bundle (scripts/package.sh) instead
 #                      of the latest GitHub release
 #
-# Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
-# snippets meeting, telefonnotiz, aufgabe, newpage and header. Typst is downloaded
-# into the installer's own folder; no admin rights needed.
+# Sets up Zettlr: the export profile "Source PDF", which hands the note to
+# rf-document (real-fast-document) for the PDF, and the snippets meeting,
+# telefonnotiz, aufgabe, newpage and header. rf-document is installed
+# separately: https://github.com/jcmx9/real-fast-document
 set -euo pipefail
+# bash 5.2 would treat & in ${var//pattern/replacement} as the match
+shopt -u patsub_replacement 2>/dev/null || true
 
 readonly REPO="jcmx9/zettlr_PDF-Export-Theme"
 readonly BUNDLE="zettlr-pdf-export-theme"
-readonly TYPST_VERSION="0.15.1"
-readonly IMPORT_LINE='@import url("source-zettlr.css");'
 readonly PROFILE_NAME="Source PDF.yaml"
 readonly PROFILE_MARKER="zettlr_PDF-Export-Theme installer"
 
 readonly APP_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/zettlr-pdf-export-theme"
 readonly CURRENT="${APP_DIR}/current"
-readonly TYPST_BIN="${APP_DIR}/bin/typst"
 
 OS=""
-ARCH=""
 TMP_DIR=""
 BUNDLE_FILE=""
 
@@ -66,14 +65,9 @@ detect_platform() {
         Linux) OS="linux" ;;
         *) die "unsupported system: $(uname -s) (use install.ps1 on Windows)" ;;
     esac
-    case "$(uname -m)" in
-        x86_64 | amd64) ARCH="x86_64" ;;
-        arm64 | aarch64) ARCH="aarch64" ;;
-        *) die "unsupported processor: $(uname -m)" ;;
-    esac
 }
 
-# Zettlr keeps custom.css, export profiles and snippets in its data folder.
+# Zettlr keeps export profiles and snippets in its data folder.
 zettlr_dirs() {
     local candidates
     if [[ "${OS}" == "macos" ]]; then
@@ -145,74 +139,51 @@ fetch_bundle() {
     fi
 }
 
-ensure_typst() {
-    if [[ -x "${TYPST_BIN}" ]] && "${TYPST_BIN}" --version 2>/dev/null | grep -q "typst ${TYPST_VERSION}"; then
-        return
-    fi
-    local target
-    if [[ "${OS}" == "macos" ]]; then
-        target="${ARCH}-apple-darwin"
-    else
-        target="${ARCH}-unknown-linux-musl"
-        need xz
-    fi
-    info "Downloading Typst ${TYPST_VERSION} …"
-    local archive="${TMP_DIR}/typst.tar.xz"
-    download "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-${target}.tar.xz" "${archive}"
-    tar -xJf "${archive}" -C "${TMP_DIR}"
-    mkdir -p "$(dirname "${TYPST_BIN}")"
-    mv "${TMP_DIR}/typst-${target}/typst" "${TYPST_BIN}"
-    chmod +x "${TYPST_BIN}"
+# rf-document's command, as GUI apps such as Zettlr may not find it on PATH
+find_rf_document() {
+    local candidate
+    for candidate in "$(command -v rf-document 2>/dev/null || true)" \
+        "${HOME}/.local/bin/rf-document" /opt/homebrew/bin/rf-document /usr/local/bin/rf-document; do
+        if [[ -n "${candidate}" && -x "${candidate}" ]]; then
+            printf '%s\n' "${candidate}"
+            return
+        fi
+    done
 }
 
 # --- Zettlr -------------------------------------------------------------------
 
-add_import() {
-    local css="$1"
-    if [[ ! -f "${css}" ]]; then
-        printf '%s\n' "${IMPORT_LINE}" > "${css}"
-    elif ! grep -qF "${IMPORT_LINE}" "${css}"; then
-        backup "${css}"
-        # @import must come before all other rules
-        { printf '%s\n\n' "${IMPORT_LINE}"; cat "${css}"; } > "${css}.tmp"
-        mv "${css}.tmp" "${css}"
-    fi
-}
-
-remove_import() {
-    local css="$1"
-    if [[ -f "${css}" ]] && grep -qF "${IMPORT_LINE}" "${css}"; then
-        backup "${css}"
-        if [[ "$(head -n 2 "${css}")" == "${IMPORT_LINE}" ]]; then
-            # Exactly what add_import wrote: import line plus one blank line
-            tail -n +3 "${css}" > "${css}.tmp"
-        else
-            grep -vF "${IMPORT_LINE}" "${css}" > "${css}.tmp" || true
-        fi
-        mv "${css}.tmp" "${css}"
-    fi
-}
-
 write_profile() {
     local dir="$1" template content
     template="$(cat "${CURRENT}/zettlr/Source PDF.yaml.in")"
-    # Paths go into single-quoted YAML strings, where ' is written as ''
-    local q="'" typst_path dir_path
-    typst_path="${TYPST_BIN//${q}/${q}${q}}"
+    # The path goes into a single-quoted YAML string, where ' is written as ''
+    local q="'" dir_path
     dir_path="${CURRENT//${q}/${q}${q}}"
-    content="${template//@TYPST@/${typst_path}}"
-    content="${content//@DIR@/${dir_path}}"
+    content="${template//@DIR@/${dir_path}}"
     mkdir -p "${dir}/defaults"
     printf '%s\n' "${content}" > "${dir}/defaults/${PROFILE_NAME}"
+}
+
+# Write rf-document's path into the filter; the filter also searches itself
+configure_filter() {
+    local filter="${CURRENT}/zettlr/rf-document.lua" path
+    path="$(find_rf_document)"
+    if [[ -z "${path}" ]]; then
+        warn "rf-document not found; install it before exporting: https://github.com/jcmx9/real-fast-document"
+        return
+    fi
+    # Lua string literal: escape backslashes and double quotes
+    path="${path//\\/\\\\}"
+    path="${path//\"/\\\"}"
+    local content
+    content="$(cat "${filter}")"
+    printf '%s\n' "${content//@RFD@/${path}}" > "${filter}"
+    info "rf-document: ${path}"
 }
 
 setup_zettlr() {
     local dir="$1"
     info "Zettlr: ${dir}"
-    rm -f "${dir}/source-zettlr.css" "${dir}/source-zettlr-fonts.css"
-    cp "${CURRENT}/zettlr/source-zettlr.css" "${dir}/source-zettlr.css"
-    cp "${CURRENT}/zettlr/source-zettlr-fonts.css" "${dir}/source-zettlr-fonts.css"
-    add_import "${dir}/custom.css"
     write_profile "${dir}"
     mkdir -p "${dir}/snippets"
     local name target source
@@ -239,18 +210,16 @@ setup_zettlr() {
             if cmp -s "${target}" "${old}"; then
                 rm "${target}"
             else
-                warn "kept ${target} (changed; no longer part of the theme)"
+                warn "kept ${target} (changed; no longer shipped)"
             fi
         fi
     done
-    info "  theme, export profile \"Source PDF\" and snippets installed"
+    info "  export profile \"Source PDF\" and snippets installed"
 }
 
 remove_zettlr() {
     local dir="$1"
     info "Zettlr: ${dir}"
-    remove_import "${dir}/custom.css"
-    rm -f "${dir}/source-zettlr.css" "${dir}/source-zettlr-fonts.css"
     local profile="${dir}/defaults/${PROFILE_NAME}"
     if [[ -f "${profile}" ]] && grep -q "${PROFILE_MARKER}" "${profile}"; then
         rm "${profile}"
@@ -275,7 +244,7 @@ install_all() {
     need tar
     TMP_DIR="$(mktemp -d)"
     fetch_bundle
-    ensure_typst
+    configure_filter
 
     local found=0 dir
     while IFS= read -r dir; do
@@ -319,7 +288,7 @@ main() {
                 shift
                 ;;
             -h | --help)
-                sed -n '2,14p' "$0" 2>/dev/null || true
+                sed -n '2,15p' "$0" 2>/dev/null || true
                 exit 0
                 ;;
             *) die "unknown option: $1" ;;
