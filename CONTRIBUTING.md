@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in improving the Zettlr PDF Export. This project only connects Zettlr to [real-fast-document](https://github.com/jcmx9/real-fast-document) and ships Zettlr snippets; everything about the PDF itself belongs in real-fast-document.
+Thanks for your interest in improving the Zettlr rfdoc Export. This project only connects Zettlr to [real-fast-document](https://github.com/jcmx9/real-fast-document) and ships Zettlr snippets; everything about the PDF itself belongs in real-fast-document.
 
 ## Prerequisites
 

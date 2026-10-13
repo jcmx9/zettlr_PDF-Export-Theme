@@ -1,7 +1,7 @@
 # ZETTLR DEFAULTS FILE
 # ====================
 # Conversion: Markdown --> PDF with real-fast-document (rf-document)
-# Written by the zettlr_PDF-Export-Theme installer; reinstalling overwrites it.
+# Written by the zettlr_rfdoc-Export installer; reinstalling overwrites it.
 # More info: https://github.com/jcmx9/real-fast-document
 #
 # Pandoc only hands the note to rf-document (see the Lua filter), which sets

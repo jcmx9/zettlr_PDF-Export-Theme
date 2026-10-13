@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# zettlr_PDF-Export-Theme installer for macOS and Linux.
+# zettlr_rfdoc-Export installer for macOS and Linux.
 #
 # Install or update (run the same line again to update):
-#   curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/install.sh | bash
 #
 # Options (when piping, pass them after "bash -s --"):
 #   --uninstall        remove everything this installer added
@@ -17,12 +17,12 @@ set -euo pipefail
 # bash 5.2 would treat & in ${var//pattern/replacement} as the match
 shopt -u patsub_replacement 2>/dev/null || true
 
-readonly REPO="jcmx9/zettlr_PDF-Export-Theme"
-readonly BUNDLE="zettlr-pdf-export-theme"
+readonly REPO="jcmx9/zettlr_rfdoc-Export"
+readonly BUNDLE="zettlr-rfdoc-export"
 readonly PROFILE_NAME="rf-doc.yaml"
-readonly PROFILE_MARKER="zettlr_PDF-Export-Theme installer"
+readonly PROFILE_MARKER="zettlr_rfdoc-Export installer"
 
-readonly APP_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/zettlr-pdf-export-theme"
+readonly APP_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/zettlr-rfdoc-export"
 readonly CURRENT="${APP_DIR}/current"
 
 OS=""

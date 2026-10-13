@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Build the release bundle the installers download:
-#   dist/zettlr-pdf-export-theme.tar.gz (+ .sha256)  – macOS / Linux
-#   dist/zettlr-pdf-export-theme.zip    (+ .sha256)  – Windows
+#   dist/zettlr-rfdoc-export.tar.gz (+ .sha256)  – macOS / Linux
+#   dist/zettlr-rfdoc-export.zip    (+ .sha256)  – Windows
 # The names carry no version, so releases/latest/download/<name> always
 # points to the newest release; the version is inside the bundle (VERSION).
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 readonly repo_dir
-readonly name="zettlr-pdf-export-theme"
+readonly name="zettlr-rfdoc-export"
 readonly files=(
     VERSION LICENSE README.md README.en.md CHANGELOG.md
     "zettlr/rf-doc.yaml.in" zettlr/rf-document.lua zettlr/snippets
