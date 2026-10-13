@@ -111,7 +111,8 @@ $endif$
 // Headings: "#" in the note is the first section level; the document title
 // comes from the front matter (see source.lua for notes without "title:").
 
-#show heading: set text(font: font-serif, fill: heading-color, weight: 600)
+// Headings stay light: the serif already sets them apart from the sans text
+#show heading: set text(font: font-serif, fill: heading-color, weight: 400)
 #show heading: set block(sticky: true)
 // Type scale 1.2 on 10.5pt body: title 18pt, level 1 15pt, level 2 12.5pt,
 // level 3 body size in bold
@@ -119,7 +120,7 @@ $endif$
 #show heading.where(level: 1): set block(above: 2em, below: 0.8em)
 #show heading.where(level: 2): set text(size: 12.5pt)
 #show heading.where(level: 2): set block(above: 1.6em, below: 0.7em)
-#show heading.where(level: 3): set text(size: 10.5pt, weight: 700)
+#show heading.where(level: 3): set text(size: 10.5pt, weight: 500)
 #show heading.where(level: 3): set block(above: 1.4em, below: 0.6em)
 #show heading.where(level: 4): set text(size: 10.5pt, style: "italic")
 #show heading.where(level: 4): set block(above: 1.3em, below: 0.6em)
@@ -310,7 +311,7 @@ $endfor$
     v(0.2em)
   }
   if doc-title != none {
-    block(below: 1em, par(leading: 0.4em, text(font: font-serif, size: 18pt, weight: 700, fill: heading-color, doc-title)))
+    block(below: 1em, par(leading: 0.4em, text(font: font-serif, size: 18pt, weight: 500, fill: heading-color, doc-title)))
   }
 $if(subtitle)$
   block(below: 0.4em, text(font: font-serif, size: 12.5pt, fill: muted)[$subtitle$])
