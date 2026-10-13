@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.14** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
+**Version 26.10.15** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
 
 Write meeting notes live in Zettlr – topic, agenda, participants, notes, tasks – and export them with one click as a calm, typographic A4 PDF. Everything involved is free and open source: Zettlr, Pandoc (ships with Zettlr) and [Typst](https://typst.app).
 
@@ -76,7 +76,7 @@ Where the PDF is saved is set under *Preferences → Import and Export*.
 - **Title and headings:** title and subtitle live in the front matter (`title`, `subtitle`); `#`, `##`, … in the text are real section headings, as many as needed. Quote titles that contain a colon: `title: "Relaunch: Kick-off"`. Older notes without `title:` that start with `# Title` keep working: that heading becomes the title and the others move up one level
 - **Front matter (optional):**
   - `title`, `subtitle`, `client`, `author`
-  - `date` – defaults to the export date
+  - `date` – shown below the title; without it no date appears
   - `logo` – image next to the title (PNG, JPG or SVG), path as for images (see below). It keeps its proportions and fits into 20 mm height and 60 mm width
   - `logo-height` – maximum logo height instead of 20 mm, e.g. `logo-height: 15mm`
   - `lang: en` – English labels (Page, alert and table titles); German is the default
