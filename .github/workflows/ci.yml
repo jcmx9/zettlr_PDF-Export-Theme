@@ -73,7 +73,7 @@ jobs:
 
           bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
           bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
-          test -f "$zettlr/defaults/Source PDF.yaml"
+          test -f "$zettlr/defaults/rf-doc.yaml"
           test -f "$zettlr/snippets/meeting.tpl.md"
 
           # End to end with Zettlr's Pandoc and a stub for rf-document
@@ -86,10 +86,10 @@ jobs:
             export PATH="$PWD/pandoc-$PANDOC_VERSION/bin:$PATH"
           fi
           pandoc --version | head -n 1
-          ./scripts/test_messenger.sh "$zettlr/defaults/Source PDF.yaml"
+          ./scripts/test_messenger.sh "$zettlr/defaults/rf-doc.yaml"
 
           bash install.sh --uninstall
-          test ! -e "$zettlr/defaults/Source PDF.yaml"
+          test ! -e "$zettlr/defaults/rf-doc.yaml"
           test ! -e "$zettlr/snippets/meeting.tpl.md"
           test ! -e "$HOME/.local/share/zettlr-pdf-export-theme"
 
@@ -114,7 +114,7 @@ jobs:
           $code = Get-Content -Raw install.ps1
           & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
           & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
-          foreach ($f in @("$zettlr\defaults\Source PDF.yaml", "$zettlr\snippets\meeting.tpl.md")) {
+          foreach ($f in @("$zettlr\defaults\rf-doc.yaml", "$zettlr\snippets\meeting.tpl.md")) {
             if (-not (Test-Path -LiteralPath $f)) { throw "missing $f" }
           }
 
@@ -135,7 +135,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
 
           Push-Location $notes
-          & $pandoc -d "$zettlr\defaults\Source PDF.yaml" notiz.md -o $target
+          & $pandoc -d "$zettlr\defaults\rf-doc.yaml" notiz.md -o $target
           $exit = $LASTEXITCODE
           Pop-Location
           Get-Content $log
@@ -148,7 +148,7 @@ jobs:
 
           $env:STUB_EXIT = "3"
           Push-Location $notes
-          & $pandoc -d "$zettlr\defaults\Source PDF.yaml" notiz.md -o $target
+          & $pandoc -d "$zettlr\defaults\rf-doc.yaml" notiz.md -o $target
           $exit = $LASTEXITCODE
           Pop-Location
           if ($exit -ne 3) { throw "exit code $exit instead of 3" }
@@ -157,6 +157,6 @@ jobs:
           & ([scriptblock]::Create($code)) -Uninstall
           $app = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
           if (Test-Path -LiteralPath $app) { throw "app folder left behind" }
-          if (Test-Path -LiteralPath "$zettlr\defaults\Source PDF.yaml") { throw "profile left behind" }
+          if (Test-Path -LiteralPath "$zettlr\defaults\rf-doc.yaml") { throw "profile left behind" }
           # The failure test above leaves exit code 3 behind on purpose
           exit 0

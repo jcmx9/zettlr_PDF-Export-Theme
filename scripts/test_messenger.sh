@@ -28,7 +28,7 @@ die() {
 # ${work}/zettlr/rf-document.lua
 profile() {
     local q="'" content
-    content="$(cat "${repo_dir}/zettlr/Source PDF.yaml.in")"
+    content="$(cat "${repo_dir}/zettlr/rf-doc.yaml.in")"
     printf '%s\n' "${content//@DIR@/${work//${q}/${q}${q}}}" > "${work}/profile.yaml"
 }
 
