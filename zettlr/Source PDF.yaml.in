@@ -22,7 +22,9 @@ pdf-engine-opts:
   - '--font-path=@DIR@/typst/fonts'
   - '--package-cache-path=@DIR@/typst/packages'
   - --pdf-standard=a-2u
-  - '--root=@ROOT@'
+  # Root / lets Typst read images outside the note's folder (on Windows:
+  # the root of the note's drive)
+  - --root=/
 template: '@DIR@/typst/source.typst'
 filters:
   - type: lua

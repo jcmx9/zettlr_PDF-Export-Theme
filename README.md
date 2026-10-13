@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.13** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.14** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben – Thema, Agenda, Teilnehmer, Mitschrift, Aufgaben – und mit einem Klick als ruhiges, typografisches A4-PDF exportieren. Alle Bausteine sind frei und quelloffen: Zettlr, Pandoc (in Zettlr enthalten) und [Typst](https://typst.app).
 
@@ -42,8 +42,6 @@ Der Installer
 2. lädt bei Bedarf Typst in seinen eigenen Ordner (keine Systemänderungen),
 3. richtet **Zettlr** ein: Editor-Theme, Exportprofil **Source PDF**, Snippets **meeting**, **telefonnotiz**, **aufgabe** und **header**. Snippets früherer Versionen werden beim Update entfernt, sofern du sie nicht geändert hast.
 
-Versionen bis 26.10.4 haben auch Typora-Themes installiert; der Installer entfernt sie (nur seine eigenen Dateien).
-
 Eigene Regeln in Zettlrs `custom.css` bleiben erhalten; vor jeder Änderung wird eine Sicherung mit Zeitstempel angelegt.
 
 | | macOS | Linux | Windows |
@@ -79,17 +77,17 @@ Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export
 - **Front Matter (optional):**
   - `title`, `subtitle`, `client`, `author`
   - `date` – ohne Angabe das Exportdatum
-  - `logo` – Bild neben dem Titel (PNG, JPG oder SVG), Pfad relativ zur Notiz (unter macOS/Linux auch absolut). Es behält seine Proportionen und passt in 20 mm Höhe und 60 mm Breite
+  - `logo` – Bild neben dem Titel (PNG, JPG oder SVG), Pfad wie bei Bildern (siehe unten). Es behält seine Proportionen und passt in 20 mm Höhe und 60 mm Breite
   - `logo-height` – maximale Logohöhe statt 20 mm, z. B. `logo-height: 15mm`
   - `lang: en` – englische Beschriftungen (Seite, Box- und Tabellentitel); Standard ist Deutsch
 - **Zeilenumbrüche:** jeder Zeilenumbruch der Notiz bleibt erhalten
-- **Aufgaben:** `- [ ]` / `- [x]` werden zu Kästchen. Eine Aufgabenliste mit Zuständigkeiten wird zur Tabelle *Aufgabe · Wer · Bis · Status*:
+- **Aufgaben:** Eine Liste, die nur aus Aufgaben (`- [ ]` / `- [x]`) besteht, wird zur Tabelle *Aufgabe · Wer · Bis · Status*. Wer und Bis kommen aus `– Name, bis Datum`; Spalten, die überall leer wären, entfallen. In gemischten Listen ersetzt das Kästchen den Aufzählungspunkt:
   ```markdown
   - [ ] Sitemap-Entwurf erstellen – jcmx9, bis 17.10.
   - [x] Review-Termin festlegen – Anna Beispiel
   ```
 - **Hinweisboxen:** `> [!NOTE]` (Info), `[!TIP]` (Tipp), `[!IMPORTANT]` (Wichtig), `[!WARNING]` (Hinweis, ruhiges Orange), `[!CAUTION]` (Achtung); deutsche Schlüsselwörter wie `> [!HINWEIS]` funktionieren ebenso
-- **Bilder:** `![Bildunterschrift](bilder/screen.png){width=50%}` mit Unterschrift darunter; Pfade relativ zur Notiz. Unter Windows müssen Bilder im Ordner der Notiz oder darunter liegen
+- **Bilder:** `![Bildunterschrift](bilder/screen.png){width=50%}` mit Unterschrift darunter. Pfade relativ zur Notiz oder absolut; `~`, `$USER`, `$HOME`, `${VAR}` und `%USERPROFILE%` werden ersetzt, z. B. `~/Bilder/logo.svg`. Unter Windows müssen absolute Pfade auf dem Laufwerk der Notiz liegen. Ein fehlendes Bild bricht den Export nicht ab, im PDF steht dann „[Bild fehlt: …]“
 - **Diagramme:** ` ```mermaid `-Codeblöcke werden in den Farben des Themes gezeichnet (Flussdiagramme, Sequenzdiagramme, …), ohne Internet
 - **Datumszeilen:** `18. Oktober 2026` am Zeilenanfang bleibt ein Datum; Markdown würde sonst eine Liste ab 18 daraus machen (gilt für alle Zeilen, die mit Zahl, Punkt und Monatsnamen beginnen)
 - **Seitenumbrüche:** `\newpage` oder `<!-- pagebreak -->` auf einer eigenen Zeile
@@ -100,7 +98,7 @@ Wo das PDF gespeichert wird, legst du unter *Einstellungen → Import und Export
 
 ### Editor-Theme
 
-Das Editor-Theme wirkt mit jedem eingebauten Zettlr-Theme; die Einstellung *Darstellung → Editor-Theme* spielt keine Rolle mehr. Hell und dunkel folgen Zettlrs Dunkelmodus. Es setzt Schriften, Überschriftengrößen (Faktor 1,25 für Ebene 1–3, ab Ebene 4 Fließtextgröße), Abstände und Farben. Um Zettlr ohne das Theme zu sehen, die erste Zeile der `custom.css` im *Assets Manager* von Zettlr auskommentieren.
+Das Editor-Theme wirkt mit jedem eingebauten Zettlr-Theme; die Einstellung *Darstellung → Editor-Theme* spielt keine Rolle mehr. Hell und dunkel folgen Zettlrs Dunkelmodus. Es setzt Schriften, Überschriftengrößen (dieselbe Stufung wie im PDF: Faktor 1,2, ab Ebene 3 Fließtextgröße), Abstände und Farben. Um Zettlr ohne das Theme zu sehen, die erste Zeile der `custom.css` im *Assets Manager* von Zettlr auskommentieren.
 
 Tags erscheinen samt `#` in der Akzentfarbe. Zettlr unterstützt keine Tag-Hierarchien: Bei Tags im Obsidian-Stil wie `#projekt/kunde` erkennt und färbt Zettlr nur `#projekt`; die Notiz selbst bleibt unverändert.
 
@@ -139,6 +137,7 @@ python3 scripts/fetch_packages.py
 # PDF auf der Kommandozeile
 pandoc note.md -f commonmark_x+hard_line_breaks+implicit_figures-smart-fancy_lists -t pdf --pdf-engine=typst \
   --pdf-engine-opt=--ignore-system-fonts --pdf-engine-opt=--font-path=typst/fonts \
+  --pdf-engine-opt=--package-cache-path=typst/packages --pdf-engine-opt=--root=/ \
   --template=typst/source.typst --lua-filter=typst/source.lua -o note.pdf
 ```
 
@@ -150,7 +149,7 @@ Die CI prüft alles, führt den Installer unter Ubuntu, macOS und Windows (Power
 install.sh, install.ps1   – Installer (macOS/Linux, Windows)
 VERSION                   – Release-Version (CalVer)
 typst/source.typst        – Pandoc-Vorlage für das PDF
-typst/source.lua          – Pandoc-Filter (Hinweisboxen, Anführungszeichen, Bilder, Logo, Aufgabentabellen, Seitenumbrüche)
+typst/source.lua          – Pandoc-Filter (Titel, Hinweisboxen, Anführungszeichen, Bildpfade, Logo, Aufgabentabellen, Datumszeilen, Markierungen, Seitenumbrüche)
 typst/fonts/              – Schriften für Typst (variable OTF, Noto Emoji, statische Regular für Diagramme)
 typst/packages/           – Mitgelieferte Typst-Pakete (mmdr für Mermaid)
 typst/example-meeting.md  – Beispiel einer Besprechungsnotiz

@@ -5,6 +5,21 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.14] - 2026-10-13
+
+### Changed
+- Zettlr editor headings use the same scale as the PDF (factor 1.2)
+- Every list made only of tasks becomes a table; owner and due date columns appear only when used
+- In mixed lists the check box replaces the bullet in the PDF
+- Image and logo paths: absolute paths on every system (Windows: on the note's drive); `~`, `$USER`, `$HOME`, `${VAR}` and `%USERPROFILE%` are expanded
+- README image regenerated from the current layout
+
+### Fixed
+- A missing image or logo no longer breaks the export; the PDF shows a note instead
+
+### Removed
+- Installer cleanup for Typora themes and development setups of the first versions
+
 ## [26.10.13] - 2026-10-13
 
 ### Added
@@ -120,7 +135,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.13...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.14...HEAD
+[26.10.14]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.13...v26.10.14
 [26.10.13]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.12...v26.10.13
 [26.10.12]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.11...v26.10.12
 [26.10.11]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.10...v26.10.11

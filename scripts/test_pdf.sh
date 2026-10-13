@@ -43,7 +43,6 @@ build_profile() {
     content="$(cat "${repo_dir}/zettlr/Source PDF.yaml.in")"
     content="${content//@TYPST@/${typst}}"
     content="${content//@DIR@/${repo_dir}}"
-    content="${content//@ROOT@//}"
     printf '%s\n' "${content}" > "${out_dir}/profile.yaml"
     printf '%s\n' "${out_dir}/profile.yaml"
 }
@@ -130,6 +129,14 @@ main() {
         "18. Oktober 2026"
     reject no-blank-lines.md "${text}" "# Mitschrift" "# Abschluss" "==Markierung=="
     echo "ok   no-blank-lines.md"
+
+    # Absolute paths through an environment variable; a missing image leaves
+    # a note instead of breaking the export
+    text="$(TEST_ASSETS="${fixtures}" render absolute-paths.md "${profile}")"
+    expect absolute-paths.md "${text}" "Absolut über Variable" "Bild fehlt: bilder/gibt-es-nicht.png" "Text nach den Bildern."
+    pdfimages_count="$(grep -ac '/Subtype */Image' "${out_dir}/absolute-paths.pdf" || true)"
+    [[ "${pdfimages_count}" -ge 1 ]] || die "absolute-paths.md: no embedded image"
+    echo "ok   absolute-paths.md"
 
     # Snippets with their placeholders filled in must export as well
     local snippet name

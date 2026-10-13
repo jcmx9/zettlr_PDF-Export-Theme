@@ -8,8 +8,8 @@ Uninstall:
   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/jcmx9/zettlr_PDF-Export-Theme/main/install.ps1))) -Uninstall
 
 Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
-snippets meeting, telefonnotiz, aufgabe and header. Typst is downloaded into the installer's own folder. Typora
-themes installed by earlier versions are removed.
+snippets meeting, telefonnotiz, aufgabe and header. Typst is downloaded
+into the installer's own folder.
 #>
 param(
     [switch]$Uninstall,
@@ -27,14 +27,11 @@ $TypstVersion = "0.15.1"
 $ImportLine = '@import url("source-zettlr.css");'
 $ProfileName = "Source PDF.yaml"
 $ProfileMarker = "zettlr_PDF-Export-Theme installer"
-# Installed into Typora by versions up to 26.10.4
-$LegacyTyporaThemes = @("source.css", "source-dark.css", "source-compact.css", "source-dark-compact.css")
 
 $AppDir = Join-Path $env:LOCALAPPDATA "zettlr-pdf-export-theme"
 $Current = Join-Path $AppDir "current"
 $TypstExe = ([IO.Path]::Combine($AppDir, "bin", "typst.exe"))
 $ZettlrDir = Join-Path $env:APPDATA "zettlr"
-$TyporaDir = ([IO.Path]::Combine($env:APPDATA, "Typora", "themes"))
 
 $Utf8NoBom = New-Object System.Text.UTF8Encoding $false
 
@@ -164,8 +161,6 @@ function Install-Zettlr {
 
     $template = Read-Text ([IO.Path]::Combine($Current, "zettlr", "Source PDF.yaml.in"))
     $content = $template.Replace("@TYPST@", (Convert-YamlPath $TypstExe)).Replace("@DIR@", (Convert-YamlPath $Current))
-    # No fixed root on Windows (notes may live on any drive): Typst uses the note's folder
-    $content = $content -replace "(?m)^.*@ROOT@.*\r?\n", ""
     $defaults = Join-Path $ZettlrDir "defaults"
     New-Item -ItemType Directory -Force -Path $defaults | Out-Null
     Write-Text (Join-Path $defaults $ProfileName) $content
@@ -230,27 +225,10 @@ function Uninstall-Zettlr {
     Write-Host "  removed"
 }
 
-# --- Typora (legacy) ----------------------------------------------------------
-
-# Earlier versions also installed Typora themes. They are removed only when
-# the font folder carries this installer's marker, so other themes stay.
-function Remove-LegacyTypora {
-    $fontsCss = ([IO.Path]::Combine($TyporaDir, "source", "fonts.css"))
-    if (-not ((Test-Path -LiteralPath $fontsCss) -and (Read-Text $fontsCss).Contains("scripts/fetch_fonts.py"))) {
-        return
-    }
-    Write-Host "Typora: removing themes of earlier versions from $TyporaDir"
-    foreach ($theme in $LegacyTyporaThemes) {
-        Remove-Item -LiteralPath (Join-Path $TyporaDir $theme) -Force -ErrorAction SilentlyContinue
-    }
-    Remove-Item -LiteralPath (Join-Path $TyporaDir "source") -Recurse -Force
-}
-
 # --- Main ---------------------------------------------------------------------
 
 if ($Uninstall) {
     if (Test-Path -LiteralPath $ZettlrDir) { Uninstall-Zettlr }
-    if (Test-Path -LiteralPath $TyporaDir) { Remove-LegacyTypora }
     if (Test-Path -LiteralPath $AppDir) { Remove-Item -LiteralPath $AppDir -Recurse -Force }
     Write-Host "Uninstalled."
     return
@@ -263,7 +241,6 @@ try {
     Install-Typst $temp
     $found = $false
     if (Test-Path -LiteralPath $ZettlrDir) { Install-Zettlr; $found = $true }
-    if (Test-Path -LiteralPath $TyporaDir) { Remove-LegacyTypora }
     if (-not $found) {
         Write-Warning "Zettlr not found; start Zettlr once, then run this again"
     }

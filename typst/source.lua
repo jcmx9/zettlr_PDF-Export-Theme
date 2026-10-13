@@ -5,12 +5,14 @@
 --    "alerts" extension) and German keywords (> [!HINWEIS] …).
 -- 2. Typographic quotes are passed to Typst verbatim. Pandoc would turn
 --    “ ” into a plain " and Typst would then guess the wrong German quote.
--- 3. Local images are handed to Typst by their path relative to the note.
---    Pandoc would copy them into a temporary folder outside Typst's root.
+-- 3. Local images are handed to Typst by their path (relative to the note
+--    or absolute; ~, $VAR, ${VAR} and %VAR% are expanded). Pandoc would copy
+--    them into a temporary folder outside Typst's root. A missing image or
+--    logo leaves a note instead of breaking the export.
 -- 4. Front matter "logo" becomes the logo next to the title; "logo-height"
 --    sets its maximum height (default 20mm, see the template).
--- 5. Task lists with owners ("- [ ] Task – Name, bis 17.10.") become a
---    table with the columns task, owner, due date and status.
+-- 5. Task lists ("- [ ] Task – Name, bis 17.10.") become a table with the
+--    columns task, owner and due date (only when used) and status.
 -- 6. \newpage, \pagebreak and <!-- pagebreak --> start a new page.
 -- 9. A line such as "18. Oktober 2026" is a date, not an ordered list
 --    starting at 18: numbered "lists" whose items start with a month name
@@ -31,6 +33,7 @@ local TEXT = {
       caution = "Achtung",
     },
     tasks = { "Aufgabe", "Wer", "Bis", "Status" },
+    missing = "Bild fehlt",
   },
   en = {
     alerts = {
@@ -41,6 +44,7 @@ local TEXT = {
       caution = "Caution",
     },
     tasks = { "Task", "Owner", "Due", "Status" },
+    missing = "Image missing",
   },
 }
 
@@ -69,18 +73,66 @@ end
 
 -- --- Images ------------------------------------------------------------------
 
--- Path of a local image as Typst should see it, or nil for remote images
-local function local_path(src)
-  if src:match("^%a[%w+.-]*://") or src:match("^data:") then
-    return nil
+-- Environment variables in paths; USER/HOME fall back to their Windows names
+local function env(name)
+  return os.getenv(name)
+    or (name == "USER" and os.getenv("USERNAME"))
+    or (name == "USERNAME" and os.getenv("USER"))
+    or (name == "HOME" and os.getenv("USERPROFILE"))
+    or (name == "USERPROFILE" and os.getenv("HOME"))
+    or nil
+end
+
+local function expand(path)
+  local first = path:sub(1, 1)
+  if first == "~" and (#path == 1 or path:sub(2, 2) == "/" or path:sub(2, 2) == "\\") then
+    path = (env("HOME") or "~") .. path:sub(2)
   end
-  local path = src:gsub("%%(%x%x)", function(hex)
+  path = path:gsub("%$%{([%w_]+)%}", env):gsub("%$([%a_][%w_]*)", env):gsub("%%([%a_][%w_]*)%%", env)
+  path = path:gsub("%%(%x%x)", function(hex)
     return string.char(tonumber(hex, 16))
   end)
-  if path:sub(1, 2) == "~/" then
-    path = (os.getenv("HOME") or os.getenv("USERPROFILE") or "~") .. path:sub(2)
-  end
   return (path:gsub("\\", "/"))
+end
+
+local function exists(path)
+  local file = io.open(path, "rb")
+  if file then
+    file:close()
+    return true
+  end
+  return false
+end
+
+-- A local image path as Typst reads it, or nil and the path for display.
+-- Typst runs with root "/", relative paths start at the note's folder.
+-- On Windows, absolute paths work on the drive the note is on.
+local function resolve(src)
+  local path = expand(src)
+  local cwd = pandoc.system.get_working_directory():gsub("\\", "/")
+  local drive, rest = path:match("^(%a):(/.*)$")
+  local full, typst_path
+  if drive then
+    full = path
+    local cwd_drive = cwd:match("^(%a):")
+    typst_path = cwd_drive and cwd_drive:lower() == drive:lower() and rest or nil
+  elseif path:sub(1, 1) == "/" then
+    full, typst_path = path, path
+  else
+    full, typst_path = cwd .. "/" .. path, path
+  end
+  if typst_path and exists(full) then
+    return typst_path
+  end
+  return nil, path
+end
+
+local function is_remote(src)
+  return src:match("^%a[%w+.-]*://") ~= nil or src:match("^data:") ~= nil
+end
+
+local function warn(message)
+  io.stderr:write("[Source PDF] " .. message .. "\n")
 end
 
 -- Typst length from an image attribute such as 50%, 8cm or 300px
@@ -102,9 +154,14 @@ local function typst_length(value)
 end
 
 local function image(img)
-  local path = local_path(img.src)
-  if not path then
+  if is_remote(img.src) then
     return nil
+  end
+  local path, shown = resolve(img.src)
+  if not path then
+    -- A missing image must not break the export: show a note instead
+    warn("image not found: " .. shown)
+    return pandoc.Emph({ pandoc.Str("[" .. text().missing .. ": " .. shown .. "]") })
   end
   local args = { typst_string(path) }
   local width = typst_length(img.attributes.width)
@@ -172,10 +229,13 @@ function Meta(meta)
   if meta.lang then
     lang = pandoc.utils.stringify(meta.lang):sub(1, 2)
   end
-  if meta.logo then
-    local path = local_path(pandoc.utils.stringify(meta.logo))
-    if path and path ~= "" then
+  local logo = meta.logo and pandoc.utils.stringify(meta.logo) or ""
+  if logo ~= "" and not is_remote(logo) then
+    local path, shown = resolve(logo)
+    if path then
       meta["logo-path"] = pandoc.RawInline("typst", typst_string(path))
+    else
+      warn("logo not found: " .. shown)
     end
   end
   if meta["logo-height"] then
@@ -286,7 +346,7 @@ local function task_parts(item)
       end
     end
   end
-  return { box = box.text, task = task, owner = owner, due = due, has_owner = dash ~= nil }
+  return { box = box.text, task = task, owner = owner, due = due }
 end
 
 local function plain(s)
@@ -294,35 +354,50 @@ local function plain(s)
 end
 
 local function task_table(list)
-  local rows, any_owner = {}, false
+  local tasks = {}
+  local has_owner, has_due = false, false
   for _, item in ipairs(list.content) do
     local parts = task_parts(item)
     if not parts then
       return nil
     end
-    any_owner = any_owner or parts.has_owner
-    table.insert(rows, {
-      { pandoc.Plain(parts.task) },
-      plain(parts.owner),
-      plain(parts.due),
-      plain(parts.box),
-    })
+    has_owner = has_owner or parts.owner ~= ""
+    has_due = has_due or parts.due ~= ""
+    table.insert(tasks, parts)
   end
-  if not any_owner then
-    return nil
+
+  -- Columns: task, owner and due date only when used, status
+  local titles = text().tasks
+  local columns = {
+    { title = titles[1], align = pandoc.AlignDefault, width = 0.56, cell = function(t) return { pandoc.Plain(t.task) } end },
+  }
+  if has_owner then
+    table.insert(columns, { title = titles[2], align = pandoc.AlignDefault, width = 0.2, cell = function(t) return plain(t.owner) end })
   end
-  local header = {}
-  for _, title in ipairs(text().tasks) do
-    table.insert(header, plain(title))
+  if has_due then
+    table.insert(columns, { title = titles[3], align = pandoc.AlignDefault, width = 0.14, cell = function(t) return plain(t.due) end })
   end
-  local simple = pandoc.SimpleTable(
-    {},
-    { pandoc.AlignDefault, pandoc.AlignDefault, pandoc.AlignDefault, pandoc.AlignCenter },
-    { 0.56, 0.2, 0.14, 0.1 },
-    header,
-    rows
-  )
-  return pandoc.utils.from_simple_table(simple)
+  table.insert(columns, { title = titles[4], align = pandoc.AlignCenter, width = 0.1, cell = function(t) return plain(t.box) end })
+
+  local used = 0
+  for _, column in ipairs(columns) do
+    used = used + column.width
+  end
+  local header, aligns, widths, rows = {}, {}, {}, {}
+  for i, column in ipairs(columns) do
+    header[i] = plain(column.title)
+    aligns[i] = column.align
+    -- the task column takes the width of the dropped columns
+    widths[i] = i == 1 and column.width + (1 - used) or column.width
+  end
+  for _, task in ipairs(tasks) do
+    local row = {}
+    for i, column in ipairs(columns) do
+      row[i] = column.cell(task)
+    end
+    table.insert(rows, row)
+  end
+  return pandoc.utils.from_simple_table(pandoc.SimpleTable({}, aligns, widths, header, rows))
 end
 
 -- --- Dates -------------------------------------------------------------------

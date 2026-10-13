@@ -10,8 +10,8 @@
 #                      of the latest GitHub release
 #
 # Sets up Zettlr: editor theme, PDF export profile "Source PDF" and the
-# snippets meeting, telefonnotiz, aufgabe and header. Typst is downloaded into the installer's own folder; no admin
-# rights needed. Typora themes installed by earlier versions are removed.
+# snippets meeting, telefonnotiz, aufgabe and header. Typst is downloaded
+# into the installer's own folder; no admin rights needed.
 set -euo pipefail
 
 readonly REPO="jcmx9/zettlr_PDF-Export-Theme"
@@ -20,8 +20,6 @@ readonly TYPST_VERSION="0.15.1"
 readonly IMPORT_LINE='@import url("source-zettlr.css");'
 readonly PROFILE_NAME="Source PDF.yaml"
 readonly PROFILE_MARKER="zettlr_PDF-Export-Theme installer"
-# Installed into Typora by versions up to 26.10.4
-readonly LEGACY_TYPORA_THEMES="source.css source-dark.css source-compact.css source-dark-compact.css"
 
 readonly APP_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/zettlr-pdf-export-theme"
 readonly CURRENT="${APP_DIR}/current"
@@ -91,18 +89,6 @@ ${HOME}/.var/app/com.zettlr.Zettlr/config/zettlr"
             printf '%s\n' "${dir}"
         fi
     done
-}
-
-typora_dir() {
-    local dir
-    if [[ "${OS}" == "macos" ]]; then
-        dir="${HOME}/Library/Application Support/abnerworks.Typora/themes"
-    else
-        dir="${XDG_CONFIG_HOME:-${HOME}/.config}/Typora/themes"
-    fi
-    if [[ -d "${dir}" ]]; then
-        printf '%s\n' "${dir}"
-    fi
 }
 
 backup() {
@@ -216,28 +202,13 @@ write_profile() {
     dir_path="${CURRENT//${q}/${q}${q}}"
     content="${template//@TYPST@/${typst_path}}"
     content="${content//@DIR@/${dir_path}}"
-    # Root "/" lets Typst read images outside the note's folder
-    content="${content//@ROOT@//}"
     mkdir -p "${dir}/defaults"
     printf '%s\n' "${content}" > "${dir}/defaults/${PROFILE_NAME}"
-}
-
-remove_legacy() {
-    local dir="$1"
-    # Development setups linked these into the data folder
-    if [[ -L "${dir}/source" ]]; then
-        rm "${dir}/source"
-    fi
-    local legacy="${dir}/defaults/Source PDF (Typst).yaml"
-    if [[ -f "${legacy}" ]] && grep -q "install-zettlr.sh" "${legacy}"; then
-        rm "${legacy}"
-    fi
 }
 
 setup_zettlr() {
     local dir="$1"
     info "Zettlr: ${dir}"
-    remove_legacy "${dir}"
     rm -f "${dir}/source-zettlr.css" "${dir}/source-zettlr-fonts.css"
     cp "${CURRENT}/zettlr/source-zettlr.css" "${dir}/source-zettlr.css"
     cp "${CURRENT}/zettlr/source-zettlr-fonts.css" "${dir}/source-zettlr-fonts.css"
@@ -297,22 +268,6 @@ remove_zettlr() {
     info "  removed"
 }
 
-# --- Typora (legacy) ----------------------------------------------------------
-
-# Earlier versions also installed Typora themes. They are removed only when
-# the font folder carries this installer's marker, so other themes stay.
-remove_legacy_typora() {
-    local dir="$1" theme
-    if [[ ! -f "${dir}/source/fonts.css" ]] || ! grep -q "scripts/fetch_fonts.py" "${dir}/source/fonts.css"; then
-        return 0
-    fi
-    info "Typora: removing themes of earlier versions from ${dir}"
-    for theme in ${LEGACY_TYPORA_THEMES}; do
-        rm -f "${dir}/${theme}"
-    done
-    rm -rf "${dir}/source"
-}
-
 # --- Main ---------------------------------------------------------------------
 
 install_all() {
@@ -330,10 +285,6 @@ install_all() {
     done <<EOF
 $(zettlr_dirs)
 EOF
-    dir="$(typora_dir)"
-    if [[ -n "${dir}" ]]; then
-        remove_legacy_typora "${dir}"
-    fi
     if [[ "${found}" -eq 0 ]]; then
         warn "Zettlr not found; start Zettlr once, then run this again"
     fi
@@ -353,10 +304,6 @@ uninstall_all() {
     done <<EOF
 $(zettlr_dirs)
 EOF
-    dir="$(typora_dir)"
-    if [[ -n "${dir}" ]]; then
-        remove_legacy_typora "${dir}"
-    fi
     rm -rf "${APP_DIR}"
     info "Uninstalled."
 }
@@ -372,7 +319,7 @@ main() {
                 shift
                 ;;
             -h | --help)
-                sed -n '2,15p' "$0" 2>/dev/null || true
+                sed -n '2,14p' "$0" 2>/dev/null || true
                 exit 0
                 ;;
             *) die "unknown option: $1" ;;

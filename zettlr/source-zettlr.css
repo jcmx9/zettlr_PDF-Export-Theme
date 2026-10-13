@@ -99,10 +99,11 @@ body .cm-editor {
     --zettlr-editor-emphasis-style: italic;
     --zettlr-editor-code-style: normal;
 
-    /* Scale 1.25 for h1–h3, body size from h4 on (same as the PDF) */
-    --zettlr-editor-header-1-size: 1.95em;
-    --zettlr-editor-header-2-size: 1.56em;
-    --zettlr-editor-header-3-size: 1.25em;
+    /* Same scale as the PDF (factor 1.2 on the body): # 15/10.5, ## 12.5/10.5,
+       ### body size in bold, then italic */
+    --zettlr-editor-header-1-size: 1.43em;
+    --zettlr-editor-header-2-size: 1.19em;
+    --zettlr-editor-header-3-size: 1em;
     --zettlr-editor-header-4-size: 1em;
     --zettlr-editor-header-5-size: 1em;
     --zettlr-editor-header-6-size: 1em;
@@ -150,31 +151,27 @@ body .cm-editor .cm-line:has(.cm-header-6) {
 }
 
 body .cm-editor .cm-line:has(.cm-header-1) {
-    --zettlr-editor-header-style: 700;
-    padding-top: 0.8em;
+    padding-top: 1em;
     padding-bottom: 0.2em;
 }
 
 body .cm-editor .cm-line:has(.cm-header-2) {
-    padding-top: 0.9em;
+    padding-top: 0.8em;
     padding-bottom: 0.15em;
 }
 
 body .cm-editor .cm-line:has(.cm-header-3) {
-    padding-top: 0.8em;
+    --zettlr-editor-header-style: 700;
+    padding-top: 0.7em;
     padding-bottom: 0.1em;
 }
 
 body .cm-editor .cm-line:has(.cm-header-4) {
-    --zettlr-editor-header-style: 700;
-    padding-top: 0.6em;
-}
-
-body .cm-editor .cm-line:has(.cm-header-5) {
     --zettlr-editor-header-style: italic 600;
     padding-top: 0.6em;
 }
 
+body .cm-editor .cm-line:has(.cm-header-5),
 body .cm-editor .cm-line:has(.cm-header-6) {
     --zettlr-editor-header-style: italic 400;
     padding-top: 0.6em;
