@@ -206,7 +206,7 @@ jobs:
             pandoc="$PWD/pandoc-$PANDOC_VERSION/bin/pandoc"
           fi
           mkdir -p "$zettlr"
-          bash install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
+          bash install.sh --bundle dist/zettlr-rfdoc-export.tar.gz
 
           notes="$RUNNER_TEMP/Notizen mit Leerzeichen"
           target="$RUNNER_TEMP/Export Ziel/notiz.pdf"
@@ -229,7 +229,7 @@ jobs:
           $zettlr = Join-Path $env:APPDATA "zettlr"
           New-Item -ItemType Directory -Force -Path $zettlr | Out-Null
           $code = Get-Content -Raw install.ps1
-          & ([scriptblock]::Create($code)) -Bundle dist\zettlr-pdf-export-theme.zip
+          & ([scriptblock]::Create($code)) -Bundle dist\zettlr-rfdoc-export.zip
 
           Invoke-WebRequest -UseBasicParsing -OutFile pandoc.zip "https://github.com/jgm/pandoc/releases/download/$env:PANDOC_VERSION/pandoc-$env:PANDOC_VERSION-windows-x86_64.zip"
           Expand-Archive pandoc.zip -DestinationPath .
