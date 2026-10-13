@@ -1,36 +1,18 @@
 # ZETTLR DEFAULTS FILE
 # ====================
-# Conversion: Markdown --> PDF with the Source layout (via Pandoc and Typst)
+# Conversion: Markdown --> PDF with real-fast-document (rf-document)
 # Written by the zettlr_PDF-Export-Theme installer; reinstalling overwrites it.
-# More info: https://pandoc.org/MANUAL.html
+# More info: https://github.com/jcmx9/real-fast-document
 #
-# - Title and subtitle come from the front matter (title, subtitle); "#" is
-#   the first section level. Notes without "title:" that start with
-#   "# Title" keep the old behavior: that heading becomes the title.
-# - Every line break in the note is kept (hard_line_breaks)
-# - ==highlight==, > [!NOTE] alerts, typographic quotes, images, Mermaid
-#   diagrams, task tables and page breaks (\newpage) are supported
-# - Front matter (optional): title, subtitle, client, date, author, logo,
-#   logo-height, lang
-# - The PDF conforms to PDF/A-2u for archiving
-reader: commonmark_x+hard_line_breaks+implicit_figures-smart-fancy_lists
+# Pandoc only hands the note to rf-document (see the Lua filter), which sets
+# layout, fonts and PDF/A. The PDF engine below is never started; Pandoc only
+# needs a valid name for a PDF profile.
+reader: commonmark_x
 writer: pdf
-standalone: true
-pdf-engine: '@TYPST@'
-pdf-engine-opts:
-  - --ignore-system-fonts
-  - '--font-path=@DIR@/typst/fonts'
-  - '--package-cache-path=@DIR@/typst/packages'
-  - --pdf-standard=a-2u
-  # Root / lets Typst read images outside the note's folder (on Windows:
-  # the root of the note's drive)
-  - --root=/
-template: '@DIR@/typst/source.typst'
+pdf-engine: typst
 filters:
   - type: lua
-    path: '@DIR@/typst/source.lua'
-variables:
-  papersize: a4
+    path: '@DIR@/zettlr/rf-document.lua'
 metadata-files: []
 include-before-body: []
 include-after-body: []
