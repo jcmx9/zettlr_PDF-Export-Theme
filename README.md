@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_PDF-Export-Theme/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.11** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.12** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben – Thema, Agenda, Teilnehmer, Mitschrift, Aufgaben – und mit einem Klick als ruhiges, typografisches A4-PDF exportieren. Alle Bausteine sind frei und quelloffen: Zettlr, Pandoc (in Zettlr enthalten) und [Typst](https://typst.app).
 
@@ -135,7 +135,7 @@ python3 scripts/fetch_packages.py
 ./install.sh --bundle dist/zettlr-pdf-export-theme.tar.gz
 
 # PDF auf der Kommandozeile
-pandoc note.md -f markdown+hard_line_breaks+mark+alerts-smart -t pdf --pdf-engine=typst \
+pandoc note.md -f commonmark_x+hard_line_breaks+implicit_figures-smart-fancy_lists -t pdf --pdf-engine=typst \
   --pdf-engine-opt=--ignore-system-fonts --pdf-engine-opt=--font-path=typst/fonts \
   --template=typst/source.typst --lua-filter=typst/source.lua -o note.pdf
 ```

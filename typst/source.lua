@@ -12,6 +12,8 @@
 -- 5. Task lists with owners ("- [ ] Task – Name, bis 17.10.") become a
 --    table with the columns task, owner, due date and status.
 -- 6. \newpage, \pagebreak and <!-- pagebreak --> start a new page.
+-- 8. ==highlight== becomes Typst's highlight (the CommonMark reader, which
+--    parses notes the way Zettlr's editor does, has no "mark" extension).
 -- 7. The title comes from the front matter. A note without "title:" that
 --    starts with "# Title" keeps the old behavior: that heading becomes the
 --    title and the other headings move up one level.
@@ -135,6 +137,25 @@ local function title_from_heading(doc)
     end,
   })
   return doc
+end
+
+-- --- Lists -------------------------------------------------------------------
+
+-- CommonMark starts a new list where task items begin. Back to back, Typst
+-- would join them into one loose list with paragraph spacing; merge them.
+local function merge_lists(blocks)
+  local result = pandoc.Blocks({})
+  local changed = false
+  for _, block in ipairs(blocks) do
+    local previous = result[#result]
+    if block.t == "BulletList" and previous and previous.t == "BulletList" then
+      previous.content:extend(block.content)
+      changed = true
+    else
+      result:insert(block)
+    end
+  end
+  return changed and result or nil
 end
 
 -- --- Metadata ----------------------------------------------------------------
@@ -304,6 +325,14 @@ end
 -- --- Page breaks -------------------------------------------------------------
 
 local PAGEBREAK = pandoc.RawBlock("typst", "#pagebreak(weak: true)")
+local PAGEBREAK_COMMANDS = { ["\\newpage"] = true, ["\\pagebreak"] = true, ["\\clearpage"] = true }
+
+-- The CommonMark reader keeps \newpage as a paragraph of its own
+local function pagebreak_para(para)
+  if #para.content == 1 and para.content[1].t == "Str" and PAGEBREAK_COMMANDS[para.content[1].text] then
+    return PAGEBREAK
+  end
+end
 
 local function raw_block(raw)
   local text = raw.text:match("^%s*(.-)%s*$")
@@ -313,6 +342,65 @@ local function raw_block(raw)
   if raw.format == "html" and text:match("^<!%-%-%s*pagebreak%s*%-%->$") then
     return PAGEBREAK
   end
+end
+
+-- --- Highlight ---------------------------------------------------------------
+
+-- Trailing punctuation that may follow the closing ==
+local function split_close(text)
+  local inner, rest = text:match("^(.-)==([%.,;:!%?%)]*)$")
+  return inner, rest
+end
+
+local function highlight(inlines)
+  local result = pandoc.Inlines({})
+  local i = 1
+  local changed = false
+  while i <= #inlines do
+    local el = inlines[i]
+    local close_at
+    if el.t == "Str" and el.text:sub(1, 2) == "==" and #el.text > 2 then
+      for j = i, #inlines do
+        local candidate = inlines[j]
+        if candidate.t == "Str" and split_close(j == i and candidate.text:sub(3) or candidate.text) then
+          close_at = j
+          break
+        end
+      end
+    end
+    if close_at then
+      local first = el.text:sub(3)
+      local inner = pandoc.Inlines({})
+      local rest = ""
+      if close_at == i then
+        local text
+        text, rest = split_close(first)
+        inner:insert(pandoc.Str(text))
+      else
+        inner:insert(pandoc.Str(first))
+        for k = i + 1, close_at - 1 do
+          inner:insert(inlines[k])
+        end
+        local text
+        text, rest = split_close(inlines[close_at].text)
+        if text ~= "" then
+          inner:insert(pandoc.Str(text))
+        end
+      end
+      result:insert(pandoc.RawInline("typst", "#highlight["))
+      result:extend(inner)
+      result:insert(pandoc.RawInline("typst", "]"))
+      if rest ~= "" then
+        result:insert(pandoc.Str(rest))
+      end
+      i = close_at + 1
+      changed = true
+    else
+      result:insert(el)
+      i = i + 1
+    end
+  end
+  return changed and result or nil
 end
 
 -- --- Quotes ------------------------------------------------------------------
@@ -363,7 +451,8 @@ end
 
 return {
   { Pandoc = title_from_heading },
+  { Blocks = merge_lists },
   { Meta = Meta },
-  { BulletList = task_table, RawBlock = raw_block, Image = image },
+  { BulletList = task_table, RawBlock = raw_block, Para = pagebreak_para, Image = image, Inlines = highlight },
   { Div = alert, BlockQuote = german_alert, Str = quotes },
 }

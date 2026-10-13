@@ -5,6 +5,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.12] - 2026-10-13
+
+### Fixed
+- Notes are read as CommonMark, like Zettlr's editor shows them: a `#` heading directly after a list (without a blank line) is a heading again instead of list text, and lists may follow text without a blank line
+- A task item at the end of a list no longer spreads the whole list apart
+
+### Changed
+- `==highlight==` and `\newpage` are handled by the Lua filter (the CommonMark reader has neither)
+
 ## [26.10.11] - 2026-10-13
 
 ### Changed
@@ -102,7 +111,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.11...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.12...HEAD
+[26.10.12]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.11...v26.10.12
 [26.10.11]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.10...v26.10.11
 [26.10.10]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.9...v26.10.10
 [26.10.9]: https://github.com/jcmx9/zettlr_PDF-Export-Theme/compare/v26.10.8...v26.10.9
