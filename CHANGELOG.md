@@ -5,6 +5,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.24] - 2026-10-14
+
+### Changed
+- Compact `header` snippet: one line per front matter key with a short comment, every value is a tab stop, today's date. It ships with this project again instead of copying rf-document's `header.md`; CI checks that the keys match rf-document's `header.md`
+
 ## [26.10.23] - 2026-10-13
 
 ### Changed
@@ -198,7 +203,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.23...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.24...HEAD
+[26.10.24]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.23...v26.10.24
 [26.10.23]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.22...v26.10.23
 [26.10.22]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.21...v26.10.22
 [26.10.21]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.20...v26.10.21

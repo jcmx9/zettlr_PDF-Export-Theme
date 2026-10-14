@@ -5,12 +5,12 @@
 [![CI](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.23** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.24** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben und mit **Datei → Exportieren → rf-doc** als PDF für den Kunden erzeugen. Das PDF baut [real-fast-document](https://github.com/jcmx9/real-fast-document) (rf-document): Layout, Schriften, Hinweisboxen, Aufgabentabellen und PDF/A kommen von dort. Dieses Projekt sorgt auf der Zettlr-Seite für drei Dinge:
 
 1. **Live-Layout:** Der Editor sieht aus wie das PDF von rf-document – gleiche Schriften (rf-documents eigene Dateien), Größenverhältnisse, Strichstärken, Farben, Hinweisboxen, Tabellen und Zitate.
-2. **Snippets** für Besprechungen, Telefonate, Aufgaben und Seitenumbrüche; `:header` ist rf-documents `header.md` mit allen Front-Matter-Schlüsseln.
+2. **Snippets** für Besprechungen, Telefonate, Aufgaben und Seitenumbrüche; `:header` setzt alle Front-Matter-Schlüssel von rf-document ein.
 3. **Export** an rf-document.
 
 ## Voraussetzung
@@ -33,7 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/inst
 irm https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/install.ps1 | iex
 ```
 
-Der Installer lädt das neueste Release (mit SHA-256-Prüfung), sucht rf-document und richtet in Zettlr Editor-Theme, Exportprofil **rf-doc** und Snippets ein. Die Schriften des Themes und das `header`-Snippet übernimmt er aus der rf-document-Installation; deshalb nach einem Update von rf-document diesen Installer erneut ausführen. Eigene Regeln in Zettlrs `custom.css` bleiben erhalten, vor jeder Änderung wird eine Sicherung angelegt; Snippets, die du geändert hast, ebenso.
+Der Installer lädt das neueste Release (mit SHA-256-Prüfung), sucht rf-document und richtet in Zettlr Editor-Theme, Exportprofil **rf-doc** und Snippets ein. Die Schriften des Themes übernimmt er aus der rf-document-Installation; deshalb nach einem Update von rf-document diesen Installer erneut ausführen. Eigene Regeln in Zettlrs `custom.css` bleiben erhalten, vor jeder Änderung wird eine Sicherung angelegt; Snippets, die du geändert hast, ebenso.
 
 | | macOS | Linux | Windows |
 | --- | --- | --- | --- |
@@ -59,7 +59,7 @@ curl -fsSL https://raw.githubusercontent.com/jcmx9/zettlr_rfdoc-Export/main/inst
    - Beide setzen `hard_breaks: true` (jede Zeile bleibt eine Zeile, wie im Editor) und `embed_source: false` (keine Notiz im Kunden-PDF)
    - `:aufgabe` – eine Aufgabenzeile `- [ ] Aufgabe – Name, bis Datum` mit drei Tab-Stopps
    - `:newpage` – Seitenumbruch im PDF (`<!-- pagebreak -->`)
-   - `:header` – rf-documents `header.md`: alle Front-Matter-Schlüssel mit Standardwert und Kommentar
+   - `:header` – alle Front-Matter-Schlüssel von rf-document mit Standardwert, je eine Zeile mit kurzem Kommentar; jedes Feld ist ein Tab-Stopp (Tab springt von Wert zu Wert), das Datum ist heute. Die CI prüft, dass es dieselben Schlüssel sind wie in rf-documents `header.md`
 3. Export: **Datei → Exportieren…** (<kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>E</kbd>), Profil **rf-doc**.
 
 Was im PDF möglich ist (Front Matter, Hinweisboxen, Aufgabentabellen, Bilder, Diagramme …), beschreibt die [README von real-fast-document](https://github.com/jcmx9/real-fast-document#readme).
@@ -103,7 +103,7 @@ install.sh, install.ps1        – Installer (macOS/Linux, Windows)
 zettlr/rf-doc.yaml.in      – Vorlage des Exportprofils
 zettlr/rf-document.lua         – Bote: übergibt die Notiz an rf-document
 zettlr/rfdoc-zettlr.css        – Editor-Theme im Layout von rf-document
-zettlr/snippets/               – Zettlr-Snippets (header kommt aus rf-document)
+zettlr/snippets/               – Zettlr-Snippets
 scripts/                       – Bundle-Bau, Test des Boten
 VERSION                        – Release-Version (CalVer)
 README.md, README.en.md        – Dokumentation (Deutsch, Englisch)

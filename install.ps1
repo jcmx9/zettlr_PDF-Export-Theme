@@ -10,8 +10,8 @@ Uninstall:
 Sets up Zettlr: the export profile "rf-doc", which hands the note to
 rf-document (real-fast-document) for the PDF, an editor theme that mirrors
 rf-document's layout (with rf-document's own fonts) and the snippets
-meeting, telefonnotiz, aufgabe, newpage and header (rf-document's
-header.md). rf-document is installed separately:
+meeting, telefonnotiz, aufgabe, newpage and header. rf-document is
+installed separately:
 https://github.com/jcmx9/real-fast-document
 #>
 param(
@@ -33,7 +33,7 @@ $ProfileMarker = "zettlr_rfdoc-Export installer"
 $AppDir = Join-Path $env:LOCALAPPDATA "zettlr-rfdoc-export"
 $Current = Join-Path $AppDir "current"
 $ZettlrDir = Join-Path $env:APPDATA "zettlr"
-# rf-document's installation folder: fonts and header.md come from there
+# rf-document's installation folder: the theme's fonts come from there
 $RfdHome = Join-Path $env:LOCALAPPDATA "real-fast-document"
 
 $Utf8NoBom = New-Object System.Text.UTF8Encoding $false
@@ -155,18 +155,6 @@ function Write-FontsCss([string]$Out) {
     Write-Text $Out $css.ToString()
 }
 
-# The header snippet is rf-document's header.md, so it always lists the
-# front matter keys of the installed rf-document
-function Write-HeaderSnippet {
-    $header = Join-Path $RfdHome "header.md"
-    if (Test-Path -LiteralPath $header) {
-        Copy-Item -LiteralPath $header -Destination ([IO.Path]::Combine($Current, "zettlr", "snippets", "header.tpl.md")) -Force
-    }
-    else {
-        Write-Warning "rf-document's header.md not found; no header snippet"
-    }
-}
-
 function Add-Import([string]$Css) {
     if (-not (Test-Path -LiteralPath $Css)) {
         Write-Text $Css "$ImportLine`n"
@@ -285,7 +273,6 @@ New-Item -ItemType Directory -Path $temp | Out-Null
 try {
     Install-Bundle $temp
     Set-FilterPath
-    Write-HeaderSnippet
     $found = $false
     if (Test-Path -LiteralPath $ZettlrDir) { Install-Zettlr; $found = $true }
     if (-not $found) {
