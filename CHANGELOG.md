@@ -5,6 +5,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.27] - 2026-10-14
+
+### Removed
+- Folding the front matter in distraction-free mode (26.10.26): the mode changes too much else to serve as a switch
+
 ## [26.10.26] - 2026-10-14
 
 ### Added
@@ -214,7 +219,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.26...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.27...HEAD
+[26.10.27]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.26...v26.10.27
 [26.10.26]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.25...v26.10.26
 [26.10.25]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.24...v26.10.25
 [26.10.24]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.23...v26.10.24
