@@ -5,6 +5,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.25] - 2026-10-14
+
+### Fixed
+- `header` snippet: `h1_break` was missing (16 keys, 16 tab stops)
+- CI key check against rf-document's `header.md` now also sees keys with digits (it missed `h1_break`)
+
 ## [26.10.24] - 2026-10-14
 
 ### Changed
@@ -203,7 +209,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.24...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.25...HEAD
+[26.10.25]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.24...v26.10.25
 [26.10.24]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.23...v26.10.24
 [26.10.23]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.22...v26.10.23
 [26.10.22]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.21...v26.10.22
