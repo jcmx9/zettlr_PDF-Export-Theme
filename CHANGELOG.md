@@ -5,6 +5,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 
 ## [Unreleased]
 
+## [26.10.26] - 2026-10-14
+
+### Added
+- Editor theme: in distraction-free mode (Cmd/Ctrl+J) the front matter folds into one line "Header ▸" and unfolds while the cursor is in it
+
 ## [26.10.25] - 2026-10-14
 
 ### Fixed
@@ -209,7 +214,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versio
 - Zettlr editor theme with Adobe's variable Source fonts
 - One-line installers for macOS, Linux and Windows
 
-[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.25...HEAD
+[Unreleased]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.26...HEAD
+[26.10.26]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.25...v26.10.26
 [26.10.25]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.24...v26.10.25
 [26.10.24]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.23...v26.10.24
 [26.10.23]: https://github.com/jcmx9/zettlr_rfdoc-Export/compare/v26.10.22...v26.10.23
