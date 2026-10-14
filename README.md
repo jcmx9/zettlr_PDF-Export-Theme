@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.24** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
+**Version 26.10.25** ([CalVer](https://calver.org/)) · Deutsch · [English](README.en.md)
 
 Besprechungsnotizen live in Zettlr schreiben und mit **Datei → Exportieren → rf-doc** als PDF für den Kunden erzeugen. Das PDF baut [real-fast-document](https://github.com/jcmx9/real-fast-document) (rf-document): Layout, Schriften, Hinweisboxen, Aufgabentabellen und PDF/A kommen von dort. Dieses Projekt sorgt auf der Zettlr-Seite für drei Dinge:
 
