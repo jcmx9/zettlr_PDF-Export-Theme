@@ -5,7 +5,7 @@
 [![CI](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml/badge.svg)](https://github.com/jcmx9/zettlr_rfdoc-Export/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Version 26.10.25** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
+**Version 26.10.26** ([CalVer](https://calver.org/)) · English · [Deutsch](README.md)
 
 Write meeting notes live in Zettlr and create the client PDF with **File → Export → rf-doc**. The PDF is built by [real-fast-document](https://github.com/jcmx9/real-fast-document) (rf-document): layout, fonts, alerts, task tables and PDF/A come from there. This project takes care of three things on the Zettlr side:
 
@@ -67,6 +67,8 @@ What the PDF supports (front matter, alerts, task tables, images, diagrams, …)
 ### Editor theme
 
 The theme (`rfdoc-zettlr.css`) takes its values from rf-document's `template.typ`: body text in Source Sans with old-style figures and justification, headings in Source Serif (`#` 1.4× with a hairline, `##` 1.2×, `###` underlined, italic from `####`), alerts in rf-document's colors, code on light grey, striped tables. The editor uses the nominal weights (400/500/600) – rf-document sets the PDF slightly lower because PDF viewers draw heavier, so both look the same. It works with every built-in Zettlr theme; light and dark follow Zettlr's dark mode.
+
+In distraction-free mode (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>J</kbd>) the front matter folds into one line “Header ▸”; when the cursor is in it (arrow up or click), it unfolds. This needs Zettlr's setting “Mute non-focused lines in distraction-free mode” (default: on).
 
 Two things the editor cannot mirror: lists made only of tasks stay lists in the editor (in the PDF they become a table), and alerts with German keywords (`> [!HINWEIS]`) show as quotes in Zettlr – in the PDF both spellings look the same.
 
