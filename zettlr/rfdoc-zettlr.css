@@ -448,3 +448,20 @@ body .cm-editor .cm-zkn-tag,
 body .cm-editor .cm-zkn-tag-mark {
     color: var(--rfd-chrome);
 }
+
+/*
+ * Front matter folds in distraction-free mode (Cmd/Ctrl+J) into the "---"
+ * line, unless the cursor is in it. Zettlr marks every line except the
+ * cursor line as .muted there ("Mute non-focused lines"); a non-muted line
+ * before the closing "---" means the cursor is inside.
+ */
+
+.main-editor-wrapper.fullscreen .cm-content:not(:has(> .cm-line:not(.muted) ~ .cm-line .cm-yaml-frontmatter-end, > .cm-line:not(.muted) .cm-yaml-frontmatter-end))
+    > .cm-line:has(.cm-yaml-frontmatter-start) ~ .cm-line:not(.cm-line:has(.cm-yaml-frontmatter-end) ~ .cm-line) {
+    display: none;
+}
+
+.main-editor-wrapper.fullscreen .cm-content:not(:has(> .cm-line:not(.muted) ~ .cm-line .cm-yaml-frontmatter-end, > .cm-line:not(.muted) .cm-yaml-frontmatter-end))
+    .cm-yaml-frontmatter-start::after {
+    content: "Header ▸";
+}
