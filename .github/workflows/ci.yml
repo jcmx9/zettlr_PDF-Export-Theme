@@ -170,3 +170,106 @@ jobs:
           if (Test-Path -LiteralPath "$zettlr\defaults\rf-doc.yaml") { throw "profile left behind" }
           # The failure test above leaves exit code 3 behind on purpose
           exit 0
+
+  # The whole way as in Zettlr, with the real rf-document from its one-liner:
+  # note in a folder with spaces, relative image, absolute target with spaces
+  real-rf-document:
+    needs: bundle
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: bundle
+          path: dist/
+
+      - name: Export through rf-doc and rf-document (macOS / Linux)
+        if: runner.os != 'Windows'
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/jcmx9/real-fast-document/main/scripts/bootstrap.sh | bash
+          export PATH="$HOME/.local/bin:$PATH"
+          rf-document --version
+          if [ "$(uname -s)" = Darwin ]; then
+            zettlr="$HOME/Library/Application Support/zettlr"
+            curl -fsSL -o pandoc.zip "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-arm64-macOS.zip"
+            unzip -q pandoc.zip
+            pandoc="$PWD/pandoc-$PANDOC_VERSION-arm64/bin/pandoc"
+          else
+            zettlr="$HOME/.config/zettlr"
+            curl -fsSL "https://github.com/jgm/pandoc/releases/download/$PANDOC_VERSION/pandoc-$PANDOC_VERSION-linux-amd64.tar.gz" | tar -xz
+            pandoc="$PWD/pandoc-$PANDOC_VERSION/bin/pandoc"
+          fi
+          mkdir -p "$zettlr"
+          bash install.sh --bundle dist/zettlr-rfdoc-export.tar.gz
+
+          notes="$RUNNER_TEMP/Notizen mit Leerzeichen"
+          target="$RUNNER_TEMP/Export Ziel/notiz.pdf"
+          mkdir -p "$notes/bilder" "$(dirname "$target")"
+          printf '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60"><rect width="200" height="60" fill="#1f6f6a"/></svg>\n' > "$notes/bilder/grafik.svg"
+          printf -- '---\ntitle: "Bote"\nclient: "Muster GmbH"\n---\n\n# Test\n\n![Grafik](bilder/grafik.svg)\n\n- [ ] Aufgabe – Name, bis 17.10.\n' > "$notes/notiz.md"
+          # Started like a GUI app: minimal PATH
+          (cd "$notes" && env -i HOME="$HOME" PATH="/usr/bin:/bin" "$pandoc" --defaults "$zettlr/defaults/rf-doc.yaml" notiz.md -o "$target")
+          head -c 5 "$target" | grep -q '%PDF'
+          echo "ok: $target"
+
+      - name: Export through rf-doc and rf-document (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+          irm https://raw.githubusercontent.com/jcmx9/real-fast-document/main/scripts/bootstrap.ps1 | iex
+          # winget installed Typst for later sessions; load the new PATH here
+          $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")
+          $zettlr = Join-Path $env:APPDATA "zettlr"
+          New-Item -ItemType Directory -Force -Path $zettlr | Out-Null
+          $code = Get-Content -Raw install.ps1
+          & ([scriptblock]::Create($code)) -Bundle dist\zettlr-rfdoc-export.zip
+
+          Invoke-WebRequest -UseBasicParsing -OutFile pandoc.zip "https://github.com/jgm/pandoc/releases/download/$env:PANDOC_VERSION/pandoc-$env:PANDOC_VERSION-windows-x86_64.zip"
+          Expand-Archive pandoc.zip -DestinationPath .
+          $pandoc = Join-Path $PWD "pandoc-$env:PANDOC_VERSION\pandoc.exe"
+          # Notes on C:, the drive rf-document is installed on (RUNNER_TEMP is D:)
+          $notes = Join-Path $env:USERPROFILE "Notizen mit Leerzeichen"
+          $target = Join-Path $env:USERPROFILE "Export Ziel\notiz.pdf"
+          New-Item -ItemType Directory -Force -Path "$notes\bilder", (Split-Path $target) | Out-Null
+          [IO.File]::WriteAllText("$notes\bilder\grafik.svg", '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60"><rect width="200" height="60" fill="#1f6f6a"/></svg>')
+          # Windows PowerShell 5.1 reads this script as ANSI: build the dash from its code point
+          $dash = [char]0x2013
+          [IO.File]::WriteAllText("$notes\notiz.md", "---`ntitle: `"Bote`"`nclient: `"Muster GmbH`"`n---`n`n# Test`n`n![Grafik](bilder/grafik.svg)`n`n- [ ] Aufgabe $dash Name, bis 17.10.`n", (New-Object System.Text.UTF8Encoding $false))
+          Push-Location $notes
+          & $pandoc -d "$zettlr\defaults\rf-doc.yaml" notiz.md -o $target
+          $exit = $LASTEXITCODE
+          Pop-Location
+          if ($exit -ne 0) { throw "export failed with $exit" }
+          $head = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($target), 0, 5)
+          if ($head -ne "%PDF-") { throw "no PDF at $target" }
+          Write-Host "ok: $target"
+          exit 0
+
+      # Known rf-document issue: a note on another drive than rf-document is
+      # not found (the drive letter gets lost). Reported, does not block.
+      - name: Note on another drive than rf-document (Windows, known issue)
+        if: runner.os == 'Windows'
+        continue-on-error: true
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+          $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")
+          $zettlr = Join-Path $env:APPDATA "zettlr"
+          $pandoc = Join-Path $PWD "pandoc-$env:PANDOC_VERSION\pandoc.exe"
+          $notes = Join-Path $env:RUNNER_TEMP "Notizen D"
+          New-Item -ItemType Directory -Force -Path $notes | Out-Null
+          [IO.File]::WriteAllText("$notes\notiz.md", "---`ntitle: `"Laufwerk D`"`n---`n`n# Test`n")
+          Push-Location $notes
+          & $pandoc -d "$zettlr\defaults\rf-doc.yaml" notiz.md -o "$notes\notiz.pdf"
+          $exit = $LASTEXITCODE
+          Pop-Location
+          if ($exit -ne 0) { throw "note on D: failed with $exit (rf-document drive handling)" }
+          Write-Host "ok: note on another drive"
+          exit 0
