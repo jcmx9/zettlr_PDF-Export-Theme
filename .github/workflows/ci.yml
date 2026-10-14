@@ -218,6 +218,12 @@ jobs:
           head -c 5 "$target" | grep -q '%PDF'
           echo "ok: $target"
 
+          # The compact header snippet must list exactly rf-document's front matter keys
+          keys() { grep -oE '^[a-z_-]+:' "$1"; }
+          rfd_home="${XDG_DATA_HOME:-$HOME/.local/share}/real-fast-document"
+          diff <(keys "$rfd_home/header.md") <(keys zettlr/snippets/header.tpl.md)
+          echo "ok: header snippet keys match rf-document's header.md"
+
       - name: Export through rf-doc and rf-document (Windows)
         if: runner.os == 'Windows'
         shell: powershell
