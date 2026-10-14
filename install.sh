@@ -12,8 +12,8 @@
 # Sets up Zettlr: the export profile "rf-doc", which hands the note to
 # rf-document (real-fast-document) for the PDF, an editor theme that mirrors
 # rf-document's layout (with rf-document's own fonts) and the snippets
-# meeting, telefonnotiz, aufgabe, newpage and header (rf-document's
-# header.md). rf-document is installed separately:
+# meeting, telefonnotiz, aufgabe, newpage and header. rf-document is
+# installed separately:
 # https://github.com/jcmx9/real-fast-document
 set -euo pipefail
 # bash 5.2 would treat & in ${var//pattern/replacement} as the match
@@ -156,7 +156,7 @@ find_rf_document() {
 
 # --- Zettlr -------------------------------------------------------------------
 
-# rf-document's installation folder: fonts and header.md come from there
+# rf-document's installation folder: the theme's fonts come from there
 rfd_home() {
     printf '%s\n' "${RFD_HOME:-${XDG_DATA_HOME:-${HOME}/.local/share}/real-fast-document}"
 }
@@ -194,18 +194,6 @@ write_fonts_css() {
         font_face "rfdoc Code" italic "200 900" "${fonts}/SourceCodeVF-Italic.otf"
         font_face "rfdoc Emoji" normal "300 700" "${fonts}/NotoEmoji[wght].ttf"
     } > "${out}"
-}
-
-# The header snippet is rf-document's header.md, so it always lists the
-# front matter keys of the installed rf-document
-write_header_snippet() {
-    local header
-    header="$(rfd_home)/header.md"
-    if [[ -f "${header}" ]]; then
-        cp "${header}" "${CURRENT}/zettlr/snippets/header.tpl.md"
-    else
-        warn "rf-document's header.md not found; no header snippet"
-    fi
 }
 
 add_import() {
@@ -331,7 +319,6 @@ install_all() {
     TMP_DIR="$(mktemp -d)"
     fetch_bundle
     configure_filter
-    write_header_snippet
 
     local found=0 dir
     while IFS= read -r dir; do
